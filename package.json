@@ -1,7 +1,7 @@
 {
   "name": "dbslate",
   "version": "0.1.0",
-  "private": true,
+  "license": "MIT",
   "dependencies": {
     "@types/jest": "^20.0.1",
     "@types/node": "^8.0.1",
