@@ -14,17 +14,21 @@
     "husky": "^0.13.4",
     "lint-staged": "^4.0.0",
     "prettier": "^1.4.4",
-    "react-scripts-ts": "2.2.0"
+    "react-scripts-ts": "2.2.0",
+    "tslint": "^5.4.3",
+    "tslint-config-strictish": "git+https://github.com/ryanatkn/tslint-config-strictish.git"
   },
   "scripts": {
     "start": "react-scripts-ts start",
     "build": "react-scripts-ts build",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "lint": "tslint --project tsconfig.json --type-check --fix src/*.{ts,tsx}"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
+      "tslint --project tsconfig.json --type-check --fix",
       "prettier --write --single-quote --trailing-comma all --no-bracket-spacing",
       "git add"
     ]

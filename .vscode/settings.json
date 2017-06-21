@@ -2,8 +2,10 @@
 
 Recommended vscode extensions:
 
-- TSLint (eg2.tslint)
-- Prettier (esbenp.prettier-vscode)
+- TSLint - eg2.tslint
+- Prettier - esbenp.prettier-vscode
+
+Try to use `TSLint (vnext) - eg2.ts-tslints` when severity problem is figured out.
 
 */
 {

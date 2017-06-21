@@ -2,7 +2,7 @@ import * as React from 'react';
 import './App.css';
 
 class App extends React.Component<{}, null> {
-  render() {
+  render(): JSX.Element {
     return (
       <div className="App">
         <div className="App-header">
