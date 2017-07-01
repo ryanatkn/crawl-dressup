@@ -1,0 +1,22 @@
+.App {
+  background: #000;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.App-header {
+  padding: 10px;
+  color: #fed;
+}
+
+.App-header h2 {
+  margin: 0;
+  font-weight: 300;
+}
+
+.App-frames {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}

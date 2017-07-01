@@ -1,7 +1,9 @@
 {
-    "extends": [
-        "tslint-react",
-        "tslint-config-strictish"
-    ],
-    "rules": {}
+  "extends": [
+    "tslint-react",
+    "tslint-config-strictish"
+  ],
+  "rules": {
+    "jsx-no-multiline-js": false
+  }
 }
