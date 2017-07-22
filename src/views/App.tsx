@@ -1,103 +1,186 @@
-import * as React from 'react';
-import {connect} from 'react-redux';
+import './App.css';
 
-import * as rand from '../utils/rand';
+import * as React from 'react';
+import * as assets from '../assets';
 import * as t from '../types';
-import {logger} from '../utils/logger';
 
 import {Frame} from './Frame';
-import {QueryList} from './QueryList';
-import {QueryEditor} from './QueryEditor';
-import {QueryResults} from './QueryResults';
-
-import './App.css';
+import {Img} from './Img';
+import {connect} from 'react-redux';
+import {logger} from '../utils/logger';
+import {uniq} from 'lodash';
 
 const dbg = logger('App', {count: ['render']});
 
+const tileSize = 32; // TODO
+const renderedTileSize = tileSize * 4; // TODO
+const renderedTileSizeLg = renderedTileSize * 2; // TODO
+
+interface ImageData {
+  url: string;
+  parts: string[];
+  category: string;
+}
+
+const playerImages: ImageData[] = assets.images
+  .filter(image => image.indexOf('/dcss/player/') === 0)
+  .map(image => {
+    const parts = image.split('/');
+    const category = parts[3];
+    return {
+      url: image,
+      parts,
+      category,
+    };
+  });
+
+const categoryOrder = [
+  'base',
+  'hair',
+  'beard',
+  'body',
+  'legs',
+  'hand1',
+  'hand2',
+  'head',
+  'gloves',
+  'boots',
+  'cloak',
+  'felids',
+  'drcwing',
+  'drchead',
+];
+
+const omittedCategories = ['barding', 'ench', 'halo', 'mutations', 'transform'];
+
+// TODO move this and the above code
+const categories = uniq(playerImages.map(i => i.category))
+  .filter(i => !omittedCategories.includes(i))
+  .sort((a, b) => {
+    const aIdx = categoryOrder.indexOf(a);
+    const bIdx = categoryOrder.indexOf(b);
+    if (aIdx === -1 && bIdx === -1) {
+      return aIdx < bIdx ? -1 : 1;
+    } else if (aIdx === -1) {
+      return 1;
+    } else if (bIdx === -1) {
+      return -1;
+    } else if (aIdx < bIdx) {
+      return -1;
+    } else {
+      return 1;
+    }
+  });
+
 interface ConnectedStateProps {
-  queries: t.Query[];
-  sources: t.DataSource[];
-  activeQuery: t.Query | undefined;
+  // queries: t.Query[];
 }
 interface ConnectedDispatchProps {
-  updateTitle(id: string, title: string): void;
-  updateRaw(id: string, raw: string): void;
-  updateSourceId(id: string, sourceId: string): void;
-  createQuery(): void; // TODO generate special type for doc of initial properties
-  deleteQuery(id: string): void;
-  executeQuery(id: string): void;
-  setActiveQuery(id: string): void;
+  // updateTitle(id: string, title: string): void;
 }
 interface ConnectedProps extends ConnectedStateProps, ConnectedDispatchProps {}
 interface Props extends Partial<ConnectedProps>, React.ClassAttributes<any> {}
 
 class App extends React.Component<Props> {
   render(): JSX.Element {
-    dbg('render', this, this.props.activeQuery);
-    const {
-      queries,
-      sources,
-      activeQuery,
-      updateTitle,
-      updateRaw,
-      updateSourceId,
-      createQuery,
-      deleteQuery,
-      executeQuery,
-      setActiveQuery,
-    } = this.props as ConnectedProps;
+    dbg('render', this);
+    // const {
+    //   queries,
+    // } = this.props as ConnectedProps;
     return (
       <div className="App">
         <div className="App-header">
-          <h2>dbslate</h2>
+          <h2>enti</h2>
         </div>
         <div className="App-frames" style={{padding: '8px'}}>
           <Frame>
-            <div style={{flex: '1', display: 'flex', flexAlign: 'stretch'}}>
-              <div
-                style={{
-                  width: 400,
-                  overflow: 'auto',
-                }}
-              >
-                <QueryList
-                  queries={queries}
-                  createQuery={createQuery}
-                  setActiveQuery={setActiveQuery}
-                  activeQuery={activeQuery}
-                />
+            <div
+              style={{
+                flex: '1',
+                display: 'flex',
+                flexAlign: 'stretch',
+                flexDirection: 'column',
+              }}
+            >
+              <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'flex-end',
+                  }}
+                >
+                  <Img
+                    src={`assets/dcss/player/felids/cat7.png`}
+                    size={renderedTileSize}
+                  />
+                  <Img
+                    src={`assets/dcss/player/base/centaur_darkgrey_m.png`}
+                    size={renderedTileSizeLg}
+                  />
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'flex-end',
+                  }}
+                >
+                  <Img
+                    src={`assets/dcss/player/base/centaur_darkgrey_m.png`}
+                    size={renderedTileSizeLg}
+                  />
+                  <Img
+                    src={`assets/dcss/player/felids/cat7.png`}
+                    size={renderedTileSize}
+                  />
+                </div>
+                <div>
+                  {/*TODO on click or key={i}, toggle show/hide that category in ui, and displayed toggled status, also display hovered status*/}
+                  {categories.map((category, i) =>
+                    <div key={category}>
+                      <small>{i}</small> {category}
+                      {' - '}
+                      <small>
+                        {playerImages.reduce(
+                          (count, image) =>
+                            image.category === category ? count + 1 : count,
+                          0,
+                        )}
+                      </small>
+                    </div>,
+                  )}
+                </div>
               </div>
-              <div
-                style={{
-                  flex: '1',
-                  overflow: 'auto',
-                }}
-              >
-                {activeQuery
-                  ? <div>
-                      <QueryEditor
-                        query={activeQuery}
-                        sources={sources}
-                        updateTitle={updateTitle}
-                        updateRaw={updateRaw}
-                        updateSourceId={updateSourceId}
-                      />
-                      <QueryResults
-                        query={activeQuery}
-                        executeQuery={executeQuery}
-                        deleteQuery={deleteQuery}
-                      />
-
+              <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                {categories.map(category =>
+                  <div key={category}>
+                    <div>
+                      {category}
+                      {' - '}
+                      <small>
+                        {playerImages.reduce(
+                          (count, image) =>
+                            image.category === category ? count + 1 : count,
+                          0,
+                        )}
+                      </small>
                     </div>
-                  : <div>
-                      create a
-                      {' '}
-                      <button onClick={this.doCreateQuery}>
-                        new query
-                      </button>
-                      {' '}
-                      to get started
-                    </div>}
+                    <div style={{display: 'flex', flexWrap: 'wrap'}}>
+                      {playerImages.map(
+                        image =>
+                          image.category === category
+                            ? <div key={image.url} title={image.url}>
+                                <Img
+                                  src={`assets/${image.url}`}
+                                  size={renderedTileSize}
+                                />
+                              </div>
+                            : null,
+                      )}
+                    </div>
+                  </div>,
+                )}
               </div>
             </div>
           </Frame>
@@ -105,79 +188,21 @@ class App extends React.Component<Props> {
       </div>
     );
   }
-
-  doCreateQuery = () => {
-    if (this.props.createQuery) {
-      this.props.createQuery();
-    }
-  };
 }
 
 const mapStateToProps = (state: t.ClientState): ConnectedStateProps => ({
-  queries: state.queries,
-  sources: state.sources,
-  // TODO make this a selector
-  activeQuery: state.queries.find(q => q.id === state.activeQueryId), // tslint:disable-line:no-non-null-assertion
+  // queries: state.queries,
 });
 
 const mapDispatchToProps = (dispatch: t.Dispatch): ConnectedDispatchProps => ({
-  updateTitle: (
-    id: string,
-    title: string, // TODO unify by making generic? update doc type?
-  ) =>
-    dispatch<t.Action>({
-      type: t.ActionType.UpdateQueryAction,
-      payload: {id, title},
-    }),
-  updateRaw: (
-    id: string,
-    raw: string, // TODO unify by making generic? update doc type?
-  ) =>
-    dispatch<t.Action>({
-      type: t.ActionType.UpdateQueryAction,
-      payload: {id, raw},
-    }),
-  updateSourceId: (
-    id: string,
-    sourceId: string, // TODO unify by making generic? update doc type?
-  ) =>
-    dispatch<t.Action>({
-      type: t.ActionType.UpdateQueryAction,
-      payload: {id, sourceId},
-    }),
-  createQuery: () => {
-    const query: t.Query = {
-      status: 'new',
-      id: rand.id(), // TODO must be done by server
-      sourceId: '',
-      title: '',
-      raw: '',
-      lastExecuted: null,
-    };
-    dispatch<t.Action>({
-      type: t.ActionType.CreateQueryAction,
-      payload: {query},
-    });
-    dispatch<t.Action>({
-      type: t.ActionType.SetActiveQueryAction,
-      payload: {id: query.id},
-    });
-  },
-  deleteQuery: (id: string) =>
-    dispatch<t.Action>({type: t.ActionType.DeleteQueryAction, payload: {id}}),
-  executeQuery: (id: string) => {
-    dispatch<t.Action>({type: t.ActionType.ExecuteQueryAction, payload: {id}});
-    // TODO hook into api server
-    dispatch<t.Action>({
-      type: t.ActionType.ExecuteSuccessQueryAction,
-      payload: {id, results: `ts:${Date.now()}`},
-    });
-  },
-  setActiveQuery: (id: string) =>
-    dispatch<t.Action>({
-      type: t.ActionType.SetActiveQueryAction,
-      payload: {id},
-    }),
+  // updateTitle: (
+  //   id: string,
+  //   title: string, // TODO unify by making generic? update doc type?
+  // ) =>
+  //   dispatch<t.Action>({
+  //     type: t.ActionType.UpdateQueryAction,
+  //     payload: {id, title},
+  //   }),
 });
 
 export default (connect(mapStateToProps, mapDispatchToProps)(

@@ -1,7 +1,7 @@
 declare module 'fs'; // eh?
 declare module 'path'; // why?
 declare module 'prettier';
-declare module 'strip-json-comments'; // has @types, but getting an error: Module '"C:/Users/ryann/Desktop/dev/dbslate/node_modules/@types/strip-json-comments/index"' resolves to a non-module entity and cannot be imported using this construct. (2497)
+declare module 'strip-json-comments'; // has @types, but getting an error: Module '"C:/Users/ryann/Desktop/dev/enti/node_modules/@types/strip-json-comments/index"' resolves to a non-module entity and cannot be imported using this construct. (2497)
 declare module 'es6-promisify';
 
 interface Dict<T> {

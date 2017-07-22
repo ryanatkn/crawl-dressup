@@ -1,9 +1,9 @@
 {
-  "name": "dbslate",
-  "description": "a blank slate",
+  "name": "enti",
+  "description": "much",
   "version": "0.1.0",
   "license": "MIT",
-  "homepage": "https://dbslate.github.io/dbslate",
+  "homepage": "https://enti-life.github.io/enti",
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
@@ -12,7 +12,8 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "lint": "tslint --format stylish --project tsconfig.json --type-check",
-    "gen": "ts-node src/tasks/gen.ts"
+    "gen": "ts-node src/tasks/gen.ts",
+    "assets": "ts-node src/tasks/assets.ts"
   },
   "lint-staged": {
     "*.{ts,tsx}": [
@@ -40,6 +41,7 @@
     "ulid": "git+https://github.com/dbslate/ulid.git"
   },
   "devDependencies": {
+    "@types/glob": "^5.0.30",
     "app-root-path": "^2.0.1",
     "autoprefixer": "7.1.0",
     "case-sensitive-paths-webpack-plugin": "2.0.0",
@@ -52,6 +54,7 @@
     "file-loader": "0.11.1",
     "fs-extra": "3.0.1",
     "gh-pages": "^1.0.0",
+    "glob": "^7.1.2",
     "html-webpack-plugin": "2.28.0",
     "husky": "^0.13.4",
     "jest": "20.0.3",
@@ -81,18 +84,9 @@
     "whatwg-fetch": "2.0.3"
   },
   "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.{js,jsx,ts,tsx}"
-    ],
-    "setupFiles": [
-      "<rootDir>/config/polyfills.js"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx"
-    ],
+    "collectCoverageFrom": ["src/**/*.{js,jsx,ts,tsx}"],
+    "setupFiles": ["<rootDir>/config/polyfills.js"],
+    "moduleFileExtensions": ["ts", "tsx", "js", "jsx"],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.ts?(x)",
       "<rootDir>/src/**/?(*.)(spec|test).ts?(x)"
@@ -112,9 +106,7 @@
     }
   },
   "babel": {
-    "presets": [
-      "react-app"
-    ]
+    "presets": ["react-app"]
   },
   "eslintConfig": {
     "extends": "react-app"

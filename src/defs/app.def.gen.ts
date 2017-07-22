@@ -16,10 +16,10 @@ import * as defs from '../defs';
 
 export const appDef: defs.AppDef = {
   $schema: 'http://json-schema.org/draft-04/schema#',
-  id: 'http://dbslate.com/v1/defs/app.def.json',
+  id: 'http://enti.com/v1/defs/app.def.json',
   name: 'app',
-  title: 'dbslate',
-  description: 'dbslate app def',
+  title: 'enti',
+  description: 'enti app def',
   type: 'object',
   definitions: {
     Id: {
