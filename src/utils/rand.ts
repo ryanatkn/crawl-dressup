@@ -1,5 +1,6 @@
-import {random, sample} from 'lodash';
 import * as ulid from 'ulid';
+
+import {random, sample} from 'lodash';
 
 import {fillArray} from './array';
 

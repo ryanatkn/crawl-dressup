@@ -1,6 +1,6 @@
-import {last} from 'lodash';
-
 import {Writer, WriterResults} from './types';
+
+import {last} from 'lodash';
 
 export const validateWriters = (writers: Writer[]): void => {
   for (const w of writers) {

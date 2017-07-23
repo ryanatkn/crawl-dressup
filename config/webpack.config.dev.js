@@ -1,7 +1,7 @@
 'use strict';
 
 const autoprefixer = require('autoprefixer');
-const path = require('path');
+const fp = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
@@ -11,6 +11,9 @@ const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const fs = require('fs');
+const compact = require('lodash/compact');
+const nodeExternals = require('webpack-node-externals');
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 
@@ -27,7 +30,7 @@ const env = getClientEnvironment(publicUrl);
 // This is the development configuration.
 // It is focused on developer experience and fast rebuilds.
 // The production configuration is different and lives in a separate file.
-module.exports = {
+const clientConfig = {
   // You may want 'eval' instead if you prefer to see the compiled output in DevTools.
   // See the discussion in https://github.com/facebookincubator/create-react-app/issues/343.
   devtool: 'cheap-module-source-map',
@@ -68,10 +71,10 @@ module.exports = {
     // There are also additional JS chunk files if you use code splitting.
     chunkFilename: 'static/js/[name].chunk.js',
     // This is the URL that app is served from. We use "/" in development.
-    publicPath: publicPath,
+    publicPath,
     // Point sourcemap entries to original disk location
     devtoolModuleFilenameTemplate: info =>
-      path.resolve(info.absoluteResourcePath),
+      fp.resolve(info.absoluteResourcePath),
   },
   resolve: {
     // This allows you to set a fallback for where Webpack should look for modules.
@@ -80,7 +83,7 @@ module.exports = {
     // https://github.com/facebookincubator/create-react-app/issues/253
     modules: ['node_modules', paths.appNodeModules].concat(
       // It is guaranteed to exist because we tweak it in `env.js`
-      process.env.NODE_PATH.split(path.delimiter).filter(Boolean),
+      process.env.NODE_PATH.split(fp.delimiter).filter(Boolean),
     ),
     // These are the reasonable defaults supported by the Node ecosystem.
     // We also include JSX as a common component filename extension to support
@@ -93,7 +96,7 @@ module.exports = {
       'react-native': 'react-native-web',
 
       // monaco
-      vs: path.resolve(__dirname, '../node_modules/monaco-editor/dev/vs'),
+      vs: fp.resolve(__dirname, '../node_modules/monaco-editor/dev/vs'),
     },
     plugins: [
       // Prevents users from importing files from outside of src/ (or node_modules/).
@@ -276,3 +279,43 @@ module.exports = {
     hints: false,
   },
 };
+
+const serverConfig = {
+  entry: [paths.serverIndexJs],
+  target: 'node',
+  output: {
+    path: paths.appBuild,
+    filename: 'server/index.js',
+    publicPath,
+  },
+  resolve: {
+    extensions: ['.ts', '.tsx', '.js', '.json', '.jsx'],
+  },
+  module: {
+    // preLoaders: [{test: /\.ts(x?)$/, loader: 'tslint'}],
+    loaders: [{test: /\.ts(x?)$/, loader: 'ts-loader'}],
+  },
+  externals: [nodeExternals()],
+  devtool: NODE_ENV === 'development' ? 'sourcemap' : null,
+  plugins: compact([
+    // Ignore css
+    new webpack.NormalModuleReplacementPlugin(/\.css$/, 'node-noop'),
+
+    // Install source maps for each file
+    NODE_ENV === 'development' || NODE_ENV === 'production'
+      ? new webpack.BannerPlugin({
+          banner: 'require("source-map-support").install();',
+          raw: true,
+          entryOnly: false,
+        })
+      : null,
+  ]),
+
+  // tslint: {
+  //   emitErrors: false,
+  //   failOnHint: false,
+  //   formatter: 'verbose',
+  // },
+};
+
+module.exports = [clientConfig, serverConfig];

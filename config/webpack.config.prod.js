@@ -1,7 +1,7 @@
 'use strict';
 
 const autoprefixer = require('autoprefixer');
-const path = require('path');
+const fp = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -49,7 +49,7 @@ const extractTextPluginOptions = shouldUseRelativeAssetPaths
 // This is the production configuration.
 // It compiles slowly and is focused on producing a fast and minimal bundle.
 // The development configuration is different and lives in a separate file.
-module.exports = {
+const clientConfig = {
   // Don't attempt to continue if there are any errors.
   bail: true,
   // We generate sourcemaps in production. This is slow but gives good results.
@@ -69,7 +69,7 @@ module.exports = {
     publicPath: publicPath,
     // Point sourcemap entries to original disk location
     devtoolModuleFilenameTemplate: info =>
-      path.relative(paths.appSrc, info.absoluteResourcePath),
+      fp.relative(paths.appSrc, info.absoluteResourcePath),
   },
   resolve: {
     // This allows you to set a fallback for where Webpack should look for modules.
@@ -78,7 +78,7 @@ module.exports = {
     // https://github.com/facebookincubator/create-react-app/issues/253
     modules: ['node_modules', paths.appNodeModules].concat(
       // It is guaranteed to exist because we tweak it in `env.js`
-      process.env.NODE_PATH.split(path.delimiter).filter(Boolean),
+      process.env.NODE_PATH.split(fp.delimiter).filter(Boolean),
     ),
     // These are the reasonable defaults supported by the Node ecosystem.
     // We also include JSX as a common component filename extension to support
@@ -91,7 +91,7 @@ module.exports = {
       'react-native': 'react-native-web',
 
       // monaco
-      vs: path.resolve(__dirname, '../node_modules/monaco-editor/min/vs'),
+      vs: fp.resolve(__dirname, '../node_modules/monaco-editor/min/vs'),
     },
     plugins: [
       // Prevents users from importing files from outside of src/ (or node_modules/).
@@ -332,3 +332,7 @@ module.exports = {
     tls: 'empty',
   },
 };
+
+const serverConfig = {};
+
+module.exports = [clientConfig, serverConfig];

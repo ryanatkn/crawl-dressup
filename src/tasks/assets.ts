@@ -1,10 +1,13 @@
-import * as glob from 'glob';
-import * as promisify from 'es6-promisify';
 import * as fp from 'path';
 import * as fs from 'fs';
+import * as glob from 'glob';
 import * as prettier from 'prettier';
+import * as promisify from 'es6-promisify';
 
-import {loadCommentedJson, log} from './helpers';
+import {loadCommentedJson} from './helpers';
+import {logger} from '../utils/log';
+
+const log = logger('assets');
 
 const glb = promisify(glob);
 const writeFile: any = promisify(fs.writeFile);

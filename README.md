@@ -8,8 +8,9 @@
 ```bash
 npm install
 npm start
+npm run server
 
-# after editing `src/defs/app.def.json` or the writers used in `src/tasks/gen.ts`:
+# after editing `src/_userProject/app.def.json` or the writers used in `src/tasks/gen.ts`:
 npm run gen
 
 # after changing `public/assets`

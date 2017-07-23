@@ -1,8 +1,9 @@
-import {AppDef} from '../defs';
+import {AppDef} from './defs';
 
 export interface GenCtx {
   defPath: string;
   def: AppDef;
+  prettierCfg: object;
 }
 
 export interface GennedFileData {
