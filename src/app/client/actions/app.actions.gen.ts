@@ -3,7 +3,7 @@
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../_userProject/defs/app.def.json
+../app/defs/app.def.json
     |> tsActionWriter
     |> client/actions/app.actions.gen.ts
 
@@ -101,7 +101,7 @@ export const setActiveQuery = (id: t.Id): t.SetActiveQueryAction => ({
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../_userProject/defs/app.def.json
+../app/defs/app.def.json
     |> tsActionWriter
     |> client/actions/app.actions.gen.ts
 

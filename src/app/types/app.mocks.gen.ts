@@ -3,7 +3,7 @@
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../_userProject/defs/app.def.json
+../app/defs/app.def.json
     |> tsMockWriter
     |> types/app.mocks.gen.ts
 
@@ -217,7 +217,7 @@ export const mockActionPerformedMessage = (): t.ActionPerformedMessage => ({
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../_userProject/defs/app.def.json
+../app/defs/app.def.json
     |> tsMockWriter
     |> types/app.mocks.gen.ts
 

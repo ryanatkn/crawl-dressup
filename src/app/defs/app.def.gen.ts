@@ -3,7 +3,7 @@
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../_userProject/defs/app.def.json
+../app/defs/app.def.json
     |> tsDefWriter
     |> defs/app.def.gen.ts
 
@@ -746,7 +746,7 @@ export const appDef: AppDef = {
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../_userProject/defs/app.def.json
+../app/defs/app.def.json
     |> tsDefWriter
     |> defs/app.def.gen.ts
 

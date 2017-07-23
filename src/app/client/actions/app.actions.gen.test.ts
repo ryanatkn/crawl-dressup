@@ -3,7 +3,7 @@
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../_userProject/defs/app.def.json
+../app/defs/app.def.json
     |> tsActionTestWriter
     |> client/actions/app.actions.gen.test.ts
 
@@ -72,7 +72,7 @@ it('calls the SetActiveQueryAction creator', () => {
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../_userProject/defs/app.def.json
+../app/defs/app.def.json
     |> tsActionTestWriter
     |> client/actions/app.actions.gen.test.ts
 

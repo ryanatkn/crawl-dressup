@@ -3,7 +3,7 @@
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../_userProject/defs/app.def.json
+../app/defs/app.def.json
     |> tsTypeWriter
     |> types/app.types.gen.ts
 
@@ -195,7 +195,7 @@ export interface ActionPerformedMessage extends BaseMessage {
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../_userProject/defs/app.def.json
+../app/defs/app.def.json
     |> tsTypeWriter
     |> types/app.types.gen.ts
 

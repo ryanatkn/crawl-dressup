@@ -20,7 +20,7 @@ TODO need better workflow
 */
 
 // TODO config/env
-const appDir = '../_userProject';
+const appDir = '../app';
 const appDefPath = `${appDir}/defs/app.def.json`;
 const prettierCfgPath = '../../config/prettier.json';
 const baseSchemaPath = '../gen/defs/jsonschema-meta.json';
