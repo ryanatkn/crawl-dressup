@@ -3,24 +3,38 @@ import './index.css';
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
+import * as t from '../types';
 
 import {applyMiddleware, createStore} from 'redux';
 import {createPrimus, initPrimus} from './primus';
 
 import App from '../views/App';
-import {ClientCtx} from '../types';
 import {Provider} from 'react-redux';
 import {logMiddleware} from '../middlewares/log';
+import {logger} from '../utils/log';
 import {reducer} from '../reducers';
 import registerServiceWorker from './registerServiceWorker';
 
-export const main = async (): Promise<ClientCtx> => {
-  const ctx: ClientCtx = {
+const log = logger('main/index');
+
+export const main = async (): Promise<t.ClientCtx> => {
+  let primus: t.PrimusClient;
+  try {
+    primus = createPrimus();
+  } catch (err) {
+    log('failed to create primus', undefined, err); // TODO fix this api
+    primus = {} as any; // TODO fix this - load primus lib statically?
+  }
+  const ctx: t.ClientCtx = {
     store: createStore(reducer, undefined, applyMiddleware(logMiddleware)),
     root: document.getElementById('root'),
-    primus: createPrimus(),
+    primus,
   };
-  initPrimus(ctx);
+  try {
+    await initPrimus(ctx);
+  } catch (err) {
+    log('failed to init primus', undefined, err); // TODO fix this api
+  }
 
   ReactDOM.render(<Provider store={ctx.store}><App /></Provider>, ctx.root);
 

@@ -67,6 +67,16 @@ it('calls the SetActiveQueryAction creator', () => {
   t.is<t.SetActiveQueryAction>(action);
 });
 
+it('calls the SetActiveCharacterCategoryAction creator', () => {
+  const action = t.setActiveCharacterCategory(t.mockCharacterCategoryType());
+  t.is<t.SetActiveCharacterCategoryAction>(action);
+});
+
+it('calls the SetHoveredCharacterImageAction creator', () => {
+  const action = t.setHoveredCharacterImage(rand.num());
+  t.is<t.SetHoveredCharacterImageAction>(action);
+});
+
 /*
 ~!! WARNING !!~
 ~!! This is an auto-generated file.

@@ -13,7 +13,7 @@ export interface Props extends React.ClassAttributes<HTMLImageElement> {
 // This is horribly inefficient by rendering 3 images, but gets the intended effect.
 // The bottom layer is necessary to prevent bleed-through from not being 100% opaque.
 // TODO cache rendering with canvas
-export class Img extends React.Component<Props> {
+export class Img extends React.PureComponent<Props> {
   render(): JSX.Element {
     log('render', this);
     const {src, size, className} = this.props;

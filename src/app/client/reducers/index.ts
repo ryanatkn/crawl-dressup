@@ -39,6 +39,9 @@ export const getDefaultState = (): t.ClientState => {
     queries,
     sources,
     activeQueryId: (queries[0] && queries[0].id) || null,
+    activeCharacterCategory:
+      t.CharacterCategoryType[t.CharacterCategoryType.base],
+    hoveredCharacterImageIndex: null,
   };
 };
 
@@ -144,6 +147,19 @@ export const reducer = (
       return {
         ...state,
         activeQueryId: action.payload.id,
+      };
+    }
+    case t.ActionType.SetActiveCharacterCategoryAction: {
+      return {
+        ...state,
+        activeCharacterCategory:
+          t.CharacterCategoryType[action.payload.category],
+      };
+    }
+    case t.ActionType.SetHoveredCharacterImageAction: {
+      return {
+        ...state,
+        hoveredCharacterImageIndex: action.payload.index,
       };
     }
     default:

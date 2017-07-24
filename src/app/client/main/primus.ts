@@ -9,9 +9,8 @@ const config = {
   serverUrl: 'http://localhost:8999',
 };
 
-// tslint:disable-next-line:strict-type-predicates
-if (typeof Primus === 'undefined') {
-  throw Error(
+if (!window.Primus) {
+  log(
     `Primus could not be loaded from "${config.serverUrl}/primus/primus.js".` +
       ` Is the server running? npm run server`,
   );
@@ -22,7 +21,7 @@ export const createPrimus = (): t.PrimusClient => {
   return primus;
 };
 
-export const initPrimus = (ctx: t.ClientCtx): void => {
+export const initPrimus = async (ctx: t.ClientCtx): Promise<void> => {
   const {primus, store} = ctx;
 
   // Monkey patch in some meta data. Custom primus type enforces `writeMessage` over `write`.

@@ -39,12 +39,34 @@
                             "type": "null"
                         }
                     ]
+                },
+                "activeCharacterCategory": {
+                    "oneOf": [
+                        {
+                            "type": "string" // TODO category enum?!!
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
+                },
+                "hoveredCharacterImageIndex": {
+                    "oneOf": [
+                        {
+                            "type": "number" // TODO id? index type?
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
                 }
             },
             "required": [
                 "sources",
                 "queries",
-                "activeQueryId"
+                "activeQueryId",
+                "activeCharacterCategory",
+                "hoveredCharacterImageIndex"
             ]
         },
         "DataSource": {
@@ -275,7 +297,9 @@
                 "DeleteQueryAction",
                 "ExecuteQueryAction",
                 "ExecuteSuccessQueryAction",
-                "SetActiveQueryAction"
+                "SetActiveQueryAction",
+                "SetActiveCharacterCategoryAction",
+                "SetHoveredCharacterImageAction"
             ]
         },
         "Action": {
@@ -310,7 +334,14 @@
                 },
                 {
                     "$ref": "#/definitions/SetActiveQueryAction"
+                },
+                {
+                    "$ref": "#/definitions/SetActiveCharacterCategoryAction"
+                },
+                {
+                    "$ref": "#/definitions/SetHoveredCharacterImageAction"
                 }
+                
             ]
         },
         // TODO action enhanced with id, cid, other meta info
@@ -591,6 +622,97 @@
                 "type",
                 "payload"
             ]
+        },
+        "SetActiveCharacterCategoryAction": { // TODO probably belongs in some ui context or something
+            "title": "SetActiveCharacterCategoryAction",
+            "type": "object",
+            "id": "CharacterCategory/SetActive",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/BaseAction"
+                }
+            ],
+            "properties": {
+                "type": { "$ref": "#/definitions/ActionType", "value": "SetActiveCharacterCategoryAction" },
+                "payload": {
+                    "type": "object",
+                    "properties": {
+                        "category": {
+                            "$ref": "#/definitions/CharacterCategoryType"
+                        }
+                    },
+                    "required": [
+                        "category"
+                    ]
+                }
+            },
+            "required": [
+                "type",
+                "payload"
+            ]
+        },
+        "SetHoveredCharacterImageAction": { // TODO make generic for any entity - probably belongs in some ui context or something
+            "title": "SetHoveredCharacterImageAction",
+            "type": "object",
+            "id": "CharacterCategory/SetActive",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/BaseAction"
+                }
+            ],
+            "properties": {
+                "type": { "$ref": "#/definitions/ActionType", "value": "SetHoveredCharacterImageAction" },
+                "payload": {
+                    "type": "object",
+                    "properties": {
+                        "index": {
+                            "type": "number" // TODO index type? id?
+                        }
+                    },
+                    "required": [
+                        "index"
+                    ]
+                }
+            },
+            "required": [
+                "type",
+                "payload"
+            ]
+        },
+        "CharacterCategoryType": {
+            "title": "CharacterCategoryType",
+            "enum": [
+                "base",
+                "hair",
+                "beard",
+                "body",
+                "legs",
+                "hand1",
+                "hand2",
+                "head",
+                "gloves",
+                "boots",
+                "cloak",
+                "felids",
+                "drcwing",
+                "drchead",
+
+                // ommitted - see `ommittedCategories`
+                "barding",
+                "ench",
+                "halo",
+                "mutations",
+                "transform"
+            ]
+        },
+        "ImageData": {
+            "title": "ImageData",
+            "type": "object",
+            "properties": {
+                "url": {"type": "string"},
+                "parts": {"type": "array", "items": {"type": "string"}},
+                "category": {"$ref": "#/definitions/CharacterCategoryType"}
+            }
         },
         "BaseMessage": {
             "title": "BaseMessage",

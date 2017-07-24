@@ -17,12 +17,14 @@ import {sample} from 'lodash';
 import * as rand from '../../utils/rand';
 import * as t from '../types';
 
-export const mockId = (): t.Id => rand.id();
+export const mockId = (): t.Id => rand.str();
 
 export const mockClientState = (): t.ClientState => ({
   sources: [],
   queries: [],
   activeQueryId: sample([rand.str(), null]) as string | null,
+  activeCharacterCategory: sample([rand.str(), null]) as string | null,
+  hoveredCharacterImageIndex: sample([rand.num(), null]) as number | null,
 });
 
 export const mockDataSource = (): t.DataSource => ({
@@ -84,9 +86,7 @@ export const mockResolvedQuery = (): t.ResolvedQuery => ({
   ]) as boolean | null | number | {} | string,
 });
 
-export const mockBaseAction = (): t.BaseAction => ({
-  id: t.mockId(),
-});
+export const mockBaseAction = (): t.BaseAction => ({id: t.mockId()});
 
 export const mockActionType = (): t.ActionType =>
   sample([
@@ -100,6 +100,8 @@ export const mockActionType = (): t.ActionType =>
     t.ActionType.ExecuteQueryAction,
     t.ActionType.ExecuteSuccessQueryAction,
     t.ActionType.SetActiveQueryAction,
+    t.ActionType.SetActiveCharacterCategoryAction,
+    t.ActionType.SetHoveredCharacterImageAction,
   ]) as t.ActionType;
 
 export const mockAction = (): t.Action =>
@@ -114,21 +116,18 @@ export const mockAction = (): t.Action =>
     t.mockExecuteQueryAction(),
     t.mockExecuteSuccessQueryAction(),
     t.mockSetActiveQueryAction(),
+    t.mockSetActiveCharacterCategoryAction(),
+    t.mockSetHoveredCharacterImageAction(),
   ]) as t.Action;
 
 export const mockSignUpUserAction = (): t.SignUpUserAction => ({
   type: t.ActionType.SignUpUserAction,
-  payload: {
-    email: rand.str(),
-  },
+  payload: {email: rand.str()},
 });
 
 export const mockSignInUserAction = (): t.SignInUserAction => ({
   type: t.ActionType.SignInUserAction,
-  payload: {
-    email: rand.str(),
-    password: rand.str(),
-  },
+  payload: {email: rand.str(), password: rand.str()},
 });
 
 export const mockSignOutUserAction = (): t.SignOutUserAction => ({
@@ -138,9 +137,7 @@ export const mockSignOutUserAction = (): t.SignOutUserAction => ({
 
 export const mockCreateQueryAction = (): t.CreateQueryAction => ({
   type: t.ActionType.CreateQueryAction,
-  payload: {
-    query: t.mockQuery(),
-  },
+  payload: {query: t.mockQuery()},
 });
 
 export const mockReadQueryAction = (): t.ReadQueryAction => ({
@@ -160,36 +157,64 @@ export const mockUpdateQueryAction = (): t.UpdateQueryAction => ({
 
 export const mockDeleteQueryAction = (): t.DeleteQueryAction => ({
   type: t.ActionType.DeleteQueryAction,
-  payload: {
-    id: t.mockId(),
-  },
+  payload: {id: t.mockId()},
 });
 
 export const mockExecuteQueryAction = (): t.ExecuteQueryAction => ({
   type: t.ActionType.ExecuteQueryAction,
-  payload: {
-    id: t.mockId(),
-  },
+  payload: {id: t.mockId()},
 });
 
 export const mockExecuteSuccessQueryAction = (): t.ExecuteSuccessQueryAction => ({
   type: t.ActionType.ExecuteSuccessQueryAction,
-  payload: {
-    id: t.mockId(),
-    results: rand.str(),
-  },
+  payload: {id: t.mockId(), results: rand.str()},
 });
 
 export const mockSetActiveQueryAction = (): t.SetActiveQueryAction => ({
   type: t.ActionType.SetActiveQueryAction,
-  payload: {
-    id: t.mockId(),
-  },
+  payload: {id: t.mockId()},
 });
 
-export const mockBaseMessage = (): t.BaseMessage => ({
-  id: t.mockId(),
+export const mockSetActiveCharacterCategoryAction = (): t.SetActiveCharacterCategoryAction => ({
+  type: t.ActionType.SetActiveCharacterCategoryAction,
+  payload: {category: t.mockCharacterCategoryType()},
 });
+
+export const mockSetHoveredCharacterImageAction = (): t.SetHoveredCharacterImageAction => ({
+  type: t.ActionType.SetHoveredCharacterImageAction,
+  payload: {index: rand.num()},
+});
+
+export const mockCharacterCategoryType = (): t.CharacterCategoryType =>
+  sample([
+    t.CharacterCategoryType.base,
+    t.CharacterCategoryType.hair,
+    t.CharacterCategoryType.beard,
+    t.CharacterCategoryType.body,
+    t.CharacterCategoryType.legs,
+    t.CharacterCategoryType.hand1,
+    t.CharacterCategoryType.hand2,
+    t.CharacterCategoryType.head,
+    t.CharacterCategoryType.gloves,
+    t.CharacterCategoryType.boots,
+    t.CharacterCategoryType.cloak,
+    t.CharacterCategoryType.felids,
+    t.CharacterCategoryType.drcwing,
+    t.CharacterCategoryType.drchead,
+    t.CharacterCategoryType.barding,
+    t.CharacterCategoryType.ench,
+    t.CharacterCategoryType.halo,
+    t.CharacterCategoryType.mutations,
+    t.CharacterCategoryType.transform,
+  ]) as t.CharacterCategoryType;
+
+export const mockImageData = (): t.ImageData => ({
+  url: rand.str(),
+  parts: [],
+  category: t.mockCharacterCategoryType(),
+});
+
+export const mockBaseMessage = (): t.BaseMessage => ({id: t.mockId()});
 
 export const mockMessageType = (): t.MessageType =>
   sample([
@@ -207,9 +232,7 @@ export const mockInitMessage = (): t.InitMessage => ({
 
 export const mockActionPerformedMessage = (): t.ActionPerformedMessage => ({
   type: t.MessageType.ActionPerformedMessage,
-  payload: {
-    action: t.mockAction(),
-  },
+  payload: {action: t.mockAction()},
 });
 
 /*

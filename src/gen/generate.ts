@@ -11,11 +11,11 @@ const log = logger('gen');
 export const generate = (ctx: GenCtx, writers: Writer[]): WriterResults => {
   validateWriters(writers);
   return writers.reduce((results, writer) => {
-    log('writing', undefined, writer.name); // TODO the undefined smells
+    log('writing', writer.name);
     const writerResults = writer(results, ctx);
     validateResults(writerResults);
     // TODO could diff results
-    log('wrote~~', undefined, writer.name); // TODO the undefined smells
+    log('wrote~~', writer.name);
     return writerResults;
   }, getDefaultResultsData());
 };

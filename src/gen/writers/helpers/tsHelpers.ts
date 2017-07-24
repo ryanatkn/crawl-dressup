@@ -28,10 +28,16 @@ export function renderQmark(prop: SchemaProperty, propName: string): '' | '?' {
   return prop.required && prop.required.includes(propName) ? '' : '?';
 }
 
+// TODO this is a huge hack
 export function renderArrayType(prop: SchemaProperty): string {
-  return prop.items && prop.items.$ref
-    ? extractRefTypeTitle(prop.items.$ref)
-    : ''; // TODO this is a huge hack
+  if (prop.items) {
+    if (prop.items.$ref) {
+      return `${extractRefTypeTitle(prop.items.$ref)}[]`;
+    } else if (prop.items.type) {
+      return `${prop.items.type}[]`;
+    }
+  }
+  return '[]';
 }
 
 export function renderTypeUnion(
@@ -55,17 +61,9 @@ export function renderEnumType(
     return prop.enum.map(v => `'${v}'`).join(' | ');
   }
   if (isDeclaration) {
-    return `
-      {
-        ${prop.enum.map(v => `${v}`).join(',\n')}
-      }
-    `.trim();
+    return `{ ${prop.enum.map(v => `${v}`).join(', ')} }`;
   }
   return `${refTypePrefix}${prop.title}`;
-}
-
-export function renderEnumTypeUnion(prop: SchemaProperty): string {
-  return prop.enum ? prop.enum.map(v => `'${v}'`).join(' | ') : '';
 }
 
 export function renderEnumValues(
@@ -73,22 +71,24 @@ export function renderEnumValues(
   refTypePrefix: string = 't.',
 ): string {
   return prop.enum
-    ? prop.enum
+    ? `[${prop.enum
         .map(
           v => (prop.title ? `${refTypePrefix}${prop.title}.${v}` : `'${v}'`),
         )
-        .join(', ')
+        .join(', ')}]`
     : '';
 }
 
 export function renderPrimitivePropertyType(prop: SchemaProperty): string {
-  if (prop.type === 'object') {
-    // return prop.type;
-    return `
-      {
-        ${renderPropList(prop, undefined, '', renderPropertyPairNameToType)}
-      }
-    `;
+  if (!prop.type) {
+    return '';
+  } else if (prop.type === 'object') {
+    return `{${renderPropList(
+      prop,
+      undefined,
+      '',
+      renderPropertyPairNameToType,
+    )}}`;
   } else {
     return prop.type || '';
   }
@@ -105,16 +105,20 @@ export function renderPropertyType(
       : `${refTypePrefix}${extractRefTypeTitle(prop.$ref)}`;
   } else if (prop.value !== undefined) {
     return `${JSON.stringify(prop.value)}`;
-  } else if (prop.type && primitiveTypes.includes(prop.type)) {
-    return renderPrimitivePropertyType(prop);
-  } else if (prop.type === 'array') {
-    return `${renderArrayType(prop)}[]`;
   } else if (prop.oneOf) {
     return renderTypeUnion(prop, refTypePrefix);
   } else if (prop.enum) {
     return renderEnumType(prop, refTypePrefix, isDeclaration);
+  } else if (prop.type) {
+    if (primitiveTypes.includes(prop.type)) {
+      return renderPrimitivePropertyType(prop);
+    } else if (prop.type === 'array') {
+      return renderArrayType(prop);
+    } else {
+      return `'${prop.type}'`;
+    }
   } else {
-    return `'${prop.type}'`;
+    return '';
   }
 }
 
@@ -126,7 +130,7 @@ export function renderInterfaceExtendType(
   return prop.allOf
     ? `extends ${prop.allOf
         .map(p => renderPropertyType(p, refTypePrefix, isDeclaration))
-        .join(', ')}`
+        .join(', ')} `
     : '';
 }
 
@@ -134,13 +138,9 @@ export function renderRandomValue(
   prop: SchemaProperty,
   refTypePrefix: string = 't.',
 ): string {
-  // TODO huge temp hack ...wait that's everything, and it's not temp at all
+  // TODO probably switch on the type of the property from a type union of SchemaProperty subtypes
   if (prop.properties) {
-    return `
-      {
-        ${renderPropList(prop)}
-      }
-    `.trim();
+    return `{${renderPropList(prop)}}`;
   } else if (prop.$ref) {
     return prop.value !== undefined
       ? `${refTypePrefix}${h.extractRefTypeTitle(prop.$ref)}.${prop.value}` // TODO this is hardcoded for enums, or namespacing at least
@@ -156,22 +156,22 @@ export function renderRandomValue(
       ? `${refTypePrefix}${prop.title}`
       : renderTypeUnion(prop)}`; // TODO is hack to get around string literal problem from sample
   } else if (prop.enum) {
-    return `sample([${renderEnumValues(prop)}]) as ${renderEnumType(prop)}`; // TODO is hack to get around string literal problem from sample
+    return `sample(${renderEnumValues(prop)}) as ${renderEnumType(prop)}`; // TODO is hack to get around string literal problem from sample
   } else {
     switch (prop.type) {
       case 'string':
-        return prop.title === 'Id' ? 'rand.id()' : 'rand.str()'; // TODO refactor
+        return 'rand.str()';
       case 'integer':
         return 'rand.int()';
       case 'number':
         return 'rand.num()';
-      case 'object':
+      case 'object': // TODO values?
         return `{}`;
       case 'null':
         return 'null';
       case 'boolean':
         return 'sample([true, false]) as boolean';
-      case 'array':
+      case 'array': // TODO fill with some random items
         return `[]`;
       default:
         return `'FIXMEtype:${prop.type}'`;
@@ -182,7 +182,7 @@ export function renderRandomValue(
 export function renderPropertyPairNameToValue(
   prop: SchemaProperty,
   propName: string,
-  parentProp: SchemaProperty,
+  parentProp: SchemaProperty, // TODO this is unused and weird, see `renderPropList` below for more
   refTypePrefix: string = 't.',
 ): string {
   return `${propName}: ${renderRandomValue(prop, refTypePrefix)}`;
@@ -200,7 +200,7 @@ export function renderPropertyPairNameToType(
   )}`;
 }
 
-export function renderCallingArgs(
+export function renderCallingArgs( // TODO rename?
   prop: SchemaProperty,
   propName: string,
   parentProp: SchemaProperty,
@@ -212,9 +212,9 @@ export function renderCallingArgs(
 // TODO callingPropList vs declarationPropList
 export function renderPropList(
   prop: SchemaProperty,
-  separator: string = ',\n',
+  separator: string = ', ',
   refTypePrefix: string = 't.',
-  fn: typeof renderPropertyPairNameToValue = renderPropertyPairNameToValue,
+  fn: typeof renderPropertyPairNameToValue = renderPropertyPairNameToValue, // TODO this is wonky
 ): string {
   return prop.properties
     ? Object.keys(prop.properties)
@@ -261,7 +261,7 @@ export function renderTypeDeclaration(definition: SchemaDefinition): string {
       `.trim();
     case TypeDeclarationKind.Enum:
       return `
-        export enum ${definition.title}${renderPropertyType(
+        export enum ${definition.title} ${renderPropertyType(
         definition,
         '',
         true,
@@ -273,9 +273,12 @@ export function renderTypeDeclaration(definition: SchemaDefinition): string {
         definition,
         '',
         false,
-      )} {
-          ${renderPropList(definition, ';\n', '', renderPropertyPairNameToType)}
-        }
+      )}{ ${renderPropList(
+        definition,
+        '; ',
+        '',
+        renderPropertyPairNameToType,
+      )} }
       `.trim();
     default:
       h.is<never>(typeDeclarationKind);
@@ -288,34 +291,31 @@ export function renderActionCreatorCall(
   refTypePrefix: string = 't.',
 ): string {
   return `
-  ${refTypePrefix}${renderActionCreatorName(def)}(
-    ${renderPropList(
-      (def.properties && def.properties.payload) || {},
-      undefined,
-      refTypePrefix,
-      renderCallingArgs,
-    )}
-  )
+  ${refTypePrefix}${renderActionCreatorName(def)}(${renderPropList(
+    (def.properties && def.properties.payload) || {}, // TODO validate
+    undefined,
+    refTypePrefix,
+    renderCallingArgs,
+  )})
   `.trim();
 }
 
 export function renderPropertiesObjectLiteral(
   prop: SchemaProperty,
-  separator: string = ',\n',
+  separator: string = ', ',
 ): string {
   return prop.type === 'object'
     ? `
-      {
-        ${(prop.properties && Object.keys(prop.properties).join(separator)) ||
-          ''}
-      }
+      { ${(prop.properties && Object.keys(prop.properties).join(separator)) ||
+        ''} }
       `.trim()
-    : 'null';
+    : 'null'; // TODO should this be disallowed by types?
 }
 
 const ACTION_SUFFIX = 'Action';
 const ACTION_SUFFIX_LENGTH = ACTION_SUFFIX.length;
 
+// TODO validate
 export function renderActionCreatorName(def: SchemaDefinition): string {
   return (
     def.title[0].toLowerCase() +

@@ -18,6 +18,8 @@ export interface ClientState {
   sources: DataSource[];
   queries: Query[];
   activeQueryId: string | null;
+  activeCharacterCategory: string | null;
+  hoveredCharacterImageIndex: number | null;
 }
 
 export interface DataSource {
@@ -67,9 +69,7 @@ export interface ResolvedQuery {
   results: boolean | null | number | {} | string;
 }
 
-export interface BaseAction {
-  id?: Id;
-}
+export interface BaseAction {id?: Id}
 
 export enum ActionType {
   SignUpUserAction,
@@ -82,6 +82,8 @@ export enum ActionType {
   ExecuteQueryAction,
   ExecuteSuccessQueryAction,
   SetActiveQueryAction,
+  SetActiveCharacterCategoryAction,
+  SetHoveredCharacterImageAction,
 }
 
 export type Action =
@@ -94,21 +96,18 @@ export type Action =
   | DeleteQueryAction
   | ExecuteQueryAction
   | ExecuteSuccessQueryAction
-  | SetActiveQueryAction;
+  | SetActiveQueryAction
+  | SetActiveCharacterCategoryAction
+  | SetHoveredCharacterImageAction;
 
 export interface SignUpUserAction extends BaseAction {
   type: ActionType.SignUpUserAction;
-  payload: {
-    email: string;
-  };
+  payload: {email: string};
 }
 
 export interface SignInUserAction extends BaseAction {
   type: ActionType.SignInUserAction;
-  payload: {
-    email: string;
-    password: string;
-  };
+  payload: {email: string; password: string};
 }
 
 export interface SignOutUserAction extends BaseAction {
@@ -118,9 +117,7 @@ export interface SignOutUserAction extends BaseAction {
 
 export interface CreateQueryAction extends BaseAction {
   type: ActionType.CreateQueryAction;
-  payload: {
-    query: Query;
-  };
+  payload: {query: Query};
 }
 
 export interface ReadQueryAction extends BaseAction {
@@ -130,46 +127,68 @@ export interface ReadQueryAction extends BaseAction {
 
 export interface UpdateQueryAction extends BaseAction {
   type: ActionType.UpdateQueryAction;
-  payload: {
-    id: Id;
-    sourceId?: Id;
-    title?: string;
-    raw?: string;
-  };
+  payload: {id: Id; sourceId?: Id; title?: string; raw?: string};
 }
 
 export interface DeleteQueryAction extends BaseAction {
   type: ActionType.DeleteQueryAction;
-  payload: {
-    id: Id;
-  };
+  payload: {id: Id};
 }
 
 export interface ExecuteQueryAction extends BaseAction {
   type: ActionType.ExecuteQueryAction;
-  payload: {
-    id: Id;
-  };
+  payload: {id: Id};
 }
 
 export interface ExecuteSuccessQueryAction extends BaseAction {
   type: ActionType.ExecuteSuccessQueryAction;
-  payload: {
-    id: Id;
-    results: string;
-  };
+  payload: {id: Id; results: string};
 }
 
 export interface SetActiveQueryAction extends BaseAction {
   type: ActionType.SetActiveQueryAction;
-  payload: {
-    id: Id;
-  };
+  payload: {id: Id};
 }
 
-export interface BaseMessage {
-  id?: Id;
+export interface SetActiveCharacterCategoryAction extends BaseAction {
+  type: ActionType.SetActiveCharacterCategoryAction;
+  payload: {category: CharacterCategoryType};
 }
+
+export interface SetHoveredCharacterImageAction extends BaseAction {
+  type: ActionType.SetHoveredCharacterImageAction;
+  payload: {index: number};
+}
+
+export enum CharacterCategoryType {
+  base,
+  hair,
+  beard,
+  body,
+  legs,
+  hand1,
+  hand2,
+  head,
+  gloves,
+  boots,
+  cloak,
+  felids,
+  drcwing,
+  drchead,
+  barding,
+  ench,
+  halo,
+  mutations,
+  transform,
+}
+
+export interface ImageData {
+  url?: string;
+  parts?: string[];
+  category?: CharacterCategoryType;
+}
+
+export interface BaseMessage {id?: Id}
 
 export enum MessageType {
   InitMessage,
@@ -185,9 +204,7 @@ export interface InitMessage extends BaseMessage {
 
 export interface ActionPerformedMessage extends BaseMessage {
   type: MessageType.ActionPerformedMessage;
-  payload: {
-    action: Action;
-  };
+  payload: {action: Action};
 }
 
 /*

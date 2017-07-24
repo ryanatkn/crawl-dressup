@@ -15,6 +15,7 @@ export interface SchemaProperty {
   $ref?: string;
   items?: {
     $ref?: string;
+    type?: SchemaType;
   };
   value?: any;
   properties?: {

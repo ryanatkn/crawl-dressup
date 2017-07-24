@@ -76,6 +76,19 @@ it('applies a SetActiveQueryAction against the store state', () => {
   t.is<t.ClientState>(state);
 });
 
+it('applies a SetActiveCharacterCategoryAction against the store state', () => {
+  const state = reducer(
+    undefined,
+    t.setActiveCharacterCategory(t.mockCharacterCategoryType()),
+  );
+  t.is<t.ClientState>(state);
+});
+
+it('applies a SetHoveredCharacterImageAction against the store state', () => {
+  const state = reducer(undefined, t.setHoveredCharacterImage(rand.num()));
+  t.is<t.ClientState>(state);
+});
+
 /*
 ~!! WARNING !!~
 ~!! This is an auto-generated file.

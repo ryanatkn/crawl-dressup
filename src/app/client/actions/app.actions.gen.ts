@@ -16,9 +16,7 @@ import * as t from '../types';
 
 export const signUpUser = (email: string): t.SignUpUserAction => ({
   type: t.ActionType.SignUpUserAction,
-  payload: {
-    email,
-  },
+  payload: {email},
 });
 
 export const signInUser = (
@@ -26,10 +24,7 @@ export const signInUser = (
   password: string,
 ): t.SignInUserAction => ({
   type: t.ActionType.SignInUserAction,
-  payload: {
-    email,
-    password,
-  },
+  payload: {email, password},
 });
 
 export const signOutUser = (): t.SignOutUserAction => ({
@@ -39,9 +34,7 @@ export const signOutUser = (): t.SignOutUserAction => ({
 
 export const createQuery = (query: t.Query): t.CreateQueryAction => ({
   type: t.ActionType.CreateQueryAction,
-  payload: {
-    query,
-  },
+  payload: {query},
 });
 
 export const readQuery = (): t.ReadQueryAction => ({
@@ -56,26 +49,17 @@ export const updateQuery = (
   raw?: string,
 ): t.UpdateQueryAction => ({
   type: t.ActionType.UpdateQueryAction,
-  payload: {
-    id,
-    sourceId,
-    title,
-    raw,
-  },
+  payload: {id, sourceId, title, raw},
 });
 
 export const deleteQuery = (id: t.Id): t.DeleteQueryAction => ({
   type: t.ActionType.DeleteQueryAction,
-  payload: {
-    id,
-  },
+  payload: {id},
 });
 
 export const executeQuery = (id: t.Id): t.ExecuteQueryAction => ({
   type: t.ActionType.ExecuteQueryAction,
-  payload: {
-    id,
-  },
+  payload: {id},
 });
 
 export const executeSuccessQuery = (
@@ -83,17 +67,26 @@ export const executeSuccessQuery = (
   results: string,
 ): t.ExecuteSuccessQueryAction => ({
   type: t.ActionType.ExecuteSuccessQueryAction,
-  payload: {
-    id,
-    results,
-  },
+  payload: {id, results},
 });
 
 export const setActiveQuery = (id: t.Id): t.SetActiveQueryAction => ({
   type: t.ActionType.SetActiveQueryAction,
-  payload: {
-    id,
-  },
+  payload: {id},
+});
+
+export const setActiveCharacterCategory = (
+  category: t.CharacterCategoryType,
+): t.SetActiveCharacterCategoryAction => ({
+  type: t.ActionType.SetActiveCharacterCategoryAction,
+  payload: {category},
+});
+
+export const setHoveredCharacterImage = (
+  index: number,
+): t.SetHoveredCharacterImageAction => ({
+  type: t.ActionType.SetHoveredCharacterImageAction,
+  payload: {index},
 });
 
 /*

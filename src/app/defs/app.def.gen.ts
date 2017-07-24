@@ -59,11 +59,37 @@ export const appDef: AppDef = {
             },
           ],
         },
+        activeCharacterCategory: {
+          oneOf: [
+            {
+              type: 'string',
+            },
+            {
+              type: 'null',
+            },
+          ],
+        },
+        hoveredCharacterImageIndex: {
+          oneOf: [
+            {
+              type: 'number',
+            },
+            {
+              type: 'null',
+            },
+          ],
+        },
       },
-      required: ['sources', 'queries', 'activeQueryId'],
+      required: [
+        'sources',
+        'queries',
+        'activeQueryId',
+        'activeCharacterCategory',
+        'hoveredCharacterImageIndex',
+      ],
       code: {
         declaration:
-          'export interface ClientState {\n  sources: DataSource[];\n  queries: Query[];\n  activeQueryId: string | null;\n}\n',
+          'export interface ClientState {\n  sources: DataSource[];\n  queries: Query[];\n  activeQueryId: string | null;\n  activeCharacterCategory: string | null;\n  hoveredCharacterImageIndex: number | null;\n}\n',
       },
     },
     DataSource: {
@@ -284,7 +310,7 @@ export const appDef: AppDef = {
         },
       },
       code: {
-        declaration: 'export interface BaseAction {\n  id?: Id;\n}\n',
+        declaration: 'export interface BaseAction {id?: Id}\n',
       },
     },
     ActionType: {
@@ -300,10 +326,12 @@ export const appDef: AppDef = {
         'ExecuteQueryAction',
         'ExecuteSuccessQueryAction',
         'SetActiveQueryAction',
+        'SetActiveCharacterCategoryAction',
+        'SetHoveredCharacterImageAction',
       ],
       code: {
         declaration:
-          'export enum ActionType {\n  SignUpUserAction,\n  SignInUserAction,\n  SignOutUserAction,\n  CreateQueryAction,\n  ReadQueryAction,\n  UpdateQueryAction,\n  DeleteQueryAction,\n  ExecuteQueryAction,\n  ExecuteSuccessQueryAction,\n  SetActiveQueryAction,\n}\n',
+          'export enum ActionType {\n  SignUpUserAction,\n  SignInUserAction,\n  SignOutUserAction,\n  CreateQueryAction,\n  ReadQueryAction,\n  UpdateQueryAction,\n  DeleteQueryAction,\n  ExecuteQueryAction,\n  ExecuteSuccessQueryAction,\n  SetActiveQueryAction,\n  SetActiveCharacterCategoryAction,\n  SetHoveredCharacterImageAction,\n}\n',
       },
     },
     Action: {
@@ -339,10 +367,16 @@ export const appDef: AppDef = {
         {
           $ref: '#/definitions/SetActiveQueryAction',
         },
+        {
+          $ref: '#/definitions/SetActiveCharacterCategoryAction',
+        },
+        {
+          $ref: '#/definitions/SetHoveredCharacterImageAction',
+        },
       ],
       code: {
         declaration:
-          'export type Action =\n  | SignUpUserAction\n  | SignInUserAction\n  | SignOutUserAction\n  | CreateQueryAction\n  | ReadQueryAction\n  | UpdateQueryAction\n  | DeleteQueryAction\n  | ExecuteQueryAction\n  | ExecuteSuccessQueryAction\n  | SetActiveQueryAction;\n',
+          'export type Action =\n  | SignUpUserAction\n  | SignInUserAction\n  | SignOutUserAction\n  | CreateQueryAction\n  | ReadQueryAction\n  | UpdateQueryAction\n  | DeleteQueryAction\n  | ExecuteQueryAction\n  | ExecuteSuccessQueryAction\n  | SetActiveQueryAction\n  | SetActiveCharacterCategoryAction\n  | SetHoveredCharacterImageAction;\n',
       },
     },
     SignUpUserAction: {
@@ -372,7 +406,7 @@ export const appDef: AppDef = {
       required: ['type', 'payload'],
       code: {
         declaration:
-          'export interface SignUpUserAction extends BaseAction {\n  type: ActionType.SignUpUserAction;\n  payload: {\n    email: string;\n  };\n}\n',
+          'export interface SignUpUserAction extends BaseAction {\n  type: ActionType.SignUpUserAction;\n  payload: {email: string};\n}\n',
       },
     },
     SignInUserAction: {
@@ -405,7 +439,7 @@ export const appDef: AppDef = {
       required: ['type', 'payload'],
       code: {
         declaration:
-          'export interface SignInUserAction extends BaseAction {\n  type: ActionType.SignInUserAction;\n  payload: {\n    email: string;\n    password: string;\n  };\n}\n',
+          'export interface SignInUserAction extends BaseAction {\n  type: ActionType.SignInUserAction;\n  payload: {email: string; password: string};\n}\n',
       },
     },
     SignOutUserAction: {
@@ -459,7 +493,7 @@ export const appDef: AppDef = {
       required: ['type', 'payload'],
       code: {
         declaration:
-          'export interface CreateQueryAction extends BaseAction {\n  type: ActionType.CreateQueryAction;\n  payload: {\n    query: Query;\n  };\n}\n',
+          'export interface CreateQueryAction extends BaseAction {\n  type: ActionType.CreateQueryAction;\n  payload: {query: Query};\n}\n',
       },
     },
     ReadQueryAction: {
@@ -522,7 +556,7 @@ export const appDef: AppDef = {
       required: ['type', 'payload'],
       code: {
         declaration:
-          'export interface UpdateQueryAction extends BaseAction {\n  type: ActionType.UpdateQueryAction;\n  payload: {\n    id: Id;\n    sourceId?: Id;\n    title?: string;\n    raw?: string;\n  };\n}\n',
+          'export interface UpdateQueryAction extends BaseAction {\n  type: ActionType.UpdateQueryAction;\n  payload: {id: Id; sourceId?: Id; title?: string; raw?: string};\n}\n',
       },
     },
     DeleteQueryAction: {
@@ -552,7 +586,7 @@ export const appDef: AppDef = {
       required: ['type', 'payload'],
       code: {
         declaration:
-          'export interface DeleteQueryAction extends BaseAction {\n  type: ActionType.DeleteQueryAction;\n  payload: {\n    id: Id;\n  };\n}\n',
+          'export interface DeleteQueryAction extends BaseAction {\n  type: ActionType.DeleteQueryAction;\n  payload: {id: Id};\n}\n',
       },
     },
     ExecuteQueryAction: {
@@ -582,7 +616,7 @@ export const appDef: AppDef = {
       required: ['type', 'payload'],
       code: {
         declaration:
-          'export interface ExecuteQueryAction extends BaseAction {\n  type: ActionType.ExecuteQueryAction;\n  payload: {\n    id: Id;\n  };\n}\n',
+          'export interface ExecuteQueryAction extends BaseAction {\n  type: ActionType.ExecuteQueryAction;\n  payload: {id: Id};\n}\n',
       },
     },
     ExecuteSuccessQueryAction: {
@@ -615,7 +649,7 @@ export const appDef: AppDef = {
       required: ['type', 'payload'],
       code: {
         declaration:
-          'export interface ExecuteSuccessQueryAction extends BaseAction {\n  type: ActionType.ExecuteSuccessQueryAction;\n  payload: {\n    id: Id;\n    results: string;\n  };\n}\n',
+          'export interface ExecuteSuccessQueryAction extends BaseAction {\n  type: ActionType.ExecuteSuccessQueryAction;\n  payload: {id: Id; results: string};\n}\n',
       },
     },
     SetActiveQueryAction: {
@@ -645,7 +679,117 @@ export const appDef: AppDef = {
       required: ['type', 'payload'],
       code: {
         declaration:
-          'export interface SetActiveQueryAction extends BaseAction {\n  type: ActionType.SetActiveQueryAction;\n  payload: {\n    id: Id;\n  };\n}\n',
+          'export interface SetActiveQueryAction extends BaseAction {\n  type: ActionType.SetActiveQueryAction;\n  payload: {id: Id};\n}\n',
+      },
+    },
+    SetActiveCharacterCategoryAction: {
+      title: 'SetActiveCharacterCategoryAction',
+      type: 'object',
+      id: 'CharacterCategory/SetActive',
+      allOf: [
+        {
+          $ref: '#/definitions/BaseAction',
+        },
+      ],
+      properties: {
+        type: {
+          $ref: '#/definitions/ActionType',
+          value: 'SetActiveCharacterCategoryAction',
+        },
+        payload: {
+          type: 'object',
+          properties: {
+            category: {
+              $ref: '#/definitions/CharacterCategoryType',
+            },
+          },
+          required: ['category'],
+        },
+      },
+      required: ['type', 'payload'],
+      code: {
+        declaration:
+          'export interface SetActiveCharacterCategoryAction extends BaseAction {\n  type: ActionType.SetActiveCharacterCategoryAction;\n  payload: {category: CharacterCategoryType};\n}\n',
+      },
+    },
+    SetHoveredCharacterImageAction: {
+      title: 'SetHoveredCharacterImageAction',
+      type: 'object',
+      id: 'CharacterCategory/SetActive',
+      allOf: [
+        {
+          $ref: '#/definitions/BaseAction',
+        },
+      ],
+      properties: {
+        type: {
+          $ref: '#/definitions/ActionType',
+          value: 'SetHoveredCharacterImageAction',
+        },
+        payload: {
+          type: 'object',
+          properties: {
+            index: {
+              type: 'number',
+            },
+          },
+          required: ['index'],
+        },
+      },
+      required: ['type', 'payload'],
+      code: {
+        declaration:
+          'export interface SetHoveredCharacterImageAction extends BaseAction {\n  type: ActionType.SetHoveredCharacterImageAction;\n  payload: {index: number};\n}\n',
+      },
+    },
+    CharacterCategoryType: {
+      title: 'CharacterCategoryType',
+      enum: [
+        'base',
+        'hair',
+        'beard',
+        'body',
+        'legs',
+        'hand1',
+        'hand2',
+        'head',
+        'gloves',
+        'boots',
+        'cloak',
+        'felids',
+        'drcwing',
+        'drchead',
+        'barding',
+        'ench',
+        'halo',
+        'mutations',
+        'transform',
+      ],
+      code: {
+        declaration:
+          'export enum CharacterCategoryType {\n  base,\n  hair,\n  beard,\n  body,\n  legs,\n  hand1,\n  hand2,\n  head,\n  gloves,\n  boots,\n  cloak,\n  felids,\n  drcwing,\n  drchead,\n  barding,\n  ench,\n  halo,\n  mutations,\n  transform,\n}\n',
+      },
+    },
+    ImageData: {
+      title: 'ImageData',
+      type: 'object',
+      properties: {
+        url: {
+          type: 'string',
+        },
+        parts: {
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+        },
+        category: {
+          $ref: '#/definitions/CharacterCategoryType',
+        },
+      },
+      code: {
+        declaration:
+          'export interface ImageData {\n  url?: string;\n  parts?: string[];\n  category?: CharacterCategoryType;\n}\n',
       },
     },
     BaseMessage: {
@@ -657,7 +801,7 @@ export const appDef: AppDef = {
         },
       },
       code: {
-        declaration: 'export interface BaseMessage {\n  id?: Id;\n}\n',
+        declaration: 'export interface BaseMessage {id?: Id}\n',
       },
     },
     MessageType: {
@@ -734,7 +878,7 @@ export const appDef: AppDef = {
       required: ['type', 'payload'],
       code: {
         declaration:
-          'export interface ActionPerformedMessage extends BaseMessage {\n  type: MessageType.ActionPerformedMessage;\n  payload: {\n    action: Action;\n  };\n}\n',
+          'export interface ActionPerformedMessage extends BaseMessage {\n  type: MessageType.ActionPerformedMessage;\n  payload: {action: Action};\n}\n',
       },
     },
   },

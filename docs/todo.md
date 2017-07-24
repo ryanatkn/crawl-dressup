@@ -9,8 +9,8 @@ char preview and dressup
 - hover shows on preview
 - keys 1-9 and onward with shift toggle the opening of the various categories, so you can quickly focus on the thing you care about (better than tabs, maximize info shown)
     - or have some dynamically resorting list based on the last time you went to it! maybe weighted even more if you clicked on something ni it? or no, just simple nav history?
-    - "any" category that legs you choose any from any category, layered on top of your avatar (and positioned? hmmm..32px...so show cut off in preview, but sure why not?)
-- create, save, share avatars (chars)
+    - "any" category that legs you choose any from any category, layered on top of your character (and positioned? hmmm..32px...so show cut off in preview, but sure why not?)
+- create, save, share characters (chars)
 - unlock things via progress/achievements
 - demigods have the dragon wings, and gods get the dragon heads
 - some base types cannot wear pants (functional constraint)
