@@ -14,6 +14,15 @@
 
 import * as t from '../types';
 
+export const updateEntity = (
+  id: t.Id,
+  key: string,
+  value: t.Json,
+): t.UpdateEntityAction => ({
+  type: t.ActionType.UpdateEntityAction,
+  payload: {id, key, value},
+});
+
 export const signUpUser = (email: string): t.SignUpUserAction => ({
   type: t.ActionType.SignUpUserAction,
   payload: {email},
@@ -73,20 +82,6 @@ export const executeSuccessQuery = (
 export const setActiveQuery = (id: t.Id): t.SetActiveQueryAction => ({
   type: t.ActionType.SetActiveQueryAction,
   payload: {id},
-});
-
-export const setActiveCharacterCategory = (
-  category: t.CharacterCategoryType,
-): t.SetActiveCharacterCategoryAction => ({
-  type: t.ActionType.SetActiveCharacterCategoryAction,
-  payload: {category},
-});
-
-export const setHoveredCharacterImage = (
-  index: number,
-): t.SetHoveredCharacterImageAction => ({
-  type: t.ActionType.SetHoveredCharacterImageAction,
-  payload: {index},
 });
 
 /*

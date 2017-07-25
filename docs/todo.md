@@ -2,6 +2,12 @@ properties
     height/width multipliers (to make giants/shrimps)
     height/width ratio (to make squat or stringy chars)
 
+ui
+    decide on a css solution
+        typestyle? (raw css with refactor-friendly class names?)
+        styled components?
+        something else?
+
 gen
     - refactor with dbslate
 
@@ -24,6 +30,10 @@ char preview and dressup
 - show m/f toggle more clearly, maybe visually?
 - zoom
 - use quokka as 11th cat, 12th is none -- /public/assets/dcss/mon/animals/quokka
+- tweak attributes
+    - scale (and give a default to each type - so gnomes and dwarves are smaller by default, maybe golden ratio)
+- mega pointer
+    - option to fork/copy/edit the image, renaming it and adding it to your personal collection, shows up in the list with the rest immediately, next to where you clicked, and marked with your avatar to show that it's yours (avatar rendered 32x32 or maybe smaller, not obstructing... or maybe that's impossible, perhaps highlight it (outline? dotted?) with your personal color)
 
 - render chars in worlds
     - render with scale using size/weight stats/multipliers - trolls are like 2.5x, ogres 2x, orcs 1.5x (density stat..? play with all values at once Bret Victor style, would need to lock some)
@@ -56,3 +66,22 @@ context menus are just crystallized versions of searching the contextual command
     they suck
 
 reducers - condensing the vast fact/opinionspheres
+
+possibly scope ui actions somehow (better history efficiency? tagged?)
+
+json schema
+    default
+        is this a contextual concept? or an intrinsic-to-the-definition concept? both?
+        so we could define a default on definitions, but also
+            TODO shouldn't that ref/type just be a recursive type render?
+
+    possibly add all the base definitions like "Title", "Tag", "Name" (where Tag+Name is unique)
+
+modes as first-class shareable, createable, toggleable concepts
+
+generic rework
+    from the app component, update the different entities that represent the character's actual avatar and the hover preview
+        `state.activeCharacter.avatar` or `state.characterActiveAvatar`
+        `state.ui.avatar.preview` or `state.uiPreviewAvatar`
+    design leap of faith - `state.entities` ought to be a map of entity ids (ulids) or _names_ (or namespaces, like `ui`)
+        this allows us to colocate static and dynamic data in the same object and unify operations

@@ -14,13 +14,11 @@
 
 export type Id = string;
 
-export interface ClientState {
-  sources: DataSource[];
-  queries: Query[];
-  activeQueryId: string | null;
-  activeCharacterCategory: string | null;
-  hoveredCharacterImageIndex: number | null;
-}
+export type Json = any[] | object | boolean | number | number | string | null;
+
+export interface Entity {id?: Id}
+
+export interface ClientState {entities: object}
 
 export interface DataSource {
   kind: 'sql' | 'mongo';
@@ -66,12 +64,13 @@ export interface ResolvedQuery {
   title: string;
   raw: string;
   lastExecuted: string;
-  results: boolean | null | number | {} | string;
+  results: boolean | null | number | object | string;
 }
 
 export interface BaseAction {id?: Id}
 
 export enum ActionType {
+  UpdateEntityAction,
   SignUpUserAction,
   SignInUserAction,
   SignOutUserAction,
@@ -82,11 +81,10 @@ export enum ActionType {
   ExecuteQueryAction,
   ExecuteSuccessQueryAction,
   SetActiveQueryAction,
-  SetActiveCharacterCategoryAction,
-  SetHoveredCharacterImageAction,
 }
 
 export type Action =
+  | UpdateEntityAction
   | SignUpUserAction
   | SignInUserAction
   | SignOutUserAction
@@ -96,9 +94,12 @@ export type Action =
   | DeleteQueryAction
   | ExecuteQueryAction
   | ExecuteSuccessQueryAction
-  | SetActiveQueryAction
-  | SetActiveCharacterCategoryAction
-  | SetHoveredCharacterImageAction;
+  | SetActiveQueryAction;
+
+export interface UpdateEntityAction extends BaseAction {
+  type: ActionType.UpdateEntityAction;
+  payload: {id: Id; key: string; value: Json};
+}
 
 export interface SignUpUserAction extends BaseAction {
   type: ActionType.SignUpUserAction;
@@ -148,16 +149,6 @@ export interface ExecuteSuccessQueryAction extends BaseAction {
 export interface SetActiveQueryAction extends BaseAction {
   type: ActionType.SetActiveQueryAction;
   payload: {id: Id};
-}
-
-export interface SetActiveCharacterCategoryAction extends BaseAction {
-  type: ActionType.SetActiveCharacterCategoryAction;
-  payload: {category: CharacterCategoryType};
-}
-
-export interface SetHoveredCharacterImageAction extends BaseAction {
-  type: ActionType.SetHoveredCharacterImageAction;
-  payload: {index: number};
 }
 
 export enum CharacterCategoryType {

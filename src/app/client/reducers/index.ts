@@ -36,12 +36,16 @@ export const getDefaultState = (): t.ClientState => {
     },
   ];
   return {
-    queries,
-    sources,
-    activeQueryId: (queries[0] && queries[0].id) || null,
-    activeCharacterCategory:
-      t.CharacterCategoryType[t.CharacterCategoryType.base],
-    hoveredCharacterImageIndex: null,
+    entities: {
+      ui: {
+        hoveredEntity: null,
+        activeCharacterCategory: t.CharacterCategoryType.base,
+        selectedCharacterImageIndex: null,
+      },
+      queries,
+      sources,
+      activeQueryId: (queries[0] && queries[0].id) || null,
+    },
   };
 };
 
@@ -49,11 +53,11 @@ export const getNextActiveQueryId = (
   state: t.ClientState,
   oldId: string,
 ): string | null => {
-  if (state.activeQueryId === oldId) {
-    const next = state.queries.find(q => q.id !== oldId);
+  if (state.entities['activeQueryId'] === oldId) {
+    const next = state.entities['queries'].find((q: t.Query) => q.id !== oldId);
     return next ? next.id : null;
   } else {
-    return state.activeQueryId;
+    return state.entities['activeQueryId'];
   }
 };
 
@@ -81,7 +85,10 @@ export const reducer = (
     case t.ActionType.CreateQueryAction: {
       return {
         ...state,
-        queries: state.queries.concat(action.payload.query),
+        entities: {
+          ...state.entities,
+          queries: state.entities['queries'].concat(action.payload.query),
+        },
       };
     }
     case t.ActionType.ReadQueryAction: {
@@ -93,73 +100,89 @@ export const reducer = (
       const {id, ...update} = action.payload;
       return {
         ...state,
-        queries: state.queries.map(
-          q =>
-            q.id === id
-              ? {
-                  ...q,
-                  ...update as any, // TODO problem here is that copying an obj with optional properties makes invalid `undefined` copied in type system, which is not what should be expressed
-                }
-              : q,
-        ),
+        entities: {
+          ...state.entities,
+          queries: state.entities['queries'].map(
+            (q: t.Query) =>
+              q.id === id
+                ? {
+                    ...q,
+                    ...update as any, // TODO problem here is that copying an obj with optional properties makes invalid `undefined` copied in type system, which is not what should be expressed
+                  }
+                : q,
+          ),
+        },
       };
     }
     case t.ActionType.DeleteQueryAction: {
       const {id} = action.payload;
       return {
         ...state,
-        queries: state.queries.filter(q => q.id !== id),
-        activeQueryId: getNextActiveQueryId(state, id),
+        entities: {
+          ...state.entities,
+          queries: state.entities['queries'].filter(
+            (q: t.Query) => q.id !== id,
+          ),
+          activeQueryId: getNextActiveQueryId(state, id),
+        },
       };
     }
     case t.ActionType.ExecuteQueryAction: {
       const {id} = action.payload;
       return {
         ...state,
-        queries: state.queries.map(
-          q =>
-            q.id === id
-              ? {
-                  ...q,
-                  lastExecuted: q.raw,
-                }
-              : q,
-        ),
+        entities: {
+          ...state.entities,
+          queries: state.entities['queries'].map(
+            (q: t.Query) =>
+              q.id === id
+                ? {
+                    ...q,
+                    lastExecuted: q.raw,
+                  }
+                : q,
+          ),
+        },
       };
     }
     case t.ActionType.ExecuteSuccessQueryAction: {
       const {id, results} = action.payload;
       return {
         ...state,
-        queries: state.queries.map(
-          (q: t.ResolvedQuery) =>
-            q.id === id
-              ? {
-                  ...q,
-                  results,
-                  status: 'resolved' as 'resolved', // tslint:disable-line:no-unnecessary-type-assertion // TODO bug
-                }
-              : q,
-        ),
+        entities: {
+          ...state.entities,
+          queries: state.entities['queries'].map(
+            (q: t.ResolvedQuery) =>
+              q.id === id
+                ? {
+                    ...q,
+                    results,
+                    status: 'resolved' as 'resolved', // tslint:disable-line:no-unnecessary-type-assertion // TODO bug
+                  }
+                : q,
+          ),
+        },
       };
     }
     case t.ActionType.SetActiveQueryAction: {
       return {
         ...state,
-        activeQueryId: action.payload.id,
+        entities: {
+          ...state.entities,
+          activeQueryId: action.payload.id,
+        },
       };
     }
-    case t.ActionType.SetActiveCharacterCategoryAction: {
+    case t.ActionType.UpdateEntityAction: {
       return {
         ...state,
-        activeCharacterCategory:
-          t.CharacterCategoryType[action.payload.category],
-      };
-    }
-    case t.ActionType.SetHoveredCharacterImageAction: {
-      return {
-        ...state,
-        hoveredCharacterImageIndex: action.payload.index,
+        entities: {
+          ...state.entities,
+          [action.payload.id]: {
+            ...state.entities[action.payload.id],
+            [action.payload.key]: action.payload.value,
+          },
+        },
       };
     }
     default:

@@ -12,7 +12,7 @@ it('renders an optional question mark for properties that are not required', () 
 
 it('renders an array type', () => {
   // TODO consider making this check for `type=array`, would add another case that renders '' if not
-  expect(h.renderArrayType({})).toBe('[]');
+  expect(h.renderArrayType({})).toBe('any[]');
   expect(h.renderArrayType({items: {$ref: '#/definitions/Foo'}})).toBe('Foo[]');
 });
 
@@ -68,7 +68,16 @@ it(`renders an enum's values`, () => {
 it('renders a primitive property type', () => {
   expect(h.renderPrimitivePropertyType({})).toBe('');
   expect(h.renderPrimitivePropertyType({type: 'string'})).toBe('string');
+  expect(h.renderPrimitivePropertyType({type: 'number'})).toBe('number');
+  expect(h.renderPrimitivePropertyType({type: 'integer'})).toBe('number');
+  expect(h.renderPrimitivePropertyType({type: 'boolean'})).toBe('boolean');
   expect(h.renderPrimitivePropertyType({type: 'null'})).toBe('null');
+  // expect(h.renderPrimitivePropertyType({type: 'any'})).toBe('any'); // TODO? or just use #/references/Json? what if type is a function?
+  expect(
+    h.renderPrimitivePropertyType({
+      type: 'object',
+    }),
+  ).toBe('object');
   expect(
     h.renderPrimitivePropertyType({
       type: 'object',

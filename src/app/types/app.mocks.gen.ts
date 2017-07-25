@@ -19,13 +19,20 @@ import * as t from '../types';
 
 export const mockId = (): t.Id => rand.str();
 
-export const mockClientState = (): t.ClientState => ({
-  sources: [],
-  queries: [],
-  activeQueryId: sample([rand.str(), null]) as string | null,
-  activeCharacterCategory: sample([rand.str(), null]) as string | null,
-  hoveredCharacterImageIndex: sample([rand.num(), null]) as number | null,
-});
+export const mockJson = (): t.Json =>
+  sample([
+    [],
+    {},
+    sample([true, false]) as boolean,
+    rand.num(),
+    rand.int(),
+    rand.str(),
+    null,
+  ]) as t.Json;
+
+export const mockEntity = (): t.Entity => ({id: t.mockId()});
+
+export const mockClientState = (): t.ClientState => ({entities: {}});
 
 export const mockDataSource = (): t.DataSource => ({
   kind: sample(['sql', 'mongo']) as 'sql' | 'mongo',
@@ -83,13 +90,14 @@ export const mockResolvedQuery = (): t.ResolvedQuery => ({
     rand.num(),
     {},
     rand.str(),
-  ]) as boolean | null | number | {} | string,
+  ]) as boolean | null | number | object | string,
 });
 
 export const mockBaseAction = (): t.BaseAction => ({id: t.mockId()});
 
 export const mockActionType = (): t.ActionType =>
   sample([
+    t.ActionType.UpdateEntityAction,
     t.ActionType.SignUpUserAction,
     t.ActionType.SignInUserAction,
     t.ActionType.SignOutUserAction,
@@ -100,12 +108,11 @@ export const mockActionType = (): t.ActionType =>
     t.ActionType.ExecuteQueryAction,
     t.ActionType.ExecuteSuccessQueryAction,
     t.ActionType.SetActiveQueryAction,
-    t.ActionType.SetActiveCharacterCategoryAction,
-    t.ActionType.SetHoveredCharacterImageAction,
   ]) as t.ActionType;
 
 export const mockAction = (): t.Action =>
   sample([
+    t.mockUpdateEntityAction(),
     t.mockSignUpUserAction(),
     t.mockSignInUserAction(),
     t.mockSignOutUserAction(),
@@ -116,9 +123,12 @@ export const mockAction = (): t.Action =>
     t.mockExecuteQueryAction(),
     t.mockExecuteSuccessQueryAction(),
     t.mockSetActiveQueryAction(),
-    t.mockSetActiveCharacterCategoryAction(),
-    t.mockSetHoveredCharacterImageAction(),
   ]) as t.Action;
+
+export const mockUpdateEntityAction = (): t.UpdateEntityAction => ({
+  type: t.ActionType.UpdateEntityAction,
+  payload: {id: t.mockId(), key: rand.str(), value: t.mockJson()},
+});
 
 export const mockSignUpUserAction = (): t.SignUpUserAction => ({
   type: t.ActionType.SignUpUserAction,
@@ -173,16 +183,6 @@ export const mockExecuteSuccessQueryAction = (): t.ExecuteSuccessQueryAction => 
 export const mockSetActiveQueryAction = (): t.SetActiveQueryAction => ({
   type: t.ActionType.SetActiveQueryAction,
   payload: {id: t.mockId()},
-});
-
-export const mockSetActiveCharacterCategoryAction = (): t.SetActiveCharacterCategoryAction => ({
-  type: t.ActionType.SetActiveCharacterCategoryAction,
-  payload: {category: t.mockCharacterCategoryType()},
-});
-
-export const mockSetHoveredCharacterImageAction = (): t.SetHoveredCharacterImageAction => ({
-  type: t.ActionType.SetHoveredCharacterImageAction,
-  payload: {index: rand.num()},
 });
 
 export const mockCharacterCategoryType = (): t.CharacterCategoryType =>

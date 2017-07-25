@@ -77,13 +77,15 @@ const categories: t.CharacterCategoryType[] = uniq(
   });
 
 interface ConnectedStateProps {
-  activeCharacterCategory: string | null;
-  hoveredCharacterImageIndex: number | null;
+  activeCharacterCategory: t.CharacterCategoryType;
+  hoveredEntity: number | null;
+  selectedCharacterImageIndex: number | null;
   // queries: t.Query[];
 }
 interface ConnectedDispatchProps {
   setActiveCharacterCategory(category: t.CharacterCategoryType): void;
-  setHoveredCharacterImage(index: number): void;
+  setHoveredEntity(index: number): void;
+  setSelectedCharacterImageIndex(index: number): void;
   // updateTitle(id: string, title: string): void;
 }
 interface ConnectedProps extends ConnectedStateProps, ConnectedDispatchProps {}
@@ -94,20 +96,32 @@ class App extends React.Component<Props> {
     log('render', this);
     const {
       activeCharacterCategory,
-      hoveredCharacterImageIndex,
+      hoveredEntity,
+      selectedCharacterImageIndex,
       setActiveCharacterCategory,
-      setHoveredCharacterImage,
+      setHoveredEntity,
+      setSelectedCharacterImageIndex,
     } = this.props as ConnectedProps;
-    const activeCharacterCategoryType = activeCharacterCategory
-      ? t.CharacterCategoryType[activeCharacterCategory]
-      : null;
+    const selectedCharacterImage = selectedCharacterImageIndex !== null
+      ? playerImages[selectedCharacterImageIndex]
+      : playerImages[10]; // TODO differently - default used as fallback, add to definition?
+    const hoveredCharacterImage = hoveredEntity !== null
+      ? playerImages[hoveredEntity]
+      : playerImages[10]; // TODO differently - default used as fallback, add to definition?
     return (
       <div className="App">
         <div
           className="App-header"
           style={{display: 'flex', justifyContent: 'space-between'}}
         >
-          <h2>enti</h2>
+          <h2>
+            {/* TODO clickable-img class, or btn-img, or something similar  */}
+            <a href="https://github.com/enti-life/enti">
+              <img src="assets/github-light.png" />
+            </a>
+            {' '}
+            enti
+          </h2>
           <div style={{display: 'flex'}}>
             <div
               style={{
@@ -116,12 +130,14 @@ class App extends React.Component<Props> {
                 alignItems: 'center',
               }}
             >
-              <h3 style={{textDecoration: 'underline'}}>characters</h3>
+              <h3 style={{borderBottom: '3px dashed rgba(255, 250, 245, 0.4)'}}>
+                characters
+              </h3>
               <div style={{display: 'flex'}}>
                 <div
                   style={{
                     padding: 4,
-                    textDecoration: 'underline',
+                    borderBottom: '3px dashed rgba(255, 250, 245, 0.4)',
                     fontWeight: 'bold',
                   }}
                 >
@@ -132,15 +148,15 @@ class App extends React.Component<Props> {
                 {/* apps don't work in every world, but compatibility is possible */}
               </div>
             </div>
-            <div style={{height: 32}}>
+            <div style={{height: tileSize * 2}}>
               <h3 style={{fontWeight: 'normal'}}>settings</h3>
             </div>
           </div>
           <div style={{display: 'flex'}}>
             <div
               style={{
-                width: 32,
-                height: 32,
+                width: tileSize * 2,
+                height: tileSize * 2,
                 border: '7px dashed blue',
                 color: 'blue',
                 fontWeight: 'bold',
@@ -150,8 +166,8 @@ class App extends React.Component<Props> {
             </div>
             <div
               style={{
-                width: 32,
-                height: 32,
+                width: tileSize * 2,
+                height: tileSize * 2,
                 border: '5px dotted violet',
                 color: 'violet',
                 fontWeight: 'bold',
@@ -159,7 +175,7 @@ class App extends React.Component<Props> {
             >
               :D
             </div>
-            <div style={{height: 32}}>
+            <div style={{height: tileSize * 2}}>
               <small>6 more friends</small>
             </div>
           </div>
@@ -187,7 +203,7 @@ class App extends React.Component<Props> {
                     size={renderedTileSize}
                   />
                   <Img
-                    src={`assets/dcss/player/base/centaur_darkgrey_m.png`}
+                    src={`assets${selectedCharacterImage.url}`}
                     size={renderedTileSizeLg}
                   />
                 </div>
@@ -199,7 +215,7 @@ class App extends React.Component<Props> {
                   }}
                 >
                   <Img
-                    src={`assets/dcss/player/base/centaur_darkgrey_m.png`}
+                    src={`assets${hoveredCharacterImage.url}`}
                     size={renderedTileSizeLg}
                   />
                   <Img
@@ -213,8 +229,7 @@ class App extends React.Component<Props> {
                     <div
                       key={category}
                       style={{
-                        fontWeight: t.CharacterCategoryType[category] ===
-                          activeCharacterCategory
+                        fontWeight: category === activeCharacterCategory
                           ? 'bold'
                           : 'normal',
                         cursor: 'pointer',
@@ -233,16 +248,22 @@ class App extends React.Component<Props> {
                     </div>,
                   )}
                 </div>
+                <div>
+                  TODO - show each of the selections, and allow canceling (along
+                  with other megatouch actions)
+                  {/* TODO need to map all selected items for the currently selected character's avatar */}
+                </div>
+                <div>TODO save/export/import data</div>
               </div>
               <div style={{display: 'flex', flexWrap: 'wrap'}}>
-                <div key={activeCharacterCategoryType}>
-                  <div>
-                    {activeCharacterCategoryType}
+                <div>
+                  <div style={{display: 'flex', alignItems: 'center'}}>
+                    <h3>{t.CharacterCategoryType[activeCharacterCategory]}</h3>
                     {' - '}
                     <small>
                       {playerImages.reduce(
                         (count, image) =>
-                          image.category === activeCharacterCategoryType
+                          image.category === activeCharacterCategory
                             ? count + 1
                             : count,
                         0,
@@ -252,15 +273,18 @@ class App extends React.Component<Props> {
                   <div style={{display: 'flex', flexWrap: 'wrap'}}>
                     {playerImages.map(
                       (image, i) =>
-                        image.category === activeCharacterCategoryType
+                        image.category === activeCharacterCategory
                           ? <div
                               key={image.url}
                               title={image.url}
-                              onMouseEnter={() => setHoveredCharacterImage(i)}
+                              onMouseEnter={() => setHoveredEntity(i)}
+                              onClick={() => setSelectedCharacterImageIndex(i)}
                               style={{
-                                border: i === hoveredCharacterImageIndex
-                                  ? '3px dashed rgba(0, 0, 0, 0.4)'
-                                  : '3px dashed transparent',
+                                border: i === selectedCharacterImageIndex
+                                  ? '3px dashed rgba(0, 0, 0, 0.2)'
+                                  : i === hoveredEntity
+                                    ? '3px dashed rgba(0, 0, 0, 0.4)'
+                                    : '3px dashed transparent',
                               }}
                             >
                               <Img
@@ -283,22 +307,47 @@ class App extends React.Component<Props> {
 
 const mapStateToProps = (state: t.ClientState): ConnectedStateProps => ({
   // queries: state.queries,
-  activeCharacterCategory: state.activeCharacterCategory,
-  hoveredCharacterImageIndex: state.hoveredCharacterImageIndex,
+  hoveredEntity: state.entities['ui'].hoveredEntity,
+  activeCharacterCategory: state.entities['ui'].activeCharacterCategory,
+  selectedCharacterImageIndex: state.entities['ui'].selectedCharacterImageIndex,
 });
 
 const mapDispatchToProps = (dispatch: t.Dispatch): ConnectedDispatchProps => ({
+  // setActiveCharacterCategory: (category: t.CharacterCategoryType) =>
+  //   dispatch<t.Action>({
+  //     type: t.ActionType.SetActiveCharacterCategoryAction,
+  //     payload: {category},
+  //   }),
+  // // how do we do this? give id automatically to all images? pass index?
+  // setHoveredCharacterImage: (index: number) =>
+  //   dispatch<t.Action>({
+  //     type: t.ActionType.SetHoveredCharacterImageAction,
+  //     payload: {index},
+  //   }),
+  // setSelectedCharacterImage: (index: number) =>
+  //   dispatch<t.Action>({
+  //     type: t.ActionType.SetSelectedCharacterImageAction,
+  //     payload: {index},
+  //   }),
+
+  // TODO - rewrite the above functions with a single generic update
   setActiveCharacterCategory: (category: t.CharacterCategoryType) =>
     dispatch<t.Action>({
-      type: t.ActionType.SetActiveCharacterCategoryAction,
-      payload: {category},
+      type: t.ActionType.UpdateEntityAction,
+      payload: {id: 'ui', key: 'activeCharacterCategory', value: category},
     }),
   // how do we do this? give id automatically to all images? pass index?
-  setHoveredCharacterImage: (index: number) =>
+  setHoveredEntity: (index: number) =>
     dispatch<t.Action>({
-      type: t.ActionType.SetHoveredCharacterImageAction,
-      payload: {index},
+      type: t.ActionType.UpdateEntityAction,
+      payload: {id: 'ui', key: 'hoveredEntity', value: index}, // TODO 'hoveredEntity'? or need a stack/collection?
     }),
+  setSelectedCharacterImageIndex: (index: number) =>
+    dispatch<t.Action>({
+      type: t.ActionType.UpdateEntityAction,
+      payload: {id: 'ui', key: 'selectedCharacterImageIndex', value: index},
+    }),
+
   // updateTitle: (
   //   id: string,
   //   title: string, // TODO unify by making generic? update doc type?

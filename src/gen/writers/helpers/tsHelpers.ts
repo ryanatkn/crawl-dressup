@@ -17,6 +17,7 @@ Most of it should probably be made more generic over the file type and moved to 
 export const primitiveTypes = [
   'string',
   'number',
+  'integer', // hmm, is this typescript or jsonschema types?
   'boolean',
   'null',
   'undefined',
@@ -37,7 +38,7 @@ export function renderArrayType(prop: SchemaProperty): string {
       return `${prop.items.type}[]`;
     }
   }
-  return '[]';
+  return 'any[]';
 }
 
 export function renderTypeUnion(
@@ -82,15 +83,21 @@ export function renderEnumValues(
 export function renderPrimitivePropertyType(prop: SchemaProperty): string {
   if (!prop.type) {
     return '';
-  } else if (prop.type === 'object') {
-    return `{${renderPropList(
-      prop,
-      undefined,
-      '',
-      renderPropertyPairNameToType,
-    )}}`;
-  } else {
-    return prop.type || '';
+  }
+  switch (prop.type) {
+    case 'object':
+      return prop.properties
+        ? `{${renderPropList(
+            prop,
+            undefined,
+            '',
+            renderPropertyPairNameToType,
+          )}}`
+        : 'object'; // TODO this may cause probs
+    case 'integer':
+      return 'number';
+    default:
+      return prop.type;
   }
 }
 

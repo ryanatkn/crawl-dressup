@@ -17,6 +17,11 @@
 import * as rand from '../../../utils/rand';
 import * as t from '../types';
 
+it('calls the UpdateEntityAction creator', () => {
+  const action = t.updateEntity(t.mockId(), rand.str(), t.mockJson());
+  t.is<t.UpdateEntityAction>(action);
+});
+
 it('calls the SignUpUserAction creator', () => {
   const action = t.signUpUser(rand.str());
   t.is<t.SignUpUserAction>(action);
@@ -65,16 +70,6 @@ it('calls the ExecuteSuccessQueryAction creator', () => {
 it('calls the SetActiveQueryAction creator', () => {
   const action = t.setActiveQuery(t.mockId());
   t.is<t.SetActiveQueryAction>(action);
-});
-
-it('calls the SetActiveCharacterCategoryAction creator', () => {
-  const action = t.setActiveCharacterCategory(t.mockCharacterCategoryType());
-  t.is<t.SetActiveCharacterCategoryAction>(action);
-});
-
-it('calls the SetHoveredCharacterImageAction creator', () => {
-  const action = t.setHoveredCharacterImage(rand.num());
-  t.is<t.SetHoveredCharacterImageAction>(action);
 });
 
 /*

@@ -7,6 +7,7 @@ import {GenCtx, generate} from '../gen';
 import {getWritersList, loadCommentedJson} from './helpers';
 
 import {logger} from '../utils/log';
+import {validateAppDef} from '../app/defs';
 
 const log = logger('task:gen');
 
@@ -40,13 +41,14 @@ async function main(): Promise<void> {
   log('__dirname', __dirname);
   log('__filename', __filename, fp.join(__dirname, appDefPath));
 
+  const def = validateAppDef(await loadCommentedJson(appDefPath));
   const prettierCfg = await loadCommentedJson(prettierCfgPath);
   const baseSchema = await loadCommentedJson(baseSchemaPath);
 
   // Load the app definition and generate some code
   const ctx: GenCtx = {
     defPath: appDefPath,
-    def: await loadCommentedJson(appDefPath),
+    def,
     prettierCfg,
   };
 

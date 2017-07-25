@@ -20,6 +20,14 @@ import * as t from '../types';
 
 import {reducer} from './index';
 
+it('applies a UpdateEntityAction against the store state', () => {
+  const state = reducer(
+    undefined,
+    t.updateEntity(t.mockId(), rand.str(), t.mockJson()),
+  );
+  t.is<t.ClientState>(state);
+});
+
 it('applies a SignUpUserAction against the store state', () => {
   const state = reducer(undefined, t.signUpUser(rand.str()));
   t.is<t.ClientState>(state);
@@ -73,19 +81,6 @@ it('applies a ExecuteSuccessQueryAction against the store state', () => {
 
 it('applies a SetActiveQueryAction against the store state', () => {
   const state = reducer(undefined, t.setActiveQuery(t.mockId()));
-  t.is<t.ClientState>(state);
-});
-
-it('applies a SetActiveCharacterCategoryAction against the store state', () => {
-  const state = reducer(
-    undefined,
-    t.setActiveCharacterCategory(t.mockCharacterCategoryType()),
-  );
-  t.is<t.ClientState>(state);
-});
-
-it('applies a SetHoveredCharacterImageAction against the store state', () => {
-  const state = reducer(undefined, t.setHoveredCharacterImage(rand.num()));
   t.is<t.ClientState>(state);
 });
 

@@ -31,65 +31,72 @@ export const appDef: AppDef = {
         declaration: 'export type Id = string;\n',
       },
     },
+    Json: {
+      title: 'Json',
+      oneOf: [
+        {
+          type: 'array',
+        },
+        {
+          type: 'object',
+        },
+        {
+          type: 'boolean',
+        },
+        {
+          type: 'number',
+        },
+        {
+          type: 'integer',
+        },
+        {
+          type: 'string',
+        },
+        {
+          type: 'null',
+        },
+      ],
+      code: {
+        declaration:
+          'export type Json = any[] | object | boolean | number | number | string | null;\n',
+      },
+    },
+    Entity: {
+      title: 'Entity',
+      type: 'object',
+      properties: {
+        id: {
+          $ref: '#/definitions/Id',
+        },
+      },
+      patternProperties: {
+        '^[a-zA-Z0-9]+$': {
+          $ref: '#/definitions/Json',
+        },
+      },
+      code: {
+        declaration: 'export interface Entity {id?: Id}\n',
+      },
+    },
     ClientState: {
       title: 'ClientState',
       type: 'object',
       properties: {
-        sources: {
-          type: 'array',
-          items: {
-            $ref: '#/definitions/DataSource',
+        entities: {
+          type: 'object',
+          patternProperties: {
+            '^[A-Z0-9]{26}$': {
+              $ref: '#/definitions/Entity',
+            },
+            '^[a-zA-Z0-9]+': {
+              $ref: '#/definitions/Entity',
+            },
           },
-          uniqueItems: true,
-        },
-        queries: {
-          type: 'array',
-          items: {
-            $ref: '#/definitions/Query',
-          },
-          uniqueItems: true,
-        },
-        activeQueryId: {
-          oneOf: [
-            {
-              type: 'string',
-            },
-            {
-              type: 'null',
-            },
-          ],
-        },
-        activeCharacterCategory: {
-          oneOf: [
-            {
-              type: 'string',
-            },
-            {
-              type: 'null',
-            },
-          ],
-        },
-        hoveredCharacterImageIndex: {
-          oneOf: [
-            {
-              type: 'number',
-            },
-            {
-              type: 'null',
-            },
-          ],
         },
       },
-      required: [
-        'sources',
-        'queries',
-        'activeQueryId',
-        'activeCharacterCategory',
-        'hoveredCharacterImageIndex',
-      ],
+      required: ['entities'],
       code: {
-        declaration:
-          'export interface ClientState {\n  sources: DataSource[];\n  queries: Query[];\n  activeQueryId: string | null;\n  activeCharacterCategory: string | null;\n  hoveredCharacterImageIndex: number | null;\n}\n',
+        declaration: 'export interface ClientState {entities: object}\n',
       },
     },
     DataSource: {
@@ -298,7 +305,7 @@ export const appDef: AppDef = {
       ],
       code: {
         declaration:
-          "export interface ResolvedQuery {\n  status: 'resolved';\n  id: Id;\n  sourceId: Id;\n  title: string;\n  raw: string;\n  lastExecuted: string;\n  results: boolean | null | number | {} | string;\n}\n",
+          "export interface ResolvedQuery {\n  status: 'resolved';\n  id: Id;\n  sourceId: Id;\n  title: string;\n  raw: string;\n  lastExecuted: string;\n  results: boolean | null | number | object | string;\n}\n",
       },
     },
     BaseAction: {
@@ -316,6 +323,7 @@ export const appDef: AppDef = {
     ActionType: {
       title: 'ActionType',
       enum: [
+        'UpdateEntityAction',
         'SignUpUserAction',
         'SignInUserAction',
         'SignOutUserAction',
@@ -326,17 +334,18 @@ export const appDef: AppDef = {
         'ExecuteQueryAction',
         'ExecuteSuccessQueryAction',
         'SetActiveQueryAction',
-        'SetActiveCharacterCategoryAction',
-        'SetHoveredCharacterImageAction',
       ],
       code: {
         declaration:
-          'export enum ActionType {\n  SignUpUserAction,\n  SignInUserAction,\n  SignOutUserAction,\n  CreateQueryAction,\n  ReadQueryAction,\n  UpdateQueryAction,\n  DeleteQueryAction,\n  ExecuteQueryAction,\n  ExecuteSuccessQueryAction,\n  SetActiveQueryAction,\n  SetActiveCharacterCategoryAction,\n  SetHoveredCharacterImageAction,\n}\n',
+          'export enum ActionType {\n  UpdateEntityAction,\n  SignUpUserAction,\n  SignInUserAction,\n  SignOutUserAction,\n  CreateQueryAction,\n  ReadQueryAction,\n  UpdateQueryAction,\n  DeleteQueryAction,\n  ExecuteQueryAction,\n  ExecuteSuccessQueryAction,\n  SetActiveQueryAction,\n}\n',
       },
     },
     Action: {
       title: 'Action',
       oneOf: [
+        {
+          $ref: '#/definitions/UpdateEntityAction',
+        },
         {
           $ref: '#/definitions/SignUpUserAction',
         },
@@ -367,16 +376,46 @@ export const appDef: AppDef = {
         {
           $ref: '#/definitions/SetActiveQueryAction',
         },
-        {
-          $ref: '#/definitions/SetActiveCharacterCategoryAction',
-        },
-        {
-          $ref: '#/definitions/SetHoveredCharacterImageAction',
-        },
       ],
       code: {
         declaration:
-          'export type Action =\n  | SignUpUserAction\n  | SignInUserAction\n  | SignOutUserAction\n  | CreateQueryAction\n  | ReadQueryAction\n  | UpdateQueryAction\n  | DeleteQueryAction\n  | ExecuteQueryAction\n  | ExecuteSuccessQueryAction\n  | SetActiveQueryAction\n  | SetActiveCharacterCategoryAction\n  | SetHoveredCharacterImageAction;\n',
+          'export type Action =\n  | UpdateEntityAction\n  | SignUpUserAction\n  | SignInUserAction\n  | SignOutUserAction\n  | CreateQueryAction\n  | ReadQueryAction\n  | UpdateQueryAction\n  | DeleteQueryAction\n  | ExecuteQueryAction\n  | ExecuteSuccessQueryAction\n  | SetActiveQueryAction;\n',
+      },
+    },
+    UpdateEntityAction: {
+      title: 'UpdateEntityAction',
+      type: 'object',
+      id: 'Entity/Update',
+      allOf: [
+        {
+          $ref: '#/definitions/BaseAction',
+        },
+      ],
+      properties: {
+        type: {
+          $ref: '#/definitions/ActionType',
+          value: 'UpdateEntityAction',
+        },
+        payload: {
+          type: 'object',
+          properties: {
+            id: {
+              $ref: '#/definitions/Id',
+            },
+            key: {
+              type: 'string',
+            },
+            value: {
+              $ref: '#/definitions/Json',
+            },
+          },
+          required: ['id', 'key', 'value'],
+        },
+      },
+      required: ['type', 'payload'],
+      code: {
+        declaration:
+          'export interface UpdateEntityAction extends BaseAction {\n  type: ActionType.UpdateEntityAction;\n  payload: {id: Id; key: string; value: Json};\n}\n',
       },
     },
     SignUpUserAction: {
@@ -680,66 +719,6 @@ export const appDef: AppDef = {
       code: {
         declaration:
           'export interface SetActiveQueryAction extends BaseAction {\n  type: ActionType.SetActiveQueryAction;\n  payload: {id: Id};\n}\n',
-      },
-    },
-    SetActiveCharacterCategoryAction: {
-      title: 'SetActiveCharacterCategoryAction',
-      type: 'object',
-      id: 'CharacterCategory/SetActive',
-      allOf: [
-        {
-          $ref: '#/definitions/BaseAction',
-        },
-      ],
-      properties: {
-        type: {
-          $ref: '#/definitions/ActionType',
-          value: 'SetActiveCharacterCategoryAction',
-        },
-        payload: {
-          type: 'object',
-          properties: {
-            category: {
-              $ref: '#/definitions/CharacterCategoryType',
-            },
-          },
-          required: ['category'],
-        },
-      },
-      required: ['type', 'payload'],
-      code: {
-        declaration:
-          'export interface SetActiveCharacterCategoryAction extends BaseAction {\n  type: ActionType.SetActiveCharacterCategoryAction;\n  payload: {category: CharacterCategoryType};\n}\n',
-      },
-    },
-    SetHoveredCharacterImageAction: {
-      title: 'SetHoveredCharacterImageAction',
-      type: 'object',
-      id: 'CharacterCategory/SetActive',
-      allOf: [
-        {
-          $ref: '#/definitions/BaseAction',
-        },
-      ],
-      properties: {
-        type: {
-          $ref: '#/definitions/ActionType',
-          value: 'SetHoveredCharacterImageAction',
-        },
-        payload: {
-          type: 'object',
-          properties: {
-            index: {
-              type: 'number',
-            },
-          },
-          required: ['index'],
-        },
-      },
-      required: ['type', 'payload'],
-      code: {
-        declaration:
-          'export interface SetHoveredCharacterImageAction extends BaseAction {\n  type: ActionType.SetHoveredCharacterImageAction;\n  payload: {index: number};\n}\n',
       },
     },
     CharacterCategoryType: {

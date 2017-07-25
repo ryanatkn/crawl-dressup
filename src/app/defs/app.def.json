@@ -12,61 +12,50 @@
             "minLength": 26,
             "maxLength": 26
         },
+        "Json": {
+            "title": "Json",
+            "oneOf": [
+                {"type": "array"}, // TODO would be nice to have this be a generic with default type to `any`, so `Json` and `Json<MyType>` both work
+                {"type": "object"},
+                {"type": "boolean"},
+                {"type": "number"},
+                {"type": "integer"},
+                {"type": "string"},
+                {"type": "null"}
+            ]
+        },
+        "Entity": { // k/v, id/defs
+            "title": "Entity",
+            "type": "object",
+            // TODO set of defs
+            "properties": {
+                "id": { "$ref": "#/definitions/Id" }
+            },
+            "patternProperties": {
+                "^[a-zA-Z0-9]+$": { "$ref": "#/definitions/Json" }
+            }
+            // ultimately, generics? so lists of defs? so make ad-hoc defs? because 1 def instance per def is limiting
+            // arbitrary properties will likely be wanted, composition at definition site (for maximum authoring expressivity)
+        },
         "ClientState": {
             "title": "ClientState",
             "type": "object",
             "properties": {
-                "sources": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/DataSource"
-                    },
-                    "uniqueItems": true
-                },
-                "queries": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/Query"
-                    },
-                    "uniqueItems": true
-                },
-                "activeQueryId": {
-                    "oneOf": [
-                        {
-                            "type": "string"
+                "entities": {
+                    "type": "object",
+                    // TODO map of ids/names Entity defs
+                    "patternProperties": {
+                        "^[A-Z0-9]{26}$": { // TODO how to extract this? also some chars like O are omitted, also need to account for arbitrary strings (oneOf)
+                            "$ref": "#/definitions/Entity"
                         },
-                        {
-                            "type": "null"
+                        "^[a-zA-Z0-9]+": { // TODO be more lenient?
+                            "$ref": "#/definitions/Entity"
                         }
-                    ]
-                },
-                "activeCharacterCategory": {
-                    "oneOf": [
-                        {
-                            "type": "string" // TODO category enum?!!
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ]
-                },
-                "hoveredCharacterImageIndex": {
-                    "oneOf": [
-                        {
-                            "type": "number" // TODO id? index type?
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ]
+                    }
                 }
             },
             "required": [
-                "sources",
-                "queries",
-                "activeQueryId",
-                "activeCharacterCategory",
-                "hoveredCharacterImageIndex"
+                "entities"
             ]
         },
         "DataSource": {
@@ -288,6 +277,7 @@
         "ActionType": {
             "title": "ActionType",
             "enum": [
+                "UpdateEntityAction",
                 "SignUpUserAction",
                 "SignInUserAction",
                 "SignOutUserAction",
@@ -297,14 +287,15 @@
                 "DeleteQueryAction",
                 "ExecuteQueryAction",
                 "ExecuteSuccessQueryAction",
-                "SetActiveQueryAction",
-                "SetActiveCharacterCategoryAction",
-                "SetHoveredCharacterImageAction"
+                "SetActiveQueryAction"
             ]
         },
         "Action": {
             "title": "Action",
             "oneOf": [
+                {
+                    "$ref": "#/definitions/UpdateEntityAction"
+                },
                 {
                     "$ref": "#/definitions/SignUpUserAction"
                 },
@@ -334,18 +325,48 @@
                 },
                 {
                     "$ref": "#/definitions/SetActiveQueryAction"
-                },
-                {
-                    "$ref": "#/definitions/SetActiveCharacterCategoryAction"
-                },
-                {
-                    "$ref": "#/definitions/SetHoveredCharacterImageAction"
                 }
                 
             ]
         },
         // TODO action enhanced with id, cid, other meta info
         // cids, client ids, are used to dedupe - the time value tells you who wins
+        "UpdateEntityAction": {
+            "title": "UpdateEntityAction",
+            "type": "object",
+            "id": "Entity/Update",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/BaseAction"
+                }
+            ],
+            "properties": {
+                "type": { "$ref": "#/definitions/ActionType", "value": "UpdateEntityAction" },
+                "payload": {
+                    "type": "object",
+                    "properties": {
+                        "id": {
+                            "$ref": "#/definitions/Id"
+                        },
+                        "key": { // aka which definition/component you're targetting for this id - TODO still bridging ecs with jsonschema
+                            "type": "string"
+                        },
+                        "value": {
+                            "$ref": "#/definitions/Json"
+                        }
+                    },
+                    "required": [
+                        "id",
+                        "key",
+                        "value"
+                    ]
+                }
+            },
+            "required": [
+                "type",
+                "payload"
+            ]
+        },
         "SignUpUserAction": {
             "title": "SignUpUserAction",
             "type": "object",
@@ -615,62 +636,6 @@
                     },
                     "required": [
                         "id"
-                    ]
-                }
-            },
-            "required": [
-                "type",
-                "payload"
-            ]
-        },
-        "SetActiveCharacterCategoryAction": { // TODO probably belongs in some ui context or something
-            "title": "SetActiveCharacterCategoryAction",
-            "type": "object",
-            "id": "CharacterCategory/SetActive",
-            "allOf": [
-                {
-                    "$ref": "#/definitions/BaseAction"
-                }
-            ],
-            "properties": {
-                "type": { "$ref": "#/definitions/ActionType", "value": "SetActiveCharacterCategoryAction" },
-                "payload": {
-                    "type": "object",
-                    "properties": {
-                        "category": {
-                            "$ref": "#/definitions/CharacterCategoryType"
-                        }
-                    },
-                    "required": [
-                        "category"
-                    ]
-                }
-            },
-            "required": [
-                "type",
-                "payload"
-            ]
-        },
-        "SetHoveredCharacterImageAction": { // TODO make generic for any entity - probably belongs in some ui context or something
-            "title": "SetHoveredCharacterImageAction",
-            "type": "object",
-            "id": "CharacterCategory/SetActive",
-            "allOf": [
-                {
-                    "$ref": "#/definitions/BaseAction"
-                }
-            ],
-            "properties": {
-                "type": { "$ref": "#/definitions/ActionType", "value": "SetHoveredCharacterImageAction" },
-                "payload": {
-                    "type": "object",
-                    "properties": {
-                        "index": {
-                            "type": "number" // TODO index type? id?
-                        }
-                    },
-                    "required": [
-                        "index"
                     ]
                 }
             },
