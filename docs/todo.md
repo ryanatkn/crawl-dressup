@@ -1,4 +1,8 @@
-properties
+new avatar categories
+    ears
+    eyes
+    mouth
+new avatar properties
     height/width multipliers (to make giants/shrimps)
     height/width ratio (to make squat or stringy chars)
 
@@ -34,6 +38,8 @@ char preview and dressup
     - scale (and give a default to each type - so gnomes and dwarves are smaller by default, maybe golden ratio)
 - mega pointer
     - option to fork/copy/edit the image, renaming it and adding it to your personal collection, shows up in the list with the rest immediately, next to where you clicked, and marked with your avatar to show that it's yours (avatar rendered 32x32 or maybe smaller, not obstructing... or maybe that's impossible, perhaps highlight it (outline? dotted?) with your personal color)
+- improve ui
+    - make pallette area scroll separately, so the main image doesn't leave the screen
 
 - render chars in worlds
     - render with scale using size/weight stats/multipliers - trolls are like 2.5x, ogres 2x, orcs 1.5x (density stat..? play with all values at once Bret Victor style, would need to lock some)
@@ -85,3 +91,36 @@ generic rework
         `state.ui.avatar.preview` or `state.uiPreviewAvatar`
     design leap of faith - `state.entities` ought to be a map of entity ids (ulids) or _names_ (or namespaces, like `ui`)
         this allows us to colocate static and dynamic data in the same object and unify operations
+
+generic rework done - minimal beginnings at least
+    we now want a container type, or a hardcoded workaround.
+problem: need to store a map of `CharacterCategoryType` to `ImageData`
+    possibly namespace it like:
+         `character/${characterId}/avatar/${avatarId}/category/${characterCategoryType}/imageIndex/${index}`
+         .. or is index the value to that key?
+         `{[`character/${characterId}/avatar/${avatarId}/category/${characterCategoryType}/imageIndex`]: index}`
+         character is like a virtual shortcut to the currently active character
+            punting on multiple characters for now
+        simplify? one avatar id should be enough
+            need to be able to get a list of all avatar ids for a user
+        make these paths first class? like immutable.js keypaths?
+            use immutable.js here for efficiency?
+            can we keep type safety? (genning after all)
+    consider namespacing all entities under `id/${entityId}` so they can be worked on at a higher level
+
+pixel editing
+    get a color pallette from all of the player images
+        generate pallette from single image (on the fly)
+
+consider defining mappings from values to values
+    so given two objects, one with firstname and lastname, and a second, with lastname, we can solve for any missing value, and it infers that relationship automatically given all of the inputs (algebraic solver)
+
+consider making `UpdateEntityAction` take one less param,
+exchanging `key` and `value` for a single `updateSpec` modelled after mongo. (except maybe fix the $set terribleness, top level patch/merge by default?)
+
+omnipointer
+    dig into anything, any time
+        including the running instance data, and code defining it!
+        visualize the relationships in multiple ways, all of which are editable.
+        which way to view/edit things? all of them!
+    grab a color any where, any time

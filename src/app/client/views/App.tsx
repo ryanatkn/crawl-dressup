@@ -18,6 +18,7 @@ const tileSize = 32; // TODO
 const renderedTileSize = tileSize * 4; // TODO
 const renderedTileSizeLg = renderedTileSize * 2; // TODO
 
+// TODO move to reducer?
 const playerImages: t.ImageData[] = assets.images
   .filter(image => image.indexOf('/dcss/player/') === 0)
   .map(image => {
@@ -30,6 +31,7 @@ const playerImages: t.ImageData[] = assets.images
     };
   });
 
+// TODO move to `app.def.json`
 const categoryOrder: t.CharacterCategoryType[] = [
   t.CharacterCategoryType.base,
   t.CharacterCategoryType.hair,
@@ -130,10 +132,29 @@ class App extends React.Component<Props> {
                 alignItems: 'center',
               }}
             >
-              <h3 style={{borderBottom: '3px dashed rgba(255, 250, 245, 0.4)'}}>
+              <h3
+                style={{
+                  fontWeight: 'bold',
+                  borderBottom: '3px dashed rgba(255, 250, 245, 0.4)',
+                }}
+              >
                 characters
               </h3>
-              <div style={{display: 'flex'}}>
+              <h4 style={{display: 'flex'}}>
+                <div style={{padding: 4}}>admin</div>
+                <div
+                  style={{
+                    padding: 4,
+                    borderBottom: '3px dashed rgba(255, 250, 245, 0.4)',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  nimfot
+                </div>
+                <div style={{padding: 4}}>cogs</div>
+                {/* apps don't work in every world, but compatibility is possible */}
+              </h4>
+              <h5 style={{display: 'flex'}}>
                 <div
                   style={{
                     padding: 4,
@@ -146,38 +167,48 @@ class App extends React.Component<Props> {
                 <div style={{padding: 4}}>worlds</div>
                 <div style={{padding: 4}}>apps</div>
                 {/* apps don't work in every world, but compatibility is possible */}
-              </div>
+              </h5>
             </div>
             <div style={{height: tileSize * 2}}>
               <h3 style={{fontWeight: 'normal'}}>settings</h3>
             </div>
           </div>
-          <div style={{display: 'flex'}}>
-            <div
+          <div>
+            <div style={{display: 'flex'}}>
+              <div
+                style={{
+                  width: tileSize * 2,
+                  height: tileSize * 2,
+                  border: '7px dashed blue',
+                  color: 'blue',
+                  fontWeight: 'bold',
+                  fontSize: '3em',
+                }}
+              >
+                :)
+              </div>
+              <div
+                style={{
+                  width: tileSize * 2,
+                  height: tileSize * 2,
+                  border: '5px dotted violet',
+                  color: 'violet',
+                  fontWeight: 'bold',
+                  fontSize: '3em',
+                }}
+              >
+                :D
+              </div>
+            </div>
+            <h5
               style={{
-                width: tileSize * 2,
                 height: tileSize * 2,
-                border: '7px dashed blue',
-                color: 'blue',
-                fontWeight: 'bold',
+                display: 'flex',
+                justifyContent: 'flex-end',
               }}
             >
-              :)
-            </div>
-            <div
-              style={{
-                width: tileSize * 2,
-                height: tileSize * 2,
-                border: '5px dotted violet',
-                color: 'violet',
-                fontWeight: 'bold',
-              }}
-            >
-              :D
-            </div>
-            <div style={{height: tileSize * 2}}>
               <small>6 more friends</small>
-            </div>
+            </h5>
           </div>
         </div>
         <div className="App-frames" style={{padding: '8px'}}>
@@ -253,7 +284,10 @@ class App extends React.Component<Props> {
                   with other megatouch actions)
                   {/* TODO need to map all selected items for the currently selected character's avatar */}
                 </div>
-                <div>TODO save/export/import data</div>
+                <div>
+                  <button type="button">export</button>
+                  <button type="button">import</button>
+                </div>
               </div>
               <div style={{display: 'flex', flexWrap: 'wrap'}}>
                 <div>
@@ -313,49 +347,25 @@ const mapStateToProps = (state: t.ClientState): ConnectedStateProps => ({
 });
 
 const mapDispatchToProps = (dispatch: t.Dispatch): ConnectedDispatchProps => ({
-  // setActiveCharacterCategory: (category: t.CharacterCategoryType) =>
-  //   dispatch<t.Action>({
-  //     type: t.ActionType.SetActiveCharacterCategoryAction,
-  //     payload: {category},
-  //   }),
-  // // how do we do this? give id automatically to all images? pass index?
-  // setHoveredCharacterImage: (index: number) =>
-  //   dispatch<t.Action>({
-  //     type: t.ActionType.SetHoveredCharacterImageAction,
-  //     payload: {index},
-  //   }),
-  // setSelectedCharacterImage: (index: number) =>
-  //   dispatch<t.Action>({
-  //     type: t.ActionType.SetSelectedCharacterImageAction,
-  //     payload: {index},
-  //   }),
-
-  // TODO - rewrite the above functions with a single generic update
   setActiveCharacterCategory: (category: t.CharacterCategoryType) =>
+    // TODO ideally don't need this manual type assertion, need to rewrite Redux type
     dispatch<t.Action>({
       type: t.ActionType.UpdateEntityAction,
       payload: {id: 'ui', key: 'activeCharacterCategory', value: category},
     }),
-  // how do we do this? give id automatically to all images? pass index?
+  // how do we do this correctly? give id automatically to all images? pass index?
   setHoveredEntity: (index: number) =>
+    // TODO ideally don't need this manual type assertion, need to rewrite Redux type
     dispatch<t.Action>({
       type: t.ActionType.UpdateEntityAction,
       payload: {id: 'ui', key: 'hoveredEntity', value: index}, // TODO 'hoveredEntity'? or need a stack/collection?
     }),
   setSelectedCharacterImageIndex: (index: number) =>
+    // TODO ideally don't need this manual type assertion, need to rewrite Redux type
     dispatch<t.Action>({
       type: t.ActionType.UpdateEntityAction,
       payload: {id: 'ui', key: 'selectedCharacterImageIndex', value: index},
     }),
-
-  // updateTitle: (
-  //   id: string,
-  //   title: string, // TODO unify by making generic? update doc type?
-  // ) =>
-  //   dispatch<t.Action>({
-  //     type: t.ActionType.UpdateQueryAction,
-  //     payload: {id, title},
-  //   }),
 });
 
 export default (connect(mapStateToProps, mapDispatchToProps)(

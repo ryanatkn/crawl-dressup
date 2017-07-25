@@ -491,7 +491,7 @@
                 "payload"
             ]
         },
-        "UpdateQueryAction": {
+        "UpdateQueryAction": { // TODO make generic
             "title": "UpdateQueryAction",
             "type": "object",
             "id": "Query/Update",
