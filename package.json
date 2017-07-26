@@ -2,7 +2,7 @@
   "name": "enti",
   "description": "much",
   "version": "0.1.0",
-  "license": "MIT",
+  "license": "CC0 1.0",
   "homepage": "https://enti-life.github.io/enti",
   "scripts": {
     "start": "node scripts/start.js",
@@ -104,18 +104,9 @@
     "whatwg-fetch": "2.0.3"
   },
   "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.{js,jsx,ts,tsx}"
-    ],
-    "setupFiles": [
-      "<rootDir>/config/polyfills.js"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx"
-    ],
+    "collectCoverageFrom": ["src/**/*.{js,jsx,ts,tsx}"],
+    "setupFiles": ["<rootDir>/config/polyfills.js"],
+    "moduleFileExtensions": ["ts", "tsx", "js", "jsx"],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.ts?(x)",
       "<rootDir>/src/**/?(*.)(spec|test).ts?(x)"
@@ -135,9 +126,7 @@
     }
   },
   "babel": {
-    "presets": [
-      "react-app"
-    ]
+    "presets": ["react-app"]
   },
   "eslintConfig": {
     "extends": "react-app"

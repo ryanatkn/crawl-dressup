@@ -1,3 +1,5 @@
+## Artists
+
 The following is the list of artists that gave approval in 2010 for their artwork to be released under CC:0. It is asserted that this covers any new art submitted to Crawl. Please contact the maintainer (chris.hamons@gmail.com) if this is incorrect.
 
 - Eino Keskitalo evktalo@users.sourceforge.net (evktalo)
@@ -28,6 +30,7 @@ The following is the list of artists that gave approval in 2010 for their artwor
 - Charles Otto ottochar@gmail.com (caotto)
 
 The following artists have given explicit approval that past and future artwork submitted to crawl is under CC:0.
+
 - ontoclasm yokomeshi@gmail.com
 - Neil Moore neil@s-z.org (|amethyst)
 - donblas/chamons chris.hamons@gmail.com
@@ -61,3 +64,8 @@ The following artists have given explicit approval that past and future artwork 
 - roctavian - sicsemperjohn@gmail.com
 - Marbit
 - theTower mwclaws@gmail.com
+
+The following people have released all of their contributions to 
+[_enti_](https://github.com/enti-life/enti) under CC0.
+
+- Ryan Atkinson - ryanatkn@gmail.com
