@@ -7,7 +7,11 @@
 
 .App-header {
   padding: 10px 10px 0 10px;
+  height: 148px;
   color: #fed;
+  display: flex;
+  flex-shrink: 0;
+  justify-content: space-between;
 }
 
 .App-header h2 {
@@ -19,6 +23,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+  /* TODO */
+  overflow: auto;
 }
 
 .App-frames .Frame .Frame .Frame {

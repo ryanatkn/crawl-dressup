@@ -662,6 +662,7 @@
                 "drcwing",
                 "drchead",
 
+                // TODO didn't survive the transfer, make this data def?
                 // ommitted - see `ommittedCategories`
                 "barding",
                 "ench",

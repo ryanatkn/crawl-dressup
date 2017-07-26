@@ -13,6 +13,7 @@ export const Frame = ({
   <div
     className={`Frame ${className || ''}`}
     style={{
+      display: 'flex',
       backgroundColor: 'rgba(255, 250, 245, 0.95)',
       flex: 1,
       marginBottom: 10,

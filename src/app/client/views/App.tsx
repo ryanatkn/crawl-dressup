@@ -112,17 +112,16 @@ class App extends React.Component<Props> {
       : playerImages[10]; // TODO differently - default used as fallback, add to definition?
     return (
       <div className="App">
-        <div
-          className="App-header"
-          style={{display: 'flex', justifyContent: 'space-between'}}
-        >
-          <h2>
+        <div className="App-header">
+          <h2 style={{display: 'flex', alignItems: 'flex-start'}}>
             {/* TODO clickable-img class, or btn-img, or something similar  */}
-            <a href="https://github.com/enti-life/enti">
+            <a
+              href="https://github.com/enti-life/enti"
+              style={{opacity: 0.8, marginRight: 10}}
+            >
               <img src="assets/github-light.png" />
             </a>
-            {' '}
-            enti
+            <div>enti</div>
           </h2>
           <div style={{display: 'flex'}}>
             <div
@@ -285,50 +284,67 @@ class App extends React.Component<Props> {
                   {/* TODO need to map all selected items for the currently selected character's avatar */}
                 </div>
                 <div>
+                  TODO - show each of the character's avatars (the currently
+                  selected one being the large left one)
+                  {/* TODO display all of character's avatars */}
+                </div>
+                <div>
                   <button type="button">export</button>
                   <button type="button">import</button>
                 </div>
               </div>
-              <div style={{display: 'flex', flexWrap: 'wrap'}}>
-                <div>
-                  <div style={{display: 'flex', alignItems: 'center'}}>
-                    <h3>{t.CharacterCategoryType[activeCharacterCategory]}</h3>
-                    {' - '}
-                    <small>
-                      {playerImages.reduce(
-                        (count, image) =>
-                          image.category === activeCharacterCategory
-                            ? count + 1
-                            : count,
-                        0,
-                      )}
-                    </small>
-                  </div>
-                  <div style={{display: 'flex', flexWrap: 'wrap'}}>
-                    {playerImages.map(
-                      (image, i) =>
+              <div
+                style={{
+                  display: 'flex',
+                  flex: 1,
+                  flexDirection: 'column',
+                }}
+              >
+                <div style={{display: 'flex', alignItems: 'center'}}>
+                  <h3>{t.CharacterCategoryType[activeCharacterCategory]}</h3>
+                  {' - '}
+                  <small>
+                    {playerImages.reduce(
+                      (count, image) =>
                         image.category === activeCharacterCategory
-                          ? <div
-                              key={image.url}
-                              title={image.url}
-                              onMouseEnter={() => setHoveredEntity(i)}
-                              onClick={() => setSelectedCharacterImageIndex(i)}
-                              style={{
-                                border: i === selectedCharacterImageIndex
-                                  ? '3px dashed rgba(0, 0, 0, 0.2)'
-                                  : i === hoveredEntity
-                                    ? '3px dashed rgba(0, 0, 0, 0.4)'
-                                    : '3px dashed transparent',
-                              }}
-                            >
-                              <Img
-                                src={`assets/${image.url}`}
-                                size={renderedTileSize}
-                              />
-                            </div>
-                          : null,
+                          ? count + 1
+                          : count,
+                      0,
                     )}
-                  </div>
+                  </small>
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    flexShrink: 0,
+                    overflow: 'auto',
+                    flex: 1,
+                  }}
+                >
+                  {playerImages.map(
+                    (image, i) =>
+                      image.category === activeCharacterCategory
+                        ? <div
+                            key={image.url}
+                            title={image.url}
+                            onMouseEnter={() => setHoveredEntity(i)}
+                            onClick={() => setSelectedCharacterImageIndex(i)}
+                            style={{
+                              border: i === selectedCharacterImageIndex
+                                ? '3px dashed rgba(0, 0, 0, 0.2)'
+                                : i === hoveredEntity
+                                  ? '3px dashed rgba(0, 0, 0, 0.4)'
+                                  : '3px dashed transparent',
+                            }}
+                          >
+                            <Img
+                              src={`assets/${image.url}`}
+                              size={renderedTileSize}
+                            />
+                          </div>
+                        : null,
+                  )}
                 </div>
               </div>
             </div>
