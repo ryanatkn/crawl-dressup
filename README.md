@@ -20,10 +20,10 @@ npm run assets
 
 ## license
 
-[CC0](http://creativecommons.org/publicdomain/zero/1.0/)
+[CC0 1.0](http://creativecommons.org/publicdomain/zero/1.0/) (Public Domain Dedication)
 
 - [artists](ARTISTS.md)
 - [code](LICENSE)
 - [tiles](https://github.com/crawl/tiles)
-    from [Dungeon Crawl Stone Soup](https://github.com/crawl/crawl) -
+    are from [Dungeon Crawl Stone Soup](https://github.com/crawl/crawl) -
     see the included [readme and arists list](public/assets/dcss/README.md)

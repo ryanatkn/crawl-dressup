@@ -61,6 +61,13 @@ export const appDef: AppDef = {
           'export type Json = any[] | object | boolean | number | number | string | null;\n',
       },
     },
+    Path: {
+      title: 'Path',
+      type: 'string',
+      code: {
+        declaration: 'export type Path = string;\n',
+      },
+    },
     Entity: {
       title: 'Entity',
       type: 'object',
@@ -97,6 +104,202 @@ export const appDef: AppDef = {
       required: ['entities'],
       code: {
         declaration: 'export interface ClientState {entities: object}\n',
+      },
+    },
+    Character: {
+      title: 'Character',
+      type: 'object',
+      allOf: [
+        {
+          $ref: '#/definitions/Entity',
+        },
+      ],
+      properties: {
+        name: {
+          type: 'string',
+        },
+        avatars: {
+          type: 'array',
+          items: {
+            $ref: '#/definitions/Avatar',
+          },
+        },
+        activeAvatarId: {
+          $ref: '#/definitions/Id',
+        },
+      },
+      required: ['name', 'avatars', 'activeAvatarId'],
+      code: {
+        declaration:
+          'export interface Character extends Entity {\n  name: string;\n  avatars: Avatar[];\n  activeAvatarId: Id;\n}\n',
+      },
+    },
+    Avatar: {
+      title: 'Avatar',
+      type: 'object',
+      allOf: [
+        {
+          $ref: '#/definitions/Entity',
+        },
+      ],
+      properties: {
+        costume: {
+          $ref: '#/definitions/Costume',
+        },
+      },
+      required: ['costume'],
+      code: {
+        declaration:
+          'export interface Avatar extends Entity {costume: Costume}\n',
+      },
+    },
+    Costume: {
+      title: 'Costume',
+      type: 'object',
+      allOf: [
+        {
+          $ref: '#/definitions/Entity',
+        },
+      ],
+      properties: {
+        base: {
+          oneOf: [
+            {
+              $ref: '#/definitions/Id',
+            },
+            {
+              type: 'null',
+            },
+          ],
+        },
+        hair: {
+          oneOf: [
+            {
+              $ref: '#/definitions/Id',
+            },
+            {
+              type: 'null',
+            },
+          ],
+        },
+        beard: {
+          oneOf: [
+            {
+              $ref: '#/definitions/Id',
+            },
+            {
+              type: 'null',
+            },
+          ],
+        },
+        body: {
+          oneOf: [
+            {
+              $ref: '#/definitions/Id',
+            },
+            {
+              type: 'null',
+            },
+          ],
+        },
+        legs: {
+          oneOf: [
+            {
+              $ref: '#/definitions/Id',
+            },
+            {
+              type: 'null',
+            },
+          ],
+        },
+        hand1: {
+          oneOf: [
+            {
+              $ref: '#/definitions/Id',
+            },
+            {
+              type: 'null',
+            },
+          ],
+        },
+        hand2: {
+          oneOf: [
+            {
+              $ref: '#/definitions/Id',
+            },
+            {
+              type: 'null',
+            },
+          ],
+        },
+        head: {
+          oneOf: [
+            {
+              $ref: '#/definitions/Id',
+            },
+            {
+              type: 'null',
+            },
+          ],
+        },
+        gloves: {
+          oneOf: [
+            {
+              $ref: '#/definitions/Id',
+            },
+            {
+              type: 'null',
+            },
+          ],
+        },
+        boots: {
+          oneOf: [
+            {
+              $ref: '#/definitions/Id',
+            },
+            {
+              type: 'null',
+            },
+          ],
+        },
+        cloak: {
+          oneOf: [
+            {
+              $ref: '#/definitions/Id',
+            },
+            {
+              type: 'null',
+            },
+          ],
+        },
+        felids: {
+          oneOf: [
+            {
+              $ref: '#/definitions/Id',
+            },
+            {
+              type: 'null',
+            },
+          ],
+        },
+      },
+      required: [
+        'base',
+        'hair',
+        'beard',
+        'body',
+        'legs',
+        'hand1',
+        'hand2',
+        'head',
+        'gloves',
+        'boots',
+        'cloak',
+        'felids',
+      ],
+      code: {
+        declaration:
+          'export interface Costume extends Entity {\n  base: Id | null;\n  hair: Id | null;\n  beard: Id | null;\n  body: Id | null;\n  legs: Id | null;\n  hand1: Id | null;\n  hand2: Id | null;\n  head: Id | null;\n  gloves: Id | null;\n  boots: Id | null;\n  cloak: Id | null;\n  felids: Id | null;\n}\n',
       },
     },
     DataSource: {
@@ -721,8 +924,8 @@ export const appDef: AppDef = {
           'export interface SetActiveQueryAction extends BaseAction {\n  type: ActionType.SetActiveQueryAction;\n  payload: {id: Id};\n}\n',
       },
     },
-    CharacterCategoryType: {
-      title: 'CharacterCategoryType',
+    CharacterCategory: {
+      title: 'CharacterCategory',
       enum: [
         'base',
         'hair',
@@ -746,12 +949,17 @@ export const appDef: AppDef = {
       ],
       code: {
         declaration:
-          'export enum CharacterCategoryType {\n  base,\n  hair,\n  beard,\n  body,\n  legs,\n  hand1,\n  hand2,\n  head,\n  gloves,\n  boots,\n  cloak,\n  felids,\n  drcwing,\n  drchead,\n  barding,\n  ench,\n  halo,\n  mutations,\n  transform,\n}\n',
+          'export enum CharacterCategory {\n  base,\n  hair,\n  beard,\n  body,\n  legs,\n  hand1,\n  hand2,\n  head,\n  gloves,\n  boots,\n  cloak,\n  felids,\n  drcwing,\n  drchead,\n  barding,\n  ench,\n  halo,\n  mutations,\n  transform,\n}\n',
       },
     },
     ImageData: {
       title: 'ImageData',
       type: 'object',
+      allOf: [
+        {
+          $ref: '#/definitions/Entity',
+        },
+      ],
       properties: {
         url: {
           type: 'string',
@@ -763,12 +971,13 @@ export const appDef: AppDef = {
           },
         },
         category: {
-          $ref: '#/definitions/CharacterCategoryType',
+          $ref: '#/definitions/CharacterCategory',
         },
       },
+      required: ['url', 'parts', 'category'],
       code: {
         declaration:
-          'export interface ImageData {\n  url?: string;\n  parts?: string[];\n  category?: CharacterCategoryType;\n}\n',
+          'export interface ImageData extends Entity {\n  url: string;\n  parts: string[];\n  category: CharacterCategory;\n}\n',
       },
     },
     BaseMessage: {

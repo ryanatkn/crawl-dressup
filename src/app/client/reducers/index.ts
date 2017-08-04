@@ -1,5 +1,29 @@
+import * as assets from '../../../assets';
 import * as rand from '../../../utils/rand';
 import * as t from '../types';
+
+// TODO move this
+// TODO key these by an entity id so they can be referred to
+export const playerImages: t.ImageData[] = assets.images
+  .filter(image => image.indexOf('dcss/player/') === 0)
+  .map(image => {
+    const parts = image.split('/');
+    const category = t.CharacterCategory[parts[2]];
+    return {
+      id: rand.id(),
+      url: image,
+      parts,
+      category,
+    };
+  });
+
+// TODO move this and `playerImages`
+export const playerImagesById: Dict<
+  t.ImageData
+> = playerImages.reduce((result, image) => {
+  result[image.id!] = image;
+  return result;
+}, {});
 
 // TODO genme
 export const getDefaultState = (): t.ClientState => {
@@ -35,16 +59,50 @@ export const getDefaultState = (): t.ClientState => {
       lastExecuted: null,
     },
   ];
+  const costume = {
+    id: rand.id(),
+    base: playerImages.find(i => i.category === t.CharacterCategory.base)!.id,
+    hair: null,
+    beard: null,
+    body: null,
+    legs: null,
+    hand1: null,
+    hand2: null,
+    head: null,
+    gloves: null,
+    boots: null,
+    cloak: null,
+    felids: playerImages.find(i => i.category === t.CharacterCategory.felids)!
+      .id,
+  };
   return {
     entities: {
+      // TODO unite with entity ids and paths
       ui: {
-        hoveredEntity: null,
-        activeCharacterCategory: t.CharacterCategoryType.base,
-        selectedCharacterImageIndex: null,
+        hoveredEntityId: null,
+        activeCharacterCategory: t.CharacterCategory.base,
       },
       queries,
       sources,
       activeQueryId: (queries[0] && queries[0].id) || null,
+      character: {
+        id: rand.id(),
+        name: 'Nimto',
+        avatars: [
+          {
+            id: rand.id(),
+            // TODO this is all janky
+            costume,
+          },
+        ],
+      },
+      previewAvatar: {
+        id: rand.id(),
+        costume: {
+          ...costume,
+          id: rand.id(),
+        },
+      },
     },
   };
 };
@@ -174,16 +232,75 @@ export const reducer = (
       };
     }
     case t.ActionType.UpdateEntityAction: {
-      return {
-        ...state,
-        entities: {
-          ...state.entities,
-          [action.payload.id]: {
-            ...state.entities[action.payload.id],
-            [action.payload.key]: action.payload.value,
+      // TODO support arbitrary keyPath length (immutable.js?)
+      const keyPath = action.payload.key.split('.');
+      if (keyPath.length === 1) {
+        return {
+          ...state,
+          entities: {
+            ...state.entities,
+            [action.payload.id]: {
+              ...state.entities[action.payload.id],
+              [action.payload.key]: action.payload.value,
+            },
           },
-        },
-      };
+        };
+      } else if (keyPath.length === 2) {
+        return {
+          ...state,
+          entities: {
+            ...state.entities,
+            [action.payload.id]: {
+              ...state.entities[action.payload.id],
+              [keyPath[0]]: {
+                ...state.entities[action.payload.id][keyPath[0]],
+                [keyPath[1]]: action.payload.value,
+              },
+            },
+          },
+        };
+      } else if (keyPath.length === 3) {
+        return {
+          ...state,
+          entities: {
+            ...state.entities,
+            [action.payload.id]: {
+              ...state.entities[action.payload.id],
+              [keyPath[0]]: {
+                ...state.entities[action.payload.id][keyPath[0]],
+                [keyPath[1]]: {
+                  ...state.entities[action.payload.id][keyPath[0]][keyPath[1]],
+                  [keyPath[2]]: action.payload.value,
+                },
+              },
+            },
+          },
+        };
+      } else if (keyPath.length === 4) {
+        return {
+          ...state,
+          entities: {
+            ...state.entities,
+            [action.payload.id]: {
+              ...state.entities[action.payload.id],
+              [keyPath[0]]: {
+                ...state.entities[action.payload.id][keyPath[0]],
+                [keyPath[1]]: {
+                  ...state.entities[action.payload.id][keyPath[0]][keyPath[1]],
+                  [keyPath[2]]: {
+                    ...state.entities[action.payload.id][keyPath[0]][
+                      keyPath[1]
+                    ][keyPath[2]],
+                    [keyPath[3]]: action.payload.value,
+                  },
+                },
+              },
+            },
+          },
+        };
+      } else {
+        throw new Error(`Unsupported key path ${action.payload.key}`);
+      }
     }
     default:
       t.is<never>(action);

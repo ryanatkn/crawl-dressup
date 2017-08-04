@@ -4,8 +4,8 @@ import {logger} from '../utils/log';
 
 const log = logger('Img', {count: ['render']});
 
-export interface Props extends React.ClassAttributes<HTMLImageElement> {
-  src: string;
+export interface Props extends React.HTMLProps<HTMLDivElement> {
+  url: string | null;
   size: number;
   className?: string;
 }
@@ -14,13 +14,14 @@ export interface Props extends React.ClassAttributes<HTMLImageElement> {
 // The bottom layer is necessary to prevent bleed-through from not being 100% opaque.
 // TODO cache rendering with canvas
 export class Img extends React.PureComponent<Props> {
-  render(): JSX.Element {
+  render(): JSX.Element | null {
     log('render', this);
-    const {src, size, className} = this.props;
+    const {url, size, className, ...rest} = this.props;
+    if (!url) return null;
     return (
-      <div className={`Img pos-relative ${className || ''}`}>
+      <div className={`Img pos-relative ${className || ''}`} {...rest}>
         <img
-          src={src}
+          src={url}
           style={{
             width: size,
             height: size,
@@ -28,7 +29,7 @@ export class Img extends React.PureComponent<Props> {
           className="pixelated"
         />
         <img
-          src={src}
+          src={url}
           style={{
             width: size,
             height: size,
@@ -39,7 +40,7 @@ export class Img extends React.PureComponent<Props> {
           }}
         />
         <img
-          src={src}
+          src={url}
           style={{
             width: size,
             height: size,

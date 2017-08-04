@@ -1,3 +1,9 @@
+open questions
+    - figure out storage with entities
+    - clientState.entities type
+    - how to make id refs to an entity of a particular type? needed to validate -- "$ref": "#/definitions/Id" should encode the underlying type
+    - improve type safety, especially around entities
+
 new avatar categories
     - ears
     - eyes
@@ -97,11 +103,11 @@ generic rework
 
 generic rework done - minimal beginnings at least
     - we now want a container type, or a hardcoded workaround.
-problem: need to store a map of `CharacterCategoryType` to `ImageData`
+problem: need to store a map of `CharacterCategory` to `ImageData`
     - possibly namespace it like:
-         - `character/${characterId}/avatar/${avatarId}/category/${characterCategoryType}/imageIndex/${index}`
+         - `character/${characterId}/avatar/${avatarId}/category/${characterCategory}/imageIndex/${index}`
          - .. or is index the value to that key?
-         - `{[`character/${characterId}/avatar/${avatarId}/category/${characterCategoryType}/imageIndex`]: index}`
+         - `{[`character/${characterId}/avatar/${avatarId}/category/${characterCategory}/imageIndex`]: index}`
          - character is like a virtual shortcut to the currently active character
             - punting on multiple characters for now
         - simplify? one avatar id should be enough
@@ -160,7 +166,7 @@ export/import
     - ecs with id/name as keys - need a handle on things
         - namespaced possibly under `character/${activeCharacter}/etc`
     - what are we exporting? a single complete avatar definition?
-        - `{[key: t.CharacterCategoryType]: imageIndex}`
+        - `{[key: t.CharacterCategory]: imageIndex}`
         - or `imageId`?
     
 could paginate avatars 
@@ -172,10 +178,6 @@ history
     - (memory cost? immutable.js?)
         - `id: {key: value}`
         - `id.key: value`
-
-interaction
-    - hoveredEntity => ui:pointer:hover
-    - selectedCharacterImageIndex => ui:pointer:click
 
 contribute with whatever skills you have
     - pixel art
@@ -227,3 +229,54 @@ ecs
     - do we do key/value lookup? type-safe functions that return string keys?
         - or something more formalized, like a tree?
             - keypath immutable.js concept?
+
+
+path aliases
+    - all entities are definition instances that have a key, an id, along with any arbitrary paths the user might have
+    - so `activeCharacter/activeInventory`, or simply `activeInventory`,
+        gets whatever id for the active account's active character's inventory,
+        or `inventory/ULID890123JLDOU89312ASDJK3` or simply `ULID890123JLDOU89312ASDJK3`
+        or heck just `inventory` because what else should it be?
+    - entity is is optional part of it, always the lone identifier if seen?
+
+procedural characters
+    - avatar has some set of affordances/appendages/modules that allow for some set of held inventory items
+        - held vs packed inventory items - different sets, different effects on gameplay
+
+alert queue (like items picked up, items sold or won at auction, etc)
+
+look at protocols
+    - matrix
+    - scuttlebutt
+
+mmo
+    - serves as an implementation metaphor for identity, aliases, permissions and ownership,
+        content, sharing, social structure, deployed persistent code/scripts/agents, 
+    - platform for exploring ideas through implementations at various scales,
+        with openly published data
+
+long term
+    - infer definitions from data set
+
+Tools for creating apps and other interactive computations.
+The background game is for metaphors. Moving files, executing processes, running programs,
+all of these things are more readily understood when applied within a metaphor.
+
+terminology
+    - *characters* can take the form of one of their many *avatars*
+        - so to play "dress up", you can keep the same character (same name, etc) but change costume
+    -
+
+features
+    - companion server runs alongside your app to update `app.def.json`)
+
+tradeoffs
+    - pros
+        - defining the app becomes a process of describing its nouns and verbs (definitions and actions)
+    - cons
+        - debugging writers is potentially nightmareish
+        - need to define a lot of validators for bad data, until a UI is put on things
+
+scratchlist TODO
+    - make id required on entities and properly render extended props
+    - mock tests

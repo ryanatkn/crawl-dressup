@@ -30,9 +30,34 @@ export const mockJson = (): t.Json =>
     null,
   ]) as t.Json;
 
+export const mockPath = (): t.Path => rand.str();
+
 export const mockEntity = (): t.Entity => ({id: t.mockId()});
 
 export const mockClientState = (): t.ClientState => ({entities: {}});
+
+export const mockCharacter = (): t.Character => ({
+  name: rand.str(),
+  avatars: [],
+  activeAvatarId: t.mockId(),
+});
+
+export const mockAvatar = (): t.Avatar => ({costume: t.mockCostume()});
+
+export const mockCostume = (): t.Costume => ({
+  base: sample([t.mockId(), null]) as t.Id | null,
+  hair: sample([t.mockId(), null]) as t.Id | null,
+  beard: sample([t.mockId(), null]) as t.Id | null,
+  body: sample([t.mockId(), null]) as t.Id | null,
+  legs: sample([t.mockId(), null]) as t.Id | null,
+  hand1: sample([t.mockId(), null]) as t.Id | null,
+  hand2: sample([t.mockId(), null]) as t.Id | null,
+  head: sample([t.mockId(), null]) as t.Id | null,
+  gloves: sample([t.mockId(), null]) as t.Id | null,
+  boots: sample([t.mockId(), null]) as t.Id | null,
+  cloak: sample([t.mockId(), null]) as t.Id | null,
+  felids: sample([t.mockId(), null]) as t.Id | null,
+});
 
 export const mockDataSource = (): t.DataSource => ({
   kind: sample(['sql', 'mongo']) as 'sql' | 'mongo',
@@ -185,33 +210,33 @@ export const mockSetActiveQueryAction = (): t.SetActiveQueryAction => ({
   payload: {id: t.mockId()},
 });
 
-export const mockCharacterCategoryType = (): t.CharacterCategoryType =>
+export const mockCharacterCategory = (): t.CharacterCategory =>
   sample([
-    t.CharacterCategoryType.base,
-    t.CharacterCategoryType.hair,
-    t.CharacterCategoryType.beard,
-    t.CharacterCategoryType.body,
-    t.CharacterCategoryType.legs,
-    t.CharacterCategoryType.hand1,
-    t.CharacterCategoryType.hand2,
-    t.CharacterCategoryType.head,
-    t.CharacterCategoryType.gloves,
-    t.CharacterCategoryType.boots,
-    t.CharacterCategoryType.cloak,
-    t.CharacterCategoryType.felids,
-    t.CharacterCategoryType.drcwing,
-    t.CharacterCategoryType.drchead,
-    t.CharacterCategoryType.barding,
-    t.CharacterCategoryType.ench,
-    t.CharacterCategoryType.halo,
-    t.CharacterCategoryType.mutations,
-    t.CharacterCategoryType.transform,
-  ]) as t.CharacterCategoryType;
+    t.CharacterCategory.base,
+    t.CharacterCategory.hair,
+    t.CharacterCategory.beard,
+    t.CharacterCategory.body,
+    t.CharacterCategory.legs,
+    t.CharacterCategory.hand1,
+    t.CharacterCategory.hand2,
+    t.CharacterCategory.head,
+    t.CharacterCategory.gloves,
+    t.CharacterCategory.boots,
+    t.CharacterCategory.cloak,
+    t.CharacterCategory.felids,
+    t.CharacterCategory.drcwing,
+    t.CharacterCategory.drchead,
+    t.CharacterCategory.barding,
+    t.CharacterCategory.ench,
+    t.CharacterCategory.halo,
+    t.CharacterCategory.mutations,
+    t.CharacterCategory.transform,
+  ]) as t.CharacterCategory;
 
 export const mockImageData = (): t.ImageData => ({
   url: rand.str(),
   parts: [],
-  category: t.mockCharacterCategoryType(),
+  category: t.mockCharacterCategory(),
 });
 
 export const mockBaseMessage = (): t.BaseMessage => ({id: t.mockId()});

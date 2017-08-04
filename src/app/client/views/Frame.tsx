@@ -1,8 +1,6 @@
 import * as React from 'react';
 
-export interface Props extends React.ClassAttributes<any>, React.HTMLAttributes<
-  HTMLDivElement
-> {}
+export interface Props extends React.HTMLProps<HTMLDivElement> {}
 
 export const Frame = ({
   children,

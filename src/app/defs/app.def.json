@@ -24,6 +24,10 @@
                 {"type": "null"}
             ]
         },
+        "Path": {
+            "title": "Path",
+            "type": "string" // TODO additional validations
+        },
         "Entity": { // k/v, id/defs
             "title": "Entity",
             "type": "object",
@@ -48,7 +52,7 @@
                         "^[A-Z0-9]{26}$": { // TODO how to extract this? also some chars like O are omitted, also need to account for arbitrary strings (oneOf)
                             "$ref": "#/definitions/Entity"
                         },
-                        "^[a-zA-Z0-9]+": { // TODO be more lenient?
+                        "^[a-zA-Z0-9]+": { // TODO be more lenient? include path/info/if/thats/what/we/use?
                             "$ref": "#/definitions/Entity"
                         }
                     }
@@ -56,6 +60,75 @@
             },
             "required": [
                 "entities"
+            ]
+        },
+        "Character": {
+            "title": "Character",
+            "type": "object",
+            "allOf": [{"$ref": "#/definitions/Entity"}],
+            "properties": {
+                "name": {
+                    "type": "string" // TODO CharacterName with validation rules
+                },
+                "avatars": { // TODO or should avatars point to a single character?
+                    "type": "array",
+                    "items": {"$ref": "#/definitions/Avatar"}
+                },
+                "activeAvatarId": {
+                    "$ref": "#/definitions/Id" // TODO how to express id of an avatar?
+                }
+            },
+            "required": [
+                "name",
+                "avatars",
+                "activeAvatarId"
+            ]
+        },
+        "Avatar": {
+            "title": "Avatar",
+            "type": "object",
+            "allOf": [{"$ref": "#/definitions/Entity"}],
+            "properties": {
+                "costume": {"$ref": "#/definitions/Costume"}
+            },
+            "required": [
+                "costume"
+            ]
+        },
+        "Costume": {
+            "title": "Costume",
+            "type": "object",
+            "allOf": [{"$ref": "#/definitions/Entity"}],
+            "properties": {
+                // TODO we're hardcoding a mapping of CharacterCategory into this type
+                // what we really want is a map of a subset of categories to paths
+                // TODO also want to encode Id is to an `ImageData`
+                "base": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
+                "hair": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
+                "beard": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
+                "body": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
+                "legs": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
+                "hand1": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
+                "hand2": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
+                "head": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
+                "gloves": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
+                "boots": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
+                "cloak": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
+                "felids": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]}
+            },
+            "required": [
+                "base",
+                "hair",
+                "beard",
+                "body",
+                "legs",
+                "hand1",
+                "hand2",
+                "head",
+                "gloves",
+                "boots",
+                "cloak",
+                "felids"
             ]
         },
         "DataSource": {
@@ -644,8 +717,8 @@
                 "payload"
             ]
         },
-        "CharacterCategoryType": {
-            "title": "CharacterCategoryType",
+        "CharacterCategory": {
+            "title": "CharacterCategory",
             "enum": [
                 "base",
                 "hair",
@@ -674,11 +747,17 @@
         "ImageData": {
             "title": "ImageData",
             "type": "object",
+            "allOf": [{"$ref": "#/definitions/Entity"}],
             "properties": {
                 "url": {"type": "string"},
                 "parts": {"type": "array", "items": {"type": "string"}},
-                "category": {"$ref": "#/definitions/CharacterCategoryType"}
-            }
+                "category": {"$ref": "#/definitions/CharacterCategory"}
+            },
+            "required": [
+                "url",
+                "parts",
+                "category"
+            ]
         },
         "BaseMessage": {
             "title": "BaseMessage",

@@ -147,7 +147,7 @@ export function renderRandomValue(
 ): string {
   // TODO probably switch on the type of the property from a type union of SchemaProperty subtypes
   if (prop.properties) {
-    return `{${renderPropList(prop)}}`;
+    return `{${renderPropList(prop, undefined, refTypePrefix)}}`;
   } else if (prop.$ref) {
     return prop.value !== undefined
       ? `${refTypePrefix}${h.extractRefTypeTitle(prop.$ref)}.${prop.value}` // TODO this is hardcoded for enums, or namespacing at least

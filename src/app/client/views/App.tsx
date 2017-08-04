@@ -3,91 +3,33 @@
 import './App.css';
 
 import * as React from 'react';
-import * as assets from '../../../assets';
+import * as k from '../constants';
 import * as t from '../types';
 
+import {Costume} from './Costume';
 import {Frame} from './Frame';
 import {Img} from './Img';
 import {connect} from 'react-redux';
 import {logger} from '../utils/log';
-import {uniq} from 'lodash';
+import {playerImages} from '../reducers';
 
 const log = logger('App', {count: ['render']});
 
-const tileSize = 32; // TODO
-const renderedTileSize = tileSize * 4; // TODO
-const renderedTileSizeLg = renderedTileSize * 2; // TODO
-
-// TODO move to reducer?
-const playerImages: t.ImageData[] = assets.images
-  .filter(image => image.indexOf('/dcss/player/') === 0)
-  .map(image => {
-    const parts = image.split('/');
-    const category = t.CharacterCategoryType[parts[3]];
-    return {
-      url: image,
-      parts,
-      category,
-    };
-  });
-
-// TODO move to `app.def.json`
-const categoryOrder: t.CharacterCategoryType[] = [
-  t.CharacterCategoryType.base,
-  t.CharacterCategoryType.hair,
-  t.CharacterCategoryType.beard,
-  t.CharacterCategoryType.body,
-  t.CharacterCategoryType.legs,
-  t.CharacterCategoryType.hand1,
-  t.CharacterCategoryType.hand2,
-  t.CharacterCategoryType.head,
-  t.CharacterCategoryType.gloves,
-  t.CharacterCategoryType.boots,
-  t.CharacterCategoryType.cloak,
-  t.CharacterCategoryType.felids,
-  t.CharacterCategoryType.drcwing,
-  t.CharacterCategoryType.drchead,
-];
-
-const omittedCategories: t.CharacterCategoryType[] = [
-  t.CharacterCategoryType.barding,
-  t.CharacterCategoryType.ench,
-  t.CharacterCategoryType.halo,
-  t.CharacterCategoryType.mutations,
-  t.CharacterCategoryType.transform,
-];
-
-// TODO move this and the above code
-const categories: t.CharacterCategoryType[] = uniq(
-  playerImages.map(i => i.category!), // tslint:disable-line:no-non-null-assertion // TODO why?
-)
-  .filter(i => !omittedCategories.includes(i))
-  .sort((a, b) => {
-    const aIdx = categoryOrder.indexOf(a);
-    const bIdx = categoryOrder.indexOf(b);
-    if (aIdx === -1 && bIdx === -1) {
-      return aIdx < bIdx ? -1 : 1;
-    } else if (aIdx === -1) {
-      return 1;
-    } else if (bIdx === -1) {
-      return -1;
-    } else if (aIdx < bIdx) {
-      return -1;
-    } else {
-      return 1;
-    }
-  });
-
 interface ConnectedStateProps {
-  activeCharacterCategory: t.CharacterCategoryType;
-  hoveredEntity: number | null;
-  selectedCharacterImageIndex: number | null;
+  activeCharacterCategory: t.CharacterCategory;
+  hoveredEntityId: t.Id | null;
+  avatar: t.Avatar;
+  previewAvatar: t.Avatar;
   // queries: t.Query[];
 }
 interface ConnectedDispatchProps {
-  setActiveCharacterCategory(category: t.CharacterCategoryType): void;
-  setHoveredEntity(index: number): void;
-  setSelectedCharacterImageIndex(index: number): void;
+  setActiveCharacterCategory(
+    category: t.CharacterCategory,
+    currentCategory: t.CharacterCategory,
+    currentAvatarCostumeValue: t.Id,
+  ): void;
+  setHoveredEntityId(id: t.Id, category: t.CharacterCategory): void;
+  setCostumeCategory(id: t.Id, category: t.CharacterCategory): void;
   // updateTitle(id: string, title: string): void;
 }
 interface ConnectedProps extends ConnectedStateProps, ConnectedDispatchProps {}
@@ -98,18 +40,14 @@ class App extends React.Component<Props> {
     log('render', this);
     const {
       activeCharacterCategory,
-      hoveredEntity,
-      selectedCharacterImageIndex,
+      hoveredEntityId,
+      avatar,
+      previewAvatar,
+      // actions
       setActiveCharacterCategory,
-      setHoveredEntity,
-      setSelectedCharacterImageIndex,
+      setHoveredEntityId,
+      setCostumeCategory,
     } = this.props as ConnectedProps;
-    const selectedCharacterImage = selectedCharacterImageIndex !== null
-      ? playerImages[selectedCharacterImageIndex]
-      : playerImages[10]; // TODO differently - default used as fallback, add to definition?
-    const hoveredCharacterImage = hoveredEntity !== null
-      ? playerImages[hoveredEntity]
-      : playerImages[10]; // TODO differently - default used as fallback, add to definition?
     return (
       <div className="App">
         <div className="App-header">
@@ -148,7 +86,7 @@ class App extends React.Component<Props> {
                     fontWeight: 'bold',
                   }}
                 >
-                  nimfot
+                  nimto
                 </div>
                 <div style={{padding: 4}}>cogs</div>
                 {/* apps don't work in every world, but compatibility is possible */}
@@ -168,7 +106,7 @@ class App extends React.Component<Props> {
                 {/* apps don't work in every world, but compatibility is possible */}
               </h5>
             </div>
-            <div style={{height: tileSize * 2}}>
+            <div style={{height: k.tileSize * 2}}>
               <h3 style={{fontWeight: 'normal'}}>settings</h3>
             </div>
           </div>
@@ -176,8 +114,8 @@ class App extends React.Component<Props> {
             <div style={{display: 'flex'}}>
               <div
                 style={{
-                  width: tileSize * 2,
-                  height: tileSize * 2,
+                  width: k.tileSize * 2,
+                  height: k.tileSize * 2,
                   border: '7px dashed blue',
                   color: 'blue',
                   fontWeight: 'bold',
@@ -188,8 +126,8 @@ class App extends React.Component<Props> {
               </div>
               <div
                 style={{
-                  width: tileSize * 2,
-                  height: tileSize * 2,
+                  width: k.tileSize * 2,
+                  height: k.tileSize * 2,
                   border: '5px dotted violet',
                   color: 'violet',
                   fontWeight: 'bold',
@@ -201,7 +139,7 @@ class App extends React.Component<Props> {
             </div>
             <h5
               style={{
-                height: tileSize * 2,
+                height: k.tileSize * 2,
                 display: 'flex',
                 justifyContent: 'flex-end',
               }}
@@ -221,41 +159,25 @@ class App extends React.Component<Props> {
               }}
             >
               <div style={{display: 'flex', flexWrap: 'wrap'}}>
-                <div
+                <Costume
+                  costume={avatar.costume}
                   style={{
                     display: 'flex',
                     flexWrap: 'wrap',
                     alignItems: 'flex-end',
                   }}
-                >
-                  <Img
-                    src={`assets/dcss/player/felids/cat7.png`}
-                    size={renderedTileSize}
-                  />
-                  <Img
-                    src={`assets${selectedCharacterImage.url}`}
-                    size={renderedTileSizeLg}
-                  />
-                </div>
-                <div
+                />
+                <Costume
+                  costume={previewAvatar.costume}
                   style={{
                     display: 'flex',
                     flexWrap: 'wrap',
                     alignItems: 'flex-end',
                   }}
-                >
-                  <Img
-                    src={`assets${hoveredCharacterImage.url}`}
-                    size={renderedTileSizeLg}
-                  />
-                  <Img
-                    src={`assets/dcss/player/felids/cat7.png`}
-                    size={renderedTileSize}
-                  />
-                </div>
+                />
                 <div>
                   {/*TODO on click or key={i}, toggle show/hide that category in ui, and displayed toggled status, also display hovered status*/}
-                  {categories.map((category, i) =>
+                  {k.categoriesOrderedForMenu.map((category, i) =>
                     <div
                       key={category}
                       style={{
@@ -264,9 +186,16 @@ class App extends React.Component<Props> {
                           : 'normal',
                         cursor: 'pointer',
                       }}
-                      onClick={() => setActiveCharacterCategory(category)}
+                      onClick={() =>
+                        setActiveCharacterCategory(
+                          category,
+                          activeCharacterCategory,
+                          avatar.costume[
+                            t.CharacterCategory[activeCharacterCategory]
+                          ],
+                        )}
                     >
-                      <small>{i}</small> {t.CharacterCategoryType[category]}
+                      <small>{i}</small> {t.CharacterCategory[category]}
                       {' - '}
                       <small>
                         {playerImages.reduce(
@@ -301,7 +230,7 @@ class App extends React.Component<Props> {
                 }}
               >
                 <div style={{display: 'flex', alignItems: 'center'}}>
-                  <h3>{t.CharacterCategoryType[activeCharacterCategory]}</h3>
+                  <h3>{t.CharacterCategory[activeCharacterCategory]}</h3>
                   {' - '}
                   <small>
                     {playerImages.reduce(
@@ -322,29 +251,39 @@ class App extends React.Component<Props> {
                     flex: 1,
                   }}
                 >
-                  {playerImages.map(
-                    (image, i) =>
-                      image.category === activeCharacterCategory
-                        ? <div
-                            key={image.url}
-                            title={image.url}
-                            onMouseEnter={() => setHoveredEntity(i)}
-                            onClick={() => setSelectedCharacterImageIndex(i)}
-                            style={{
-                              border: i === selectedCharacterImageIndex
-                                ? '3px dashed rgba(0, 0, 0, 0.2)'
-                                : i === hoveredEntity
-                                  ? '3px dashed rgba(0, 0, 0, 0.4)'
-                                  : '3px dashed transparent',
-                            }}
-                          >
-                            <Img
-                              src={`assets/${image.url}`}
-                              size={renderedTileSize}
-                            />
-                          </div>
-                        : null,
-                  )}
+                  {playerImages.map(image => {
+                    const avatarCostumeItem =
+                      avatar.costume[t.CharacterCategory[image.category]];
+                    return image.category === activeCharacterCategory
+                      ? <div
+                          key={image.url}
+                          title={image.url}
+                          onMouseEnter={() =>
+                            setHoveredEntityId(
+                              image.id!, // TODO remove when id is required on Entity
+                              activeCharacterCategory,
+                            )}
+                          onClick={() =>
+                            setCostumeCategory(
+                              image.id!, // TODO remove when id is required on Entity
+                              activeCharacterCategory,
+                            )}
+                          style={{
+                            border: avatarCostumeItem &&
+                              image.id === avatarCostumeItem.id
+                              ? '3px dashed rgba(0, 0, 0, 0.2)'
+                              : image.id === hoveredEntityId
+                                ? '3px dashed rgba(0, 0, 0, 0.4)'
+                                : '3px dashed transparent',
+                          }}
+                        >
+                          <Img
+                            url={`assets/${image.url}`}
+                            size={k.renderedTileSize}
+                          />
+                        </div>
+                      : null;
+                  })}
                 </div>
               </div>
             </div>
@@ -357,31 +296,62 @@ class App extends React.Component<Props> {
 
 const mapStateToProps = (state: t.ClientState): ConnectedStateProps => ({
   // queries: state.queries,
-  hoveredEntity: state.entities['ui'].hoveredEntity,
+  hoveredEntityId: state.entities['ui'].hoveredEntityId,
   activeCharacterCategory: state.entities['ui'].activeCharacterCategory,
-  selectedCharacterImageIndex: state.entities['ui'].selectedCharacterImageIndex,
+  avatar: state.entities['character'].avatars[0], // TODO
+  previewAvatar: state.entities['previewAvatar'],
 });
 
 const mapDispatchToProps = (dispatch: t.Dispatch): ConnectedDispatchProps => ({
-  setActiveCharacterCategory: (category: t.CharacterCategoryType) =>
+  setActiveCharacterCategory: (
+    category: t.CharacterCategory,
+    currentCategory: t.CharacterCategory,
+    currentAvatarCostumeValue: t.Id,
+  ) => {
     // TODO ideally don't need this manual type assertion, need to rewrite Redux type
     dispatch<t.Action>({
       type: t.ActionType.UpdateEntityAction,
       payload: {id: 'ui', key: 'activeCharacterCategory', value: category},
-    }),
+    });
+    // TODO this is .. very wrong
+    dispatch<t.Action>({
+      type: t.ActionType.UpdateEntityAction,
+      payload: {
+        id: 'previewAvatar',
+        key: `costume.${t.CharacterCategory[currentCategory]}`,
+        value: currentAvatarCostumeValue,
+      },
+    });
+  },
   // how do we do this correctly? give id automatically to all images? pass index?
-  setHoveredEntity: (index: number) =>
+  setHoveredEntityId: (id: t.Id, category: t.CharacterCategory) => {
     // TODO ideally don't need this manual type assertion, need to rewrite Redux type
     dispatch<t.Action>({
       type: t.ActionType.UpdateEntityAction,
-      payload: {id: 'ui', key: 'hoveredEntity', value: index}, // TODO 'hoveredEntity'? or need a stack/collection?
-    }),
-  setSelectedCharacterImageIndex: (index: number) =>
+      payload: {id: 'ui', key: 'hoveredEntityId', value: id}, // TODO 'hoveredEntityId'? or need a stack/collection?
+    });
+    // TODO... this is really broken
+    dispatch<t.Action>({
+      type: t.ActionType.UpdateEntityAction,
+      payload: {
+        id: 'previewAvatar',
+        key: `costume.${t.CharacterCategory[category]}`,
+        value: id,
+      }, // TODO 'hoveredEntityId'? or need a stack/collection?
+    });
+  },
+  // TODO should be the id of the costume itself to prevent nesting
+  setCostumeCategory: (id: t.Id, category: t.CharacterCategory) => {
     // TODO ideally don't need this manual type assertion, need to rewrite Redux type
     dispatch<t.Action>({
       type: t.ActionType.UpdateEntityAction,
-      payload: {id: 'ui', key: 'selectedCharacterImageIndex', value: index},
-    }),
+      payload: {
+        id: 'character',
+        key: `avatars.0.costume.${t.CharacterCategory[category]}`,
+        value: id,
+      }, // TODO parameterize by category
+    });
+  },
 });
 
 export default (connect(mapStateToProps, mapDispatchToProps)(

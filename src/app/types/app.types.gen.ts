@@ -16,9 +16,34 @@ export type Id = string;
 
 export type Json = any[] | object | boolean | number | number | string | null;
 
+export type Path = string;
+
 export interface Entity {id?: Id}
 
 export interface ClientState {entities: object}
+
+export interface Character extends Entity {
+  name: string;
+  avatars: Avatar[];
+  activeAvatarId: Id;
+}
+
+export interface Avatar extends Entity {costume: Costume}
+
+export interface Costume extends Entity {
+  base: Id | null;
+  hair: Id | null;
+  beard: Id | null;
+  body: Id | null;
+  legs: Id | null;
+  hand1: Id | null;
+  hand2: Id | null;
+  head: Id | null;
+  gloves: Id | null;
+  boots: Id | null;
+  cloak: Id | null;
+  felids: Id | null;
+}
 
 export interface DataSource {
   kind: 'sql' | 'mongo';
@@ -151,7 +176,7 @@ export interface SetActiveQueryAction extends BaseAction {
   payload: {id: Id};
 }
 
-export enum CharacterCategoryType {
+export enum CharacterCategory {
   base,
   hair,
   beard,
@@ -173,10 +198,10 @@ export enum CharacterCategoryType {
   transform,
 }
 
-export interface ImageData {
-  url?: string;
-  parts?: string[];
-  category?: CharacterCategoryType;
+export interface ImageData extends Entity {
+  url: string;
+  parts: string[];
+  category: CharacterCategory;
 }
 
 export interface BaseMessage {id?: Id}

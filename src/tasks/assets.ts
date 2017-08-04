@@ -38,7 +38,7 @@ async function getImagePathnames(): Promise<string[]> {
     '../../public/assets/**/*.@(png|jpg|jpeg)',
   );
   const paths: string[] = await glb(imagesGlob);
-  const assetsDir = `/public/assets`;
+  const assetsDir = `/public/assets/`;
   return paths.map(p => p.slice(p.indexOf(assetsDir) + assetsDir.length));
 }
 
