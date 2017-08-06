@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as t from '../types';
 
-import {AppDef} from '../../../gen';
+import {Clay} from '../../../gen';
 import {Frame} from './Frame';
 import {logger} from '../utils/log';
 
@@ -9,7 +9,7 @@ const log = logger('StateInspector', {count: ['render']});
 
 export interface Props extends React.ClassAttributes<any> {
   state: t.ClientState;
-  def: AppDef;
+  clay: Clay;
 }
 
 export class StateInspector extends React.PureComponent<Props> {

@@ -1,16 +1,16 @@
 import * as React from 'react';
 
-import {SchemaDefinition} from '../../../gen';
+import {SchemaDef} from '../../../gen';
 import {logger} from '../utils/log';
 
 const log = logger('DocsDefinition', {count: ['render']});
 
 export interface Props extends React.ClassAttributes<any> {
-  def: SchemaDefinition;
+  def: SchemaDef;
 }
 
 // TODO expand from here
-const DefType = ({def}: {def: SchemaDefinition}) =>
+const DefType = ({def}: {def: SchemaDef}) =>
   <div>{JSON.stringify(def.type)}</div>;
 
 export class DocsDefinition extends React.PureComponent<Props> {

@@ -13,7 +13,7 @@ ${h.renderOpenMultilineComment(file)}
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-${ctx.defPath}
+${ctx.clayDefPath}
     |> ${file.writerName}
     |> ${file.path}
 

@@ -1,3 +1,9 @@
+scratchlist
+    - mock tests
+    - elucidate defs vs props in all usage
+        - like `helpers#getSubtypes`, should that take a prop?
+        - prop/def confusion, see `any` cast in `renderRandomValue`
+    
 open questions
     - figure out storage with entities
     - clientState.entities type
@@ -268,7 +274,7 @@ terminology
     -
 
 features
-    - companion server runs alongside your app to update `app.def.json`)
+    - companion server runs alongside your app to update `app.clay.json`)
 
 tradeoffs
     - pros
@@ -276,7 +282,3 @@ tradeoffs
     - cons
         - debugging writers is potentially nightmareish
         - need to define a lot of validators for bad data, until a UI is put on things
-
-scratchlist TODO
-    - make id required on entities and properly render extended props
-    - mock tests

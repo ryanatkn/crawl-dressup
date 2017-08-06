@@ -1,8 +1,8 @@
-import {AppDef} from './defs';
+import {Clay} from './defs';
 
 export interface GenCtx {
-  defPath: string;
-  def: AppDef;
+  clayDefPath: string;
+  clay: Clay;
   prettierCfg: object;
 }
 

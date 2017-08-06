@@ -2,11 +2,11 @@ import * as h from '../helpers';
 
 import {GenCtx, WriterResults} from '../../types';
 
-import {AppDef} from '../../defs';
+import {Clay} from '../../defs';
 
 const writeContents = (
   path: string,
-  def: AppDef,
+  clay: Clay,
   results: WriterResults,
 ): string =>
   `
@@ -15,12 +15,12 @@ const writeContents = (
   import * as rand from '../../utils/rand';
   import * as t from '../types';
 
-  ${Object.keys(def.definitions)
+  ${Object.keys(clay.definitions)
     .map(d => {
-      const definition = def.definitions[d];
+      const def = clay.definitions[d];
       return `
-        export const mock${definition.title} = (): t.${d} => (
-          ${h.renderRandomValue(definition)}
+        export const mock${def.title} = (): t.${d} => (
+          ${h.renderRandomValue(clay, def)}
         );
       `.trim();
     })
@@ -31,12 +31,12 @@ export function tsMockWriter(
   results: WriterResults,
   ctx: GenCtx,
 ): WriterResults {
-  const path = `types/${ctx.def.name}.mocks.gen.ts`;
+  const path = `types/${ctx.clay.name}.mocks.gen.ts`;
   return {
     ...results,
     files: results.files.concat({
       path,
-      contents: writeContents(path, ctx.def, results),
+      contents: writeContents(path, ctx.clay, results),
       writerName: tsMockWriter.name,
     }),
   };

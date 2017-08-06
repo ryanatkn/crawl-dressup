@@ -10,7 +10,7 @@ npm run gen
 dbslate takes a nontraditional approach to writing and maintaining much of its code.
 Rather than writing all code by hand directly in source files,
 dbslate takes a plain JSON schema
-(see [`/src/app/defs/app.def.json`](/src/app/defs/app.def.json)),
+(see [`/src/app/defs/app.clay.json`](/src/app/defs/app.clay.json)),
 and outputs source code across the whole web stack in multiple languages.
 The tradeoffs include a clearly worse code reading/writing/debugging experience,
 at least at first glance, but we believe defining most of an app as plain JSON

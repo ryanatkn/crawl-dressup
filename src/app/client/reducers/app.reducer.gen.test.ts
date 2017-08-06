@@ -3,7 +3,7 @@
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../app/defs/app.def.json
+../app/defs/app.clay.json
     |> tsReducerTestWriter
     |> client/reducers/app.reducer.gen.test.ts
 
@@ -89,7 +89,7 @@ it('applies a SetActiveQueryAction against the store state', () => {
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../app/defs/app.def.json
+../app/defs/app.clay.json
     |> tsReducerTestWriter
     |> client/reducers/app.reducer.gen.test.ts
 

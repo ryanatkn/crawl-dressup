@@ -3,25 +3,28 @@ import * as prettier from 'prettier';
 
 import {GenCtx, WriterResults} from '../../types';
 
-import {AppDef} from '../../defs';
+import {Clay} from '../../defs';
 
-const writeContents = (def: AppDef, prettierCfg: object): string =>
+const writeContents = (clay: Clay, prettierCfg: object): string =>
   `
-  import {AppDef} from '../../gen';
+  import {Clay} from '../../gen';
 
-  export const ${def.name}Def: AppDef = {
-    ${Object.keys(def).map(d => {
+  export const ${clay.name}Def: Clay = {
+    ${Object.keys(clay).map(d => {
       if (d === 'definitions') {
         return `
           ${d}: {
-              ${Object.keys(def[d]).map(
+              ${Object.keys(clay[d]).map(
                 defName => `
                     ${defName}: ${JSON.stringify(
                   {
-                    ...def[d][defName],
+                    ...clay[d][defName],
                     code: {
                       declaration: prettier.format(
-                        h.renderTypeDeclaration(def.definitions[defName]),
+                        h.renderTypeDeclaration(
+                          clay,
+                          clay.definitions[defName],
+                        ),
                         prettierCfg,
                       ),
                     },
@@ -35,7 +38,7 @@ const writeContents = (def: AppDef, prettierCfg: object): string =>
           }
             `;
       } else {
-        return `${d}: ${JSON.stringify(def[d], null, 2)}`;
+        return `${d}: ${JSON.stringify(clay[d], null, 2)}`;
       }
     })}
   };
@@ -45,12 +48,12 @@ export function tsDefWriter(
   results: WriterResults,
   ctx: GenCtx,
 ): WriterResults {
-  const path = `defs/${ctx.def.name}.def.gen.ts`;
+  const path = `defs/${ctx.clay.name}.clay.gen.ts`;
   return {
     ...results,
     files: results.files.concat({
       path,
-      contents: writeContents(ctx.def, ctx.prettierCfg),
+      contents: writeContents(ctx.clay, ctx.prettierCfg),
       writerName: tsDefWriter.name,
     }),
   };

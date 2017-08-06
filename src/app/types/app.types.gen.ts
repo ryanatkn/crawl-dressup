@@ -3,7 +3,7 @@
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../app/defs/app.def.json
+../app/defs/app.clay.json
     |> tsTypeWriter
     |> types/app.types.gen.ts
 
@@ -18,7 +18,7 @@ export type Json = any[] | object | boolean | number | number | string | null;
 
 export type Path = string;
 
-export interface Entity {id?: Id}
+export interface Entity {id: Id}
 
 export interface ClientState {entities: object}
 
@@ -228,7 +228,7 @@ export interface ActionPerformedMessage extends BaseMessage {
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../app/defs/app.def.json
+../app/defs/app.clay.json
     |> tsTypeWriter
     |> types/app.types.gen.ts
 

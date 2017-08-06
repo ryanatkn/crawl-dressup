@@ -3,20 +3,20 @@
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../app/defs/app.def.json
+../app/defs/app.clay.json
     |> tsDefWriter
-    |> defs/app.def.gen.ts
+    |> defs/app.clay.gen.ts
 
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 ~!! WARNING !!~
 */
 
-import {AppDef} from '../../gen';
+import {Clay} from '../../gen';
 
-export const appDef: AppDef = {
+export const appDef: Clay = {
   $schema: 'http://json-schema.org/draft-04/schema#',
-  id: 'http://enti.com/v1/defs/app.def.json',
+  id: 'http://enti.com/v1/defs/app.clay.json',
   name: 'app',
   title: 'enti',
   description: 'enti app def',
@@ -81,8 +81,9 @@ export const appDef: AppDef = {
           $ref: '#/definitions/Json',
         },
       },
+      required: ['id'],
       code: {
-        declaration: 'export interface Entity {id?: Id}\n',
+        declaration: 'export interface Entity {id: Id}\n',
       },
     },
     ClientState: {
@@ -1078,9 +1079,9 @@ export const appDef: AppDef = {
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../app/defs/app.def.json
+../app/defs/app.clay.json
     |> tsDefWriter
-    |> defs/app.def.gen.ts
+    |> defs/app.clay.gen.ts
 
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!

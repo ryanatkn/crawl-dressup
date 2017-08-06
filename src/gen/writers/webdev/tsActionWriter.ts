@@ -1,29 +1,36 @@
 import * as h from '../helpers';
 
-import {AppDef, SchemaProperty, getActions} from '../../defs';
+import {Clay, SchemaProp, getActions} from '../../defs';
 import {GenCtx, WriterResults} from '../../types';
 
 // TODO should probably be renamed
-const writeContents = (def: AppDef): string =>
+const writeContents = (clay: Clay): string =>
   `
   import * as t from '../types';
 
-  ${getActions(def)
+  ${getActions(clay)
     .map(a =>
       `
       export const ${h.renderActionCreatorName(a)} = (
         ${h.renderPropList(
+          clay,
           (a.properties && a.properties.payload) || {},
           undefined,
           undefined,
           (
-            prop: SchemaProperty,
+            _clay: Clay,
+            prop: SchemaProp,
             propName: string,
-            parentProp: SchemaProperty,
+            parentProp: SchemaProp,
           ): string =>
             propName === 'type'
               ? ''
-              : h.renderPropertyPairNameToType(prop, propName, parentProp),
+              : h.renderPropertyPairNameToType(
+                  clay,
+                  prop,
+                  propName,
+                  parentProp,
+                ),
         )}
       ): t.${a.title} => ({
         type: t.ActionType.${a.title},
@@ -41,12 +48,12 @@ export function tsActionWriter(
   results: WriterResults,
   ctx: GenCtx,
 ): WriterResults {
-  const path = `client/actions/${ctx.def.name}.actions.gen.ts`;
+  const path = `client/actions/${ctx.clay.name}.actions.gen.ts`;
   return {
     ...results,
     files: results.files.concat({
       path,
-      contents: writeContents(ctx.def),
+      contents: writeContents(ctx.clay),
       writerName: tsActionWriter.name,
     }),
   };

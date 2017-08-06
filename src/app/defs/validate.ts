@@ -1,10 +1,10 @@
-import {AppDef} from '../../gen/defs/types';
+import {Clay} from '../../gen/defs/types';
 
-export const validateAppDef = (appDef: any): AppDef => {
-  if (appDef.definitions) {
+export const validateClay = (clay: any): Clay => {
+  if (clay.definitions) {
     // TODO should this be required?
-    for (const d in appDef.definitions) {
-      const def = appDef.definitions[d];
+    for (const d in clay.definitions) {
+      const def = clay.definitions[d];
       const {title, required} = def;
 
       if (!title) {
@@ -30,5 +30,5 @@ export const validateAppDef = (appDef: any): AppDef => {
   }
   // TODO validate `patternProperties`
   // TODO lots of other validation..including schema? or leave that to higher level check?
-  return appDef;
+  return clay;
 };

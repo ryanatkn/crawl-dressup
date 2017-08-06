@@ -169,6 +169,7 @@ class App extends React.Component<Props> {
                 />
                 <Costume
                   costume={previewAvatar.costume}
+                  flipFamiliar={true}
                   style={{
                     display: 'flex',
                     flexWrap: 'wrap',
@@ -260,12 +261,12 @@ class App extends React.Component<Props> {
                           title={image.url}
                           onMouseEnter={() =>
                             setHoveredEntityId(
-                              image.id!, // TODO remove when id is required on Entity
+                              image.id,
                               activeCharacterCategory,
                             )}
                           onClick={() =>
                             setCostumeCategory(
-                              image.id!, // TODO remove when id is required on Entity
+                              image.id,
                               activeCharacterCategory,
                             )}
                           style={{

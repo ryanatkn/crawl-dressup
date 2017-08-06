@@ -10,24 +10,30 @@ const log = logger('Costume', {count: ['render']});
 
 export interface Props extends React.HTMLProps<HTMLDivElement> {
   costume: t.Costume;
+  flipFamiliar?: boolean;
 }
 
 export class Costume extends React.PureComponent<Props> {
+  static defaultProps = {
+    flipFamiliar: false,
+  };
+
   render(): JSX.Element {
     log('render', this);
-    const {costume, ...rest} = this.props;
+    const {costume, flipFamiliar, ...rest} = this.props;
+    const familiar = (
+      <Img
+        url={
+          costume.felids
+            ? `assets/${playerImagesById[costume.felids].url}`
+            : null
+        }
+        size={k.renderedTileSize}
+      />
+    );
     return (
       <div className="Costume" {...rest}>
-        {
-          <Img
-            url={
-              costume.felids
-                ? `assets/${playerImagesById[costume.felids].url}`
-                : null
-            }
-            size={k.renderedTileSize}
-          />
-        }
+        {flipFamiliar ? null : familiar}
         <div
           style={{
             position: 'relative',
@@ -50,6 +56,7 @@ export class Costume extends React.PureComponent<Props> {
             );
           })}
         </div>
+        {flipFamiliar ? familiar : null}
       </div>
     );
   }

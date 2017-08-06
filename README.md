@@ -10,7 +10,7 @@ npm install
 npm start
 npm run server
 
-# after editing `src/app/app.def.json` or the writers used in `src/tasks/gen.ts`:
+# after editing `src/app/app.clay.json` or the writers used in `src/tasks/gen.ts`:
 npm run gen
 
 # after changing `public/assets`

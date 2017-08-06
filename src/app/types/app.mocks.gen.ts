@@ -3,7 +3,7 @@
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../app/defs/app.def.json
+../app/defs/app.clay.json
     |> tsMockWriter
     |> types/app.mocks.gen.ts
 
@@ -37,14 +37,19 @@ export const mockEntity = (): t.Entity => ({id: t.mockId()});
 export const mockClientState = (): t.ClientState => ({entities: {}});
 
 export const mockCharacter = (): t.Character => ({
+  id: t.mockId(),
   name: rand.str(),
   avatars: [],
   activeAvatarId: t.mockId(),
 });
 
-export const mockAvatar = (): t.Avatar => ({costume: t.mockCostume()});
+export const mockAvatar = (): t.Avatar => ({
+  id: t.mockId(),
+  costume: t.mockCostume(),
+});
 
 export const mockCostume = (): t.Costume => ({
+  id: t.mockId(),
   base: sample([t.mockId(), null]) as t.Id | null,
   hair: sample([t.mockId(), null]) as t.Id | null,
   beard: sample([t.mockId(), null]) as t.Id | null,
@@ -151,36 +156,43 @@ export const mockAction = (): t.Action =>
   ]) as t.Action;
 
 export const mockUpdateEntityAction = (): t.UpdateEntityAction => ({
+  id: t.mockId(),
   type: t.ActionType.UpdateEntityAction,
   payload: {id: t.mockId(), key: rand.str(), value: t.mockJson()},
 });
 
 export const mockSignUpUserAction = (): t.SignUpUserAction => ({
+  id: t.mockId(),
   type: t.ActionType.SignUpUserAction,
   payload: {email: rand.str()},
 });
 
 export const mockSignInUserAction = (): t.SignInUserAction => ({
+  id: t.mockId(),
   type: t.ActionType.SignInUserAction,
   payload: {email: rand.str(), password: rand.str()},
 });
 
 export const mockSignOutUserAction = (): t.SignOutUserAction => ({
+  id: t.mockId(),
   type: t.ActionType.SignOutUserAction,
   payload: null,
 });
 
 export const mockCreateQueryAction = (): t.CreateQueryAction => ({
+  id: t.mockId(),
   type: t.ActionType.CreateQueryAction,
   payload: {query: t.mockQuery()},
 });
 
 export const mockReadQueryAction = (): t.ReadQueryAction => ({
+  id: t.mockId(),
   type: t.ActionType.ReadQueryAction,
   payload: null,
 });
 
 export const mockUpdateQueryAction = (): t.UpdateQueryAction => ({
+  id: t.mockId(),
   type: t.ActionType.UpdateQueryAction,
   payload: {
     id: t.mockId(),
@@ -191,21 +203,25 @@ export const mockUpdateQueryAction = (): t.UpdateQueryAction => ({
 });
 
 export const mockDeleteQueryAction = (): t.DeleteQueryAction => ({
+  id: t.mockId(),
   type: t.ActionType.DeleteQueryAction,
   payload: {id: t.mockId()},
 });
 
 export const mockExecuteQueryAction = (): t.ExecuteQueryAction => ({
+  id: t.mockId(),
   type: t.ActionType.ExecuteQueryAction,
   payload: {id: t.mockId()},
 });
 
 export const mockExecuteSuccessQueryAction = (): t.ExecuteSuccessQueryAction => ({
+  id: t.mockId(),
   type: t.ActionType.ExecuteSuccessQueryAction,
   payload: {id: t.mockId(), results: rand.str()},
 });
 
 export const mockSetActiveQueryAction = (): t.SetActiveQueryAction => ({
+  id: t.mockId(),
   type: t.ActionType.SetActiveQueryAction,
   payload: {id: t.mockId()},
 });
@@ -234,6 +250,7 @@ export const mockCharacterCategory = (): t.CharacterCategory =>
   ]) as t.CharacterCategory;
 
 export const mockImageData = (): t.ImageData => ({
+  id: t.mockId(),
   url: rand.str(),
   parts: [],
   category: t.mockCharacterCategory(),
@@ -251,11 +268,13 @@ export const mockMessage = (): t.Message =>
   sample([t.mockInitMessage(), t.mockActionPerformedMessage()]) as t.Message;
 
 export const mockInitMessage = (): t.InitMessage => ({
+  id: t.mockId(),
   type: t.MessageType.InitMessage,
   payload: null,
 });
 
 export const mockActionPerformedMessage = (): t.ActionPerformedMessage => ({
+  id: t.mockId(),
   type: t.MessageType.ActionPerformedMessage,
   payload: {action: t.mockAction()},
 });
@@ -265,7 +284,7 @@ export const mockActionPerformedMessage = (): t.ActionPerformedMessage => ({
 ~!! This is an auto-generated file.
 ~!! All edits will be lost!
 
-../app/defs/app.def.json
+../app/defs/app.clay.json
     |> tsMockWriter
     |> types/app.mocks.gen.ts
 

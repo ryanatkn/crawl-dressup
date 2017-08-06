@@ -1,8 +1,6 @@
 import * as h from './tsHelpers';
 
-// it(' ', () => {
-//   expect().toBe();
-// });
+import {createTestClay} from '../../defs/testHelpers';
 
 it('renders an optional question mark for properties that are not required', () => {
   expect(h.renderQmark({}, 'bar')).toBe('?');
@@ -17,9 +15,9 @@ it('renders an array type', () => {
 });
 
 it('renders a type union', () => {
-  expect(h.renderTypeUnion({})).toBe('');
+  expect(h.renderTypeUnion(createTestClay(), {})).toBe('');
   expect(
-    h.renderTypeUnion({
+    h.renderTypeUnion(createTestClay(), {
       oneOf: [
         {$ref: '#/definitions/Foo'},
         {$ref: '#/definitions/Bar'},
@@ -29,6 +27,7 @@ it('renders a type union', () => {
   ).toBe('t.Foo | t.Bar | t.Baz');
   expect(
     h.renderTypeUnion(
+      createTestClay(),
       {
         oneOf: [
           {$ref: '#/definitions/Foo'},
@@ -66,20 +65,30 @@ it(`renders an enum's values`, () => {
 });
 
 it('renders a primitive property type', () => {
-  expect(h.renderPrimitivePropertyType({})).toBe('');
-  expect(h.renderPrimitivePropertyType({type: 'string'})).toBe('string');
-  expect(h.renderPrimitivePropertyType({type: 'number'})).toBe('number');
-  expect(h.renderPrimitivePropertyType({type: 'integer'})).toBe('number');
-  expect(h.renderPrimitivePropertyType({type: 'boolean'})).toBe('boolean');
-  expect(h.renderPrimitivePropertyType({type: 'null'})).toBe('null');
+  expect(h.renderPrimitivePropertyType(createTestClay(), {})).toBe('');
+  expect(
+    h.renderPrimitivePropertyType(createTestClay(), {type: 'string'}),
+  ).toBe('string');
+  expect(
+    h.renderPrimitivePropertyType(createTestClay(), {type: 'number'}),
+  ).toBe('number');
+  expect(
+    h.renderPrimitivePropertyType(createTestClay(), {type: 'integer'}),
+  ).toBe('number');
+  expect(
+    h.renderPrimitivePropertyType(createTestClay(), {type: 'boolean'}),
+  ).toBe('boolean');
+  expect(h.renderPrimitivePropertyType(createTestClay(), {type: 'null'})).toBe(
+    'null',
+  );
   // expect(h.renderPrimitivePropertyType({type: 'any'})).toBe('any'); // TODO? or just use #/references/Json? what if type is a function?
   expect(
-    h.renderPrimitivePropertyType({
+    h.renderPrimitivePropertyType(createTestClay(), {
       type: 'object',
     }),
   ).toBe('object');
   expect(
-    h.renderPrimitivePropertyType({
+    h.renderPrimitivePropertyType(createTestClay(), {
       type: 'object',
       properties: {
         foo: {type: 'string'},
@@ -91,27 +100,37 @@ it('renders a primitive property type', () => {
 });
 
 it(`renders a property's type`, () => {
-  expect(h.renderPropertyType({})).toBe('');
-  expect(h.renderPropertyType({$ref: '#/definitions/Foo'})).toBe(`t.Foo`);
-  expect(h.renderPropertyType({value: 5})).toBe('5');
+  expect(h.renderPropertyType(createTestClay(), {})).toBe('');
   expect(
-    h.renderPropertyType({
+    h.renderPropertyType(createTestClay(), {$ref: '#/definitions/Foo'}),
+  ).toBe(`t.Foo`);
+  expect(h.renderPropertyType(createTestClay(), {value: 5})).toBe('5');
+  expect(
+    h.renderPropertyType(createTestClay(), {
       oneOf: [{type: 'string'}, {type: 'null'}],
     }),
   ).toBe('string | null');
   const testEnum = {title: 'TestEnum', enum: ['Foo', 'Bar']};
-  expect(h.renderPropertyType(testEnum, undefined, true)).toBe(`{ Foo, Bar }`);
-  expect(h.renderPropertyType(testEnum, 'test.')).toBe(`test.TestEnum`);
-  expect(h.renderPropertyType({type: 'boolean'})).toBe('boolean');
+  expect(
+    h.renderPropertyType(createTestClay(), testEnum, undefined, true),
+  ).toBe(`{ Foo, Bar }`);
+  expect(h.renderPropertyType(createTestClay(), testEnum, 'test.')).toBe(
+    `test.TestEnum`,
+  );
+  expect(h.renderPropertyType(createTestClay(), {type: 'boolean'})).toBe(
+    'boolean',
+  );
 });
 
 it(`renders the extends portion of an interface for a property`, () => {
-  expect(h.renderInterfaceExtendType({})).toBe('');
+  expect(h.renderInterfaceExtendType(createTestClay(), {})).toBe('');
   const prop = {
     allOf: [{$ref: '#/definitions/Foo'}, {$ref: '#/definitions/Bar'}],
   };
-  expect(h.renderInterfaceExtendType(prop)).toBe('extends t.Foo, t.Bar ');
-  expect(h.renderInterfaceExtendType(prop, 'test.')).toBe(
+  expect(h.renderInterfaceExtendType(createTestClay(), prop)).toBe(
+    'extends t.Foo, t.Bar ',
+  );
+  expect(h.renderInterfaceExtendType(createTestClay(), prop, 'test.')).toBe(
     'extends test.Foo, test.Bar ',
   );
 });
@@ -123,75 +142,179 @@ it(`renders the extends portion of an interface for a property`, () => {
 it(`renders a random value for a property`, () => {
   // `properties`
   expect(
-    h.renderRandomValue({properties: {foo: {value: 5}, bar: {value: 'hi'}}}),
+    h.renderRandomValue(createTestClay(), {
+      properties: {foo: {value: 5}, bar: {value: 'hi'}},
+    }),
   ).toBe(`{foo: 5, bar: 'hi'}`);
 
-  // `$ref`
-  expect(h.renderRandomValue({$ref: '#/definitions/Foo'})).toBe('t.mockFoo()');
+  // `allOf`
   expect(
-    h.renderRandomValue({$ref: '#/definitions/EnumDef', value: 'EnumValue'}),
+    h.renderRandomValue(
+      createTestClay({
+        definitions: {
+          Foo: {title: 'Foo', properties: {foo: {value: 5}}},
+          Bar: {title: 'Bar', properties: {bar: {value: 'hi'}}},
+        },
+      }),
+      {
+        properties: {
+          baz: {value: 'yo'},
+        },
+        allOf: [{$ref: '#/definitions/Foo'}, {$ref: '#/definitions/Bar'}],
+      },
+    ),
+  ).toBe(`{foo: 5, bar: 'hi', baz: 'yo'}`);
+  expect(
+    h.renderRandomValue(
+      createTestClay({
+        definitions: {
+          Foo1: {
+            title: 'Foo1',
+            properties: {foo1: {value: '1'}},
+            allOf: [
+              {$ref: '#/definitions/Foo2a'},
+              {$ref: '#/definitions/Foo2b'},
+              {$ref: '#/definitions/Foo2c'},
+            ],
+          },
+          Foo2a: {
+            title: 'Foo2a',
+            allOf: [
+              {$ref: '#/definitions/Foo3'},
+              {$ref: '#/definitions/Foo3a'},
+            ],
+          },
+          Foo2b: {
+            title: 'Foo2b',
+            properties: {foo2b: {value: '2b'}},
+            allOf: [
+              {$ref: '#/definitions/Foo3'},
+              {$ref: '#/definitions/Foo3b'},
+            ],
+          },
+          Foo2c: {
+            title: 'Foo2c',
+            allOf: [
+              {$ref: '#/definitions/Foo3'},
+              {$ref: '#/definitions/Foo3c'},
+            ],
+          },
+          Foo3: {title: 'Foo3', properties: {foo3: {value: '3'}}},
+          Foo3a: {title: 'Foo3a', properties: {foo3a: {value: '3a'}}},
+          Foo3b: {title: 'Foo3b', properties: {foo3b: {value: '3b'}}},
+          Foo3c: {title: 'Foo3c', properties: {foo3c: {value: '3c'}}},
+          Bar: {title: 'Bar', properties: {bar: {value: 'Bar'}}},
+          TestSubDef: {
+            title: 'TestSubDef',
+            allOf: [{$ref: '#/definitions/Foo1'}, {$ref: '#/definitions/Bar'}],
+          },
+        },
+      }),
+      {
+        properties: {
+          baz: {value: 'yo'},
+        },
+        allOf: [{$ref: '#/definitions/Foo1'}, {$ref: '#/definitions/Bar'}],
+      },
+    ),
+  ).toBe(
+    `{foo3: '3', foo3a: '3a', foo3b: '3b', foo2b: '2b', foo3c: '3c', foo1: '1', bar: 'Bar', baz: 'yo'}`,
+  );
+
+  // `$ref`
+  expect(
+    h.renderRandomValue(createTestClay(), {$ref: '#/definitions/Foo'}),
+  ).toBe('t.mockFoo()');
+  expect(
+    h.renderRandomValue(createTestClay(), {
+      $ref: '#/definitions/EnumDef',
+      value: 'EnumValue',
+    }),
   ).toBe('t.EnumDef.EnumValue');
 
   // `value`
-  expect(h.renderRandomValue({value: 5})).toBe('5');
-  expect(h.renderRandomValue({value: 'hi'})).toBe(`'hi'`);
-  expect(h.renderRandomValue({value: {foo: 5}})).toBe(`{"foo":5}`);
+  expect(h.renderRandomValue(createTestClay(), {value: 5})).toBe('5');
+  expect(h.renderRandomValue(createTestClay(), {value: 'hi'})).toBe(`'hi'`);
+  expect(h.renderRandomValue(createTestClay(), {value: {foo: 5}})).toBe(
+    `{"foo":5}`,
+  );
 
   // `oneOf`
   expect(
-    h.renderRandomValue({
+    h.renderRandomValue(createTestClay(), {
       title: 'Foo',
       oneOf: [{$ref: '#/definitions/Bar'}, {value: 5}],
     }),
   ).toBe('sample([t.mockBar(), 5]) as t.Foo');
   expect(
-    h.renderRandomValue({
+    h.renderRandomValue(createTestClay(), {
       oneOf: [{$ref: '#/definitions/Bar'}, {value: 5}],
     }),
   ).toBe('sample([t.mockBar(), 5]) as t.Bar | 5');
 
   // `enum`
   expect(
-    h.renderRandomValue({
+    h.renderRandomValue(createTestClay(), {
       title: 'Foo',
       enum: ['Bar', 'Baz'],
     }),
   ).toBe('sample([t.Foo.Bar, t.Foo.Baz]) as t.Foo');
 
   // `type`
-  expect(h.renderRandomValue({type: 'string'})).toBe('rand.str()');
-  expect(h.renderRandomValue({type: 'integer'})).toBe('rand.int()');
-  expect(h.renderRandomValue({type: 'number'})).toBe('rand.num()');
-  expect(h.renderRandomValue({type: 'object'})).toBe(`{}`); // TODO values
-  expect(h.renderRandomValue({type: 'null'})).toBe('null');
-  expect(h.renderRandomValue({type: 'boolean'})).toBe(
+  expect(h.renderRandomValue(createTestClay(), {type: 'string'})).toBe(
+    'rand.str()',
+  );
+  expect(h.renderRandomValue(createTestClay(), {type: 'integer'})).toBe(
+    'rand.int()',
+  );
+  expect(h.renderRandomValue(createTestClay(), {type: 'number'})).toBe(
+    'rand.num()',
+  );
+  expect(h.renderRandomValue(createTestClay(), {type: 'object'})).toBe(`{}`); // TODO values
+  expect(h.renderRandomValue(createTestClay(), {type: 'null'})).toBe('null');
+  expect(h.renderRandomValue(createTestClay(), {type: 'boolean'})).toBe(
     'sample([true, false]) as boolean',
   );
-  expect(h.renderRandomValue({type: 'array'})).toBe(`[]`); // TODO values
+  expect(h.renderRandomValue(createTestClay(), {type: 'array'})).toBe(`[]`); // TODO values
 });
 
 it(`renders an object property key/value pair`, () => {
   expect(
-    h.renderPropertyPairNameToValue({$ref: '#/definitions/Foo'}, 'foo', {}),
+    h.renderPropertyPairNameToValue(
+      createTestClay(),
+      {$ref: '#/definitions/Foo'},
+      'foo',
+      {},
+    ),
   ).toBe(`foo: t.mockFoo()`);
 });
 
 it(`renders an object property key/type pair`, () => {
   expect(
-    h.renderPropertyPairNameToType({$ref: '#/definitions/Foo'}, 'foo', {}),
+    h.renderPropertyPairNameToType(
+      createTestClay(),
+      {$ref: '#/definitions/Foo'},
+      'foo',
+      {},
+    ),
   ).toBe(`foo?: t.Foo`);
 });
 
 it(`renders a property when it is an arg to a function`, () => {
-  expect(h.renderCallingArgs({$ref: '#/definitions/Foo'}, 'foo', {})).toBe(
-    `t.mockFoo()`,
-  );
+  expect(
+    h.renderCallingArgs(
+      createTestClay(),
+      {$ref: '#/definitions/Foo'},
+      'foo',
+      {},
+    ),
+  ).toBe(`t.mockFoo()`);
 });
 
 it(`renders a property list`, () => {
-  expect(h.renderPropList({value: 5})).toBe('');
+  expect(h.renderPropList(createTestClay(), {value: 5})).toBe('');
   expect(
-    h.renderPropList({
+    h.renderPropList(createTestClay(), {
       properties: {foo: {value: 5}, bar: {$ref: '#/definitions/Bar'}},
     }),
   ).toBe(`foo: 5, bar: t.mockBar()`);
@@ -223,28 +346,40 @@ it(`infers a definition's type declaration kind`, () => {
 
 it(`renders a definition's type declaration`, () => {
   expect(
-    h.renderTypeDeclaration({title: 'Foo', type: 'number', value: 5}),
+    h.renderTypeDeclaration(createTestClay(), {
+      title: 'Foo',
+      type: 'number',
+      value: 5,
+    }),
   ).toBe('export type Foo = 5;');
   expect(
-    h.renderTypeDeclaration({title: 'Foo', type: 'string', value: 'foo'}),
+    h.renderTypeDeclaration(createTestClay(), {
+      title: 'Foo',
+      type: 'string',
+      value: 'foo',
+    }),
   ).toBe('export type Foo = "foo";'); // double quotes because we're using `JSON.stringify` as a shortcut
   expect(
-    h.renderTypeDeclaration({title: 'Foo', type: 'boolean', value: true}),
+    h.renderTypeDeclaration(createTestClay(), {
+      title: 'Foo',
+      type: 'boolean',
+      value: true,
+    }),
   ).toBe('export type Foo = true;');
   expect(
-    h.renderTypeDeclaration({
+    h.renderTypeDeclaration(createTestClay(), {
       title: 'Foo',
       oneOf: [{$ref: '#/definitions/Bar'}, {$ref: '#/definitions/Baz'}],
     }),
   ).toBe('export type Foo = Bar | Baz;');
   expect(
-    h.renderTypeDeclaration({
+    h.renderTypeDeclaration(createTestClay(), {
       title: 'Foo',
       enum: ['Bar', 'Baz'],
     }),
   ).toBe('export enum Foo { Bar, Baz };');
   expect(
-    h.renderTypeDeclaration({
+    h.renderTypeDeclaration(createTestClay(), {
       title: 'Foo',
       properties: {
         bar: {value: 5},
@@ -257,13 +392,13 @@ it(`renders a definition's type declaration`, () => {
 
 it(`renders a definiton as an action creator call`, () => {
   expect(
-    h.renderActionCreatorCall({
+    h.renderActionCreatorCall(createTestClay(), {
       title: 'FooAction',
       properties: {payload: {}},
     }),
   ).toBe('t.foo()');
   expect(
-    h.renderActionCreatorCall({
+    h.renderActionCreatorCall(createTestClay(), {
       title: 'FooAction',
       properties: {
         payload: {

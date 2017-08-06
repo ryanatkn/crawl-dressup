@@ -21,7 +21,7 @@ export const playerImages: t.ImageData[] = assets.images
 export const playerImagesById: Dict<
   t.ImageData
 > = playerImages.reduce((result, image) => {
-  result[image.id!] = image;
+  result[image.id] = image;
   return result;
 }, {});
 

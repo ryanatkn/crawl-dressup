@@ -1,11 +1,11 @@
 import * as h from '../helpers';
 
-import {AppDef, getActions} from '../../defs';
+import {Clay, getActions} from '../../defs';
 import {GenCtx, WriterResults} from '../../types';
 
 const writeContents = (
   path: string,
-  def: AppDef,
+  clay: Clay,
   results: WriterResults,
 ): string =>
   `
@@ -17,11 +17,14 @@ const writeContents = (
 
     import {reducer} from './index';
 
-    ${getActions(def)
+    ${getActions(clay)
       .map(a =>
         `
         it('applies a ${a.title} against the store state', () => {
-          const state = reducer(undefined, ${h.renderActionCreatorCall(a)});
+          const state = reducer(undefined, ${h.renderActionCreatorCall(
+            clay,
+            a,
+          )});
           t.is<t.ClientState>(state);
         });
         `.trim(),
@@ -33,12 +36,12 @@ export function tsReducerTestWriter(
   results: WriterResults,
   ctx: GenCtx,
 ): WriterResults {
-  const path = `client/reducers/${ctx.def.name}.reducer.gen.test.ts`;
+  const path = `client/reducers/${ctx.clay.name}.reducer.gen.test.ts`;
   return {
     ...results,
     files: results.files.concat({
       path,
-      contents: writeContents(path, ctx.def, results),
+      contents: writeContents(path, ctx.clay, results),
       writerName: tsReducerTestWriter.name,
     }),
   };

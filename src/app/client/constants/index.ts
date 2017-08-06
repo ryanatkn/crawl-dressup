@@ -8,7 +8,7 @@ export const tileSize = 32; // TODO
 export const renderedTileSize = tileSize * 4; // TODO
 export const renderedTileSizeLg = renderedTileSize * 2; // TODO
 
-// TODO move to `app.def.json`
+// TODO move to `app.clay.json`
 export const categoryRenderOrder: t.CharacterCategory[] = [
   t.CharacterCategory.cloak,
   t.CharacterCategory.base,

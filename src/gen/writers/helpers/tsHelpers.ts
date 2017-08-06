@@ -1,9 +1,11 @@
 import * as h from '../helpers';
 
 import {
-  SchemaDefinition,
-  SchemaProperty,
+  Clay,
+  SchemaDef,
+  SchemaProp,
   extractRefTypeTitle,
+  getSuperDefs,
 } from '../../defs';
 
 /*
@@ -25,12 +27,12 @@ export const primitiveTypes = [
   'any',
 ];
 
-export function renderQmark(prop: SchemaProperty, propName: string): '' | '?' {
+export function renderQmark(prop: SchemaProp, propName: string): '' | '?' {
   return prop.required && prop.required.includes(propName) ? '' : '?';
 }
 
 // TODO this is a huge hack
-export function renderArrayType(prop: SchemaProperty): string {
+export function renderArrayType(prop: SchemaProp): string {
   if (prop.items) {
     if (prop.items.$ref) {
       return `${extractRefTypeTitle(prop.items.$ref)}[]`;
@@ -42,16 +44,19 @@ export function renderArrayType(prop: SchemaProperty): string {
 }
 
 export function renderTypeUnion(
-  prop: SchemaProperty,
+  clay: Clay,
+  prop: SchemaProp,
   refTypePrefix: string = 't.',
 ): string {
   return prop.oneOf
-    ? prop.oneOf.map(v => renderPropertyType(v, refTypePrefix)).join(' | ')
+    ? prop.oneOf
+        .map(v => renderPropertyType(clay, v, refTypePrefix))
+        .join(' | ')
     : '';
 }
 
 export function renderEnumType(
-  prop: SchemaProperty,
+  prop: SchemaProp,
   refTypePrefix: string = 't.',
   isDeclaration: boolean = false,
 ): string {
@@ -68,7 +73,7 @@ export function renderEnumType(
 }
 
 export function renderEnumValues(
-  prop: SchemaProperty,
+  prop: SchemaProp,
   refTypePrefix: string = 't.',
 ): string {
   return prop.enum
@@ -80,7 +85,10 @@ export function renderEnumValues(
     : '';
 }
 
-export function renderPrimitivePropertyType(prop: SchemaProperty): string {
+export function renderPrimitivePropertyType(
+  clay: Clay,
+  prop: SchemaProp,
+): string {
   if (!prop.type) {
     return '';
   }
@@ -88,6 +96,7 @@ export function renderPrimitivePropertyType(prop: SchemaProperty): string {
     case 'object':
       return prop.properties
         ? `{${renderPropList(
+            clay,
             prop,
             undefined,
             '',
@@ -102,7 +111,8 @@ export function renderPrimitivePropertyType(prop: SchemaProperty): string {
 }
 
 export function renderPropertyType(
-  prop: SchemaProperty,
+  clay: Clay,
+  prop: SchemaProp,
   refTypePrefix: string = 't.',
   isDeclaration: boolean = false,
 ): string {
@@ -113,12 +123,12 @@ export function renderPropertyType(
   } else if (prop.value !== undefined) {
     return `${JSON.stringify(prop.value)}`;
   } else if (prop.oneOf) {
-    return renderTypeUnion(prop, refTypePrefix);
+    return renderTypeUnion(clay, prop, refTypePrefix);
   } else if (prop.enum) {
     return renderEnumType(prop, refTypePrefix, isDeclaration);
   } else if (prop.type) {
     if (primitiveTypes.includes(prop.type)) {
-      return renderPrimitivePropertyType(prop);
+      return renderPrimitivePropertyType(clay, prop);
     } else if (prop.type === 'array') {
       return renderArrayType(prop);
     } else {
@@ -130,24 +140,48 @@ export function renderPropertyType(
 }
 
 export function renderInterfaceExtendType(
-  prop: SchemaProperty,
+  clay: Clay,
+  prop: SchemaProp,
   refTypePrefix: string = 't.',
   isDeclaration: boolean = false,
 ): string {
   return prop.allOf
     ? `extends ${prop.allOf
-        .map(p => renderPropertyType(p, refTypePrefix, isDeclaration))
+        .map(p => renderPropertyType(clay, p, refTypePrefix, isDeclaration))
         .join(', ')} `
     : '';
 }
 
 export function renderRandomValue(
-  prop: SchemaProperty,
+  clay: Clay,
+  prop: SchemaProp,
   refTypePrefix: string = 't.',
 ): string {
   // TODO probably switch on the type of the property from a type union of SchemaProperty subtypes
-  if (prop.properties) {
-    return `{${renderPropList(prop, undefined, refTypePrefix)}}`;
+  if (prop.properties || prop.allOf) {
+    return `{${getSuperDefs(clay, prop as any) // TODO!!! this is a great example of the prop/def problem
+      // TODO could do this more functionally using `flatten` or `flatMap`
+      .reduce((kvPairs, p) => {
+        if (!p.properties && !p.allOf) {
+          throw new Error(`Unexpected missing properties for "${p.title}"`);
+        }
+        if (p.properties) {
+          for (const propName in p.properties) {
+            kvPairs.push(
+              renderPropertyPairNameToValue(
+                clay,
+                p.properties[propName],
+                propName,
+                p,
+                refTypePrefix,
+              ),
+            );
+          }
+        }
+        return kvPairs;
+      }, [] as string[])
+      .filter(p => p)
+      .join(', ')}}`;
   } else if (prop.$ref) {
     return prop.value !== undefined
       ? `${refTypePrefix}${h.extractRefTypeTitle(prop.$ref)}.${prop.value}` // TODO this is hardcoded for enums, or namespacing at least
@@ -158,10 +192,10 @@ export function renderRandomValue(
       : JSON.stringify(prop.value);
   } else if (prop.oneOf) {
     return `sample([${prop.oneOf
-      .map(p => renderRandomValue(p, refTypePrefix))
+      .map(p => renderRandomValue(clay, p, refTypePrefix))
       .join(', ')}]) as ${prop.title
       ? `${refTypePrefix}${prop.title}`
-      : renderTypeUnion(prop)}`; // TODO is hack to get around string literal problem from sample
+      : renderTypeUnion(clay, prop)}`; // TODO is hack to get around string literal problem from sample
   } else if (prop.enum) {
     return `sample(${renderEnumValues(prop)}) as ${renderEnumType(prop)}`; // TODO is hack to get around string literal problem from sample
   } else {
@@ -187,38 +221,43 @@ export function renderRandomValue(
 }
 
 export function renderPropertyPairNameToValue(
-  prop: SchemaProperty,
+  clay: Clay,
+  prop: SchemaProp,
   propName: string,
-  parentProp: SchemaProperty, // TODO this is unused and weird, see `renderPropList` below for more
+  parentProp: SchemaProp, // TODO this is unused and weird, see `renderPropList` below for more
   refTypePrefix: string = 't.',
 ): string {
-  return `${propName}: ${renderRandomValue(prop, refTypePrefix)}`;
+  return `${propName}: ${renderRandomValue(clay, prop, refTypePrefix)}`;
 }
 
 export function renderPropertyPairNameToType(
-  prop: SchemaProperty,
+  clay: Clay,
+  prop: SchemaProp,
   propName: string,
-  parentProp: SchemaProperty,
+  parentProp: SchemaProp,
   refTypePrefix: string = 't.',
 ): string {
   return `${propName}${renderQmark(parentProp, propName)}: ${renderPropertyType(
+    clay,
     prop,
     refTypePrefix,
   )}`;
 }
 
 export function renderCallingArgs( // TODO rename?
-  prop: SchemaProperty,
+  clay: Clay,
+  prop: SchemaProp,
   propName: string,
-  parentProp: SchemaProperty,
+  parentProp: SchemaProp,
   refTypePrefix: string = 't.',
 ): string {
-  return renderRandomValue(prop, refTypePrefix);
+  return renderRandomValue(clay, prop, refTypePrefix);
 }
 
 // TODO callingPropList vs declarationPropList
 export function renderPropList(
-  prop: SchemaProperty,
+  clay: Clay,
+  prop: SchemaProp,
   separator: string = ', ',
   refTypePrefix: string = 't.',
   fn: typeof renderPropertyPairNameToValue = renderPropertyPairNameToValue, // TODO this is wonky
@@ -227,7 +266,7 @@ export function renderPropList(
     ? Object.keys(prop.properties)
         .map(propName =>
           // tslint:disable-next-line:no-non-null-assertion
-          fn(prop.properties![propName], propName, prop, refTypePrefix),
+          fn(clay, prop.properties![propName], propName, prop, refTypePrefix),
         )
         .filter(p => p)
         .join(separator)
@@ -242,50 +281,39 @@ export enum TypeDeclarationKind {
 
 // TODO makes me think `SchemaProperty` should be a union type, instead of inferring it
 export const inferTypeDeclarationKind = (
-  definition: SchemaDefinition,
+  def: SchemaDef,
 ): TypeDeclarationKind => {
   if (
-    definition.oneOf ||
-    (definition.type &&
-      definition.type !== 'array' &&
-      definition.type !== 'object')
+    def.oneOf ||
+    (def.type && def.type !== 'array' && def.type !== 'object')
   ) {
     return TypeDeclarationKind.TypeLiteral;
-  } else if (definition.enum) {
+  } else if (def.enum) {
     return TypeDeclarationKind.Enum;
   } else {
     return TypeDeclarationKind.Interface;
   }
 };
 
-export function renderTypeDeclaration(definition: SchemaDefinition): string {
-  // TODO this should be a helper
-  const typeDeclarationKind = inferTypeDeclarationKind(definition);
+export function renderTypeDeclaration(clay: Clay, def: SchemaDef): string {
+  const typeDeclarationKind = inferTypeDeclarationKind(def);
   switch (typeDeclarationKind) {
     case TypeDeclarationKind.TypeLiteral:
       return `
-        export type ${definition.title} = ${renderPropertyType(definition, '')};
+        export type ${def.title} = ${renderPropertyType(clay, def, '')};
       `.trim();
     case TypeDeclarationKind.Enum:
       return `
-        export enum ${definition.title} ${renderPropertyType(
-        definition,
-        '',
-        true,
-      )};
+        export enum ${def.title} ${renderPropertyType(clay, def, '', true)};
       `.trim();
     case TypeDeclarationKind.Interface:
       return `
-        export interface ${definition.title} ${renderInterfaceExtendType(
-        definition,
+        export interface ${def.title} ${renderInterfaceExtendType(
+        clay,
+        def,
         '',
         false,
-      )}{ ${renderPropList(
-        definition,
-        '; ',
-        '',
-        renderPropertyPairNameToType,
-      )} }
+      )}{ ${renderPropList(clay, def, '; ', '', renderPropertyPairNameToType)} }
       `.trim();
     default:
       h.is<never>(typeDeclarationKind);
@@ -294,11 +322,13 @@ export function renderTypeDeclaration(definition: SchemaDefinition): string {
 }
 
 export function renderActionCreatorCall(
-  def: SchemaDefinition,
+  clay: Clay,
+  def: SchemaDef,
   refTypePrefix: string = 't.',
 ): string {
   return `
   ${refTypePrefix}${renderActionCreatorName(def)}(${renderPropList(
+    clay,
     (def.properties && def.properties.payload) || {}, // TODO validate
     undefined,
     refTypePrefix,
@@ -308,7 +338,7 @@ export function renderActionCreatorCall(
 }
 
 export function renderPropertiesObjectLiteral(
-  prop: SchemaProperty,
+  prop: SchemaProp,
   separator: string = ', ',
 ): string {
   return prop.type === 'object'
@@ -323,7 +353,7 @@ const ACTION_SUFFIX = 'Action';
 const ACTION_SUFFIX_LENGTH = ACTION_SUFFIX.length;
 
 // TODO validate
-export function renderActionCreatorName(def: SchemaDefinition): string {
+export function renderActionCreatorName(def: SchemaDef): string {
   return (
     def.title[0].toLowerCase() +
     def.title.slice(1, def.title.length - ACTION_SUFFIX_LENGTH)
@@ -331,7 +361,7 @@ export function renderActionCreatorName(def: SchemaDefinition): string {
 }
 
 export function renderActionTypeValue(
-  def: SchemaDefinition,
+  def: SchemaDef,
   refTypePrefix: string = 't.',
 ): string {
   return `${refTypePrefix}${def.title}`;

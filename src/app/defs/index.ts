@@ -1,2 +1,2 @@
-export * from './app.def.gen';
+export * from './app.clay.gen';
 export * from './validate';

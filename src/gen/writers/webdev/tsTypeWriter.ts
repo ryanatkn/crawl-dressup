@@ -2,16 +2,16 @@ import * as h from '../helpers';
 
 import {GenCtx, WriterResults} from '../../types';
 
-import {AppDef} from '../../defs';
+import {Clay} from '../../defs';
 
 const writeContents = (
   path: string,
-  def: AppDef,
+  clay: Clay,
   results: WriterResults,
 ): string =>
   `
-  ${Object.keys(def.definitions)
-    .map(d => h.renderTypeDeclaration(def.definitions[d]))
+  ${Object.keys(clay.definitions)
+    .map(d => h.renderTypeDeclaration(clay, clay.definitions[d]))
     .join('\n\n')}
   `.trim();
 
@@ -19,12 +19,12 @@ export function tsTypeWriter(
   results: WriterResults,
   ctx: GenCtx,
 ): WriterResults {
-  const path = `types/${ctx.def.name}.types.gen.ts`;
+  const path = `types/${ctx.clay.name}.types.gen.ts`;
   return {
     ...results,
     files: results.files.concat({
       path,
-      contents: writeContents(path, ctx.def, results),
+      contents: writeContents(path, ctx.clay, results),
       writerName: tsTypeWriter.name,
     }),
   };
