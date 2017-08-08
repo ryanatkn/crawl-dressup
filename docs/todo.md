@@ -15,6 +15,7 @@ open questions
     - the clay name `app` is problematic - it's hardcoded all over the writers, consider removing it completely
     - how to use `ulid` in mock for id?
     - how to implement enum without string literal values?
+    - ecs integration (can we get the best of both worlds, typesafe selectors with dynamic data model?)
 
 new avatar categories
     - ears

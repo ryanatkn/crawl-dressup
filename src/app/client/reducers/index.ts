@@ -17,7 +17,7 @@ export const playerImages: t.ImageData[] = assets.images
     };
   });
 
-// TODO move this and `playerImages`
+// TODO move this and `playerImages`, to state?
 export const playerImagesById: Dict<
   t.ImageData
 > = playerImages.reduce((result, image) => {

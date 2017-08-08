@@ -7,6 +7,7 @@ import * as k from '../constants';
 import * as t from '../types';
 
 import {Costume} from './Costume';
+import {CostumeManager} from './CostumeManager';
 import {Frame} from './Frame';
 import {Img} from './Img';
 import {connect} from 'react-redux';
@@ -29,7 +30,7 @@ interface ConnectedDispatchProps {
     currentAvatarCostumeValue: t.Id,
   ): void;
   setHoveredEntityId(id: t.Id, category: t.CharacterCategory): void;
-  setCostumeCategory(id: t.Id, category: t.CharacterCategory): void;
+  setCostumeCategory(id: t.Id | null, category: t.CharacterCategory): void;
   // updateTitle(id: string, title: string): void;
 }
 interface ConnectedProps extends ConnectedStateProps, ConnectedDispatchProps {}
@@ -161,6 +162,28 @@ class App extends React.Component<Props> {
               <div style={{display: 'flex', flexWrap: 'wrap'}}>
                 <Costume
                   costume={avatar.costume}
+                  familiar="left"
+                  size={k.renderedTileSizeSm}
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'flex-end',
+                  }}
+                />
+                <Costume
+                  costume={avatar.costume}
+                  familiar="right"
+                  size={k.renderedTileSize}
+                  style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    alignItems: 'flex-end',
+                  }}
+                />
+                <Costume
+                  costume={avatar.costume}
+                  familiar="left"
+                  size={k.renderedTileSizeLg}
                   style={{
                     display: 'flex',
                     flexWrap: 'wrap',
@@ -169,7 +192,8 @@ class App extends React.Component<Props> {
                 />
                 <Costume
                   costume={previewAvatar.costume}
-                  flipFamiliar={true}
+                  familiar="right"
+                  size={k.renderedTileSizeLg}
                   style={{
                     display: 'flex',
                     flexWrap: 'wrap',
@@ -209,9 +233,17 @@ class App extends React.Component<Props> {
                   )}
                 </div>
                 <div>
-                  TODO - show each of the selections, and allow canceling (along
-                  with other megatouch actions)
-                  {/* TODO need to map all selected items for the currently selected character's avatar */}
+                  <CostumeManager
+                    costume={avatar.costume}
+                    size={k.renderedTileSizeSm}
+                    removeItem={(
+                      costumeId: t.Id,
+                      category: t.CharacterCategory,
+                    ) => {
+                      // TODO this is all super awkward... not using the `costumeId` like it should
+                      setCostumeCategory(null, category);
+                    }}
+                  />
                 </div>
                 <div>
                   TODO - show each of the character's avatars (the currently
@@ -342,7 +374,7 @@ const mapDispatchToProps = (dispatch: t.Dispatch): ConnectedDispatchProps => ({
     });
   },
   // TODO should be the id of the costume itself to prevent nesting
-  setCostumeCategory: (id: t.Id, category: t.CharacterCategory) => {
+  setCostumeCategory: (id: t.Id | null, category: t.CharacterCategory) => {
     // TODO ideally don't need this manual type assertion, need to rewrite Redux type
     dispatch<t.Action>({
       type: t.ActionType.UpdateEntityAction,
