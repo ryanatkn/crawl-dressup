@@ -31,6 +31,7 @@ interface ConnectedDispatchProps {
   ): void;
   setHoveredEntityId(id: t.Id, category: t.CharacterCategory): void;
   setCostumeCategory(id: t.Id | null, category: t.CharacterCategory): void;
+  removeCostumeCategory(costumeId: t.Id, category: t.CharacterCategory): void;
   // updateTitle(id: string, title: string): void;
 }
 interface ConnectedProps extends ConnectedStateProps, ConnectedDispatchProps {}
@@ -48,6 +49,7 @@ class App extends React.Component<Props> {
       setActiveCharacterCategory,
       setHoveredEntityId,
       setCostumeCategory,
+      removeCostumeCategory,
     } = this.props as ConnectedProps;
     return (
       <div className="App">
@@ -206,9 +208,10 @@ class App extends React.Component<Props> {
                     <div
                       key={category}
                       style={{
-                        fontWeight: category === activeCharacterCategory
-                          ? 'bold'
-                          : 'normal',
+                        fontWeight:
+                          category === activeCharacterCategory
+                            ? 'bold'
+                            : 'normal',
                         cursor: 'pointer',
                       }}
                       onClick={() =>
@@ -236,13 +239,7 @@ class App extends React.Component<Props> {
                   <CostumeManager
                     costume={avatar.costume}
                     size={k.renderedTileSizeSm}
-                    removeItem={(
-                      costumeId: t.Id,
-                      category: t.CharacterCategory,
-                    ) => {
-                      // TODO this is all super awkward... not using the `costumeId` like it should
-                      setCostumeCategory(null, category);
-                    }}
+                    removeItem={removeCostumeCategory} // TODO this is all super awkward... not using the `costumeId` like it should
                   />
                 </div>
                 <div>
@@ -263,7 +260,9 @@ class App extends React.Component<Props> {
                 }}
               >
                 <div style={{display: 'flex', alignItems: 'center'}}>
-                  <h3>{t.CharacterCategory[activeCharacterCategory]}</h3>
+                  <h3>
+                    {t.CharacterCategory[activeCharacterCategory]}
+                  </h3>
                   {' - '}
                   <small>
                     {playerImages.reduce(
@@ -302,12 +301,13 @@ class App extends React.Component<Props> {
                               activeCharacterCategory,
                             )}
                           style={{
-                            border: avatarCostumeItem &&
+                            border:
+                              avatarCostumeItem &&
                               image.id === avatarCostumeItem.id
-                              ? '3px dashed rgba(0, 0, 0, 0.2)'
-                              : image.id === hoveredEntityId
-                                ? '3px dashed rgba(0, 0, 0, 0.4)'
-                                : '3px dashed transparent',
+                                ? '3px dashed rgba(0, 0, 0, 0.2)'
+                                : image.id === hoveredEntityId
+                                  ? '3px dashed rgba(0, 0, 0, 0.4)'
+                                  : '3px dashed transparent',
                           }}
                         >
                           <Img
@@ -382,7 +382,27 @@ const mapDispatchToProps = (dispatch: t.Dispatch): ConnectedDispatchProps => ({
         id: 'character',
         key: `avatars.0.costume.${t.CharacterCategory[category]}`,
         value: id,
-      }, // TODO parameterize by category
+      },
+    });
+  },
+  removeCostumeCategory: (costumeId: t.Id, category: t.CharacterCategory) => {
+    // TODO not using `costumeId`
+    dispatch<t.Action>({
+      type: t.ActionType.UpdateEntityAction,
+      payload: {
+        id: 'character',
+        key: `avatars.0.costume.${t.CharacterCategory[category]}`,
+        value: null,
+      },
+    });
+    // TODO all hacked up...what's the right way to do this?
+    dispatch<t.Action>({
+      type: t.ActionType.UpdateEntityAction,
+      payload: {
+        id: 'previewAvatar',
+        key: `costume.${t.CharacterCategory[category]}`,
+        value: null,
+      },
     });
   },
 });
