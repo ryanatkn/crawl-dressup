@@ -17,7 +17,7 @@ import {sample} from 'lodash';
 import * as rand from '../../utils/rand';
 import * as t from '../types';
 
-export const mockId = (): t.Id => rand.str();
+export const mockId = (): t.Id => rand.str(26, 26);
 
 export const mockJson = (): t.Json =>
   sample([

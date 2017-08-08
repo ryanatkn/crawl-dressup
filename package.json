@@ -38,10 +38,10 @@
     "@types/react": "^15.0.32",
     "@types/react-dom": "^15.5.1",
     "@types/react-redux": "^4.4.45",
+    "ajv": "^5.2.2",
     "cookie-parser": "^1.4.3",
     "es6-promisify": "^5.0.0",
     "express-session": "^1.15.3",
-    "jsonschema": "^1.1.1",
     "koa": "^2.3.0",
     "koa-bodyparser": "^4.2.0",
     "koa-router": "^7.2.1",
@@ -104,9 +104,18 @@
     "whatwg-fetch": "2.0.3"
   },
   "jest": {
-    "collectCoverageFrom": ["src/**/*.{js,jsx,ts,tsx}"],
-    "setupFiles": ["<rootDir>/config/polyfills.js"],
-    "moduleFileExtensions": ["ts", "tsx", "js", "jsx"],
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}"
+    ],
+    "setupFiles": [
+      "<rootDir>/config/polyfills.js"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js",
+      "jsx"
+    ],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.ts?(x)",
       "<rootDir>/src/**/?(*.)(spec|test).ts?(x)"
@@ -126,7 +135,9 @@
     }
   },
   "babel": {
-    "presets": ["react-app"]
+    "presets": [
+      "react-app"
+    ]
   },
   "eslintConfig": {
     "extends": "react-app"

@@ -3,12 +3,18 @@ scratchlist
     - elucidate defs vs props in all usage
         - like `helpers#getSubtypes`, should that take a prop?
         - prop/def confusion, see `any` cast in `renderRandomValue`
-    
+        - possibly remove distinction and make schema a union type (primitive, etc, based on the tsHelpers patterns already in use)
+    - dress up ui enhancements (manage existing choices)
+    - more docs
+
 open questions
     - figure out storage with entities
     - clientState.entities type
     - how to make id refs to an entity of a particular type? needed to validate -- "$ref": "#/definitions/Id" should encode the underlying type
     - improve type safety, especially around entities
+    - the clay name `app` is problematic - it's hardcoded all over the writers, consider removing it completely
+    - how to use `ulid` in mock for id?
+    - how to implement enum without string literal values?
 
 new avatar categories
     - ears

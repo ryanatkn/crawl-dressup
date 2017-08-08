@@ -9,7 +9,7 @@ const writeContents = (clay: Clay, prettierCfg: object): string =>
   `
   import {Clay} from '../../gen';
 
-  export const ${clay.name}Def: Clay = {
+  export const clay: Clay = {
     ${Object.keys(clay).map(d => {
       if (d === 'definitions') {
         return `

@@ -15,7 +15,7 @@ export const createTestClay = (partial?: Partial<Clay>): Clay => {
       Bar: {title: 'Bar'},
       Action: {
         title: 'Action',
-        oneOf: [
+        anyOf: [
           {$ref: '#/definitions/FooAction'},
           {$ref: '#/definitions/BarAction'},
         ],

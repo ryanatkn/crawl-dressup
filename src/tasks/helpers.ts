@@ -27,6 +27,7 @@ export const getWritersList = (): Writer[] => [
   writers.tsDefWriter,
   writers.tsTypeWriter,
   writers.tsMockWriter,
+  writers.tsMockTestWriter,
   writers.tsActionWriter,
   writers.tsActionTestWriter,
   writers.tsReducerTestWriter,

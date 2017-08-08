@@ -1,4 +1,5 @@
 import * as h from '../helpers';
+import {RAND_STR_DEFAULT_LENGTH} from '../../../utils/rand';
 
 import {
   Clay,
@@ -48,8 +49,8 @@ export function renderTypeUnion(
   prop: SchemaProp,
   refTypePrefix: string = 't.',
 ): string {
-  return prop.oneOf
-    ? prop.oneOf
+  return prop.anyOf
+    ? prop.anyOf
         .map(v => renderPropertyType(clay, v, refTypePrefix))
         .join(' | ')
     : '';
@@ -67,7 +68,7 @@ export function renderEnumType(
     return prop.enum.map(v => `'${v}'`).join(' | ');
   }
   if (isDeclaration) {
-    return `{ ${prop.enum.map(v => `${v}`).join(', ')} }`;
+    return `{ ${prop.enum.map(v => `${v} = '${v}'`).join(', ')} }`;
   }
   return `${refTypePrefix}${prop.title}`;
 }
@@ -122,7 +123,7 @@ export function renderPropertyType(
       : `${refTypePrefix}${extractRefTypeTitle(prop.$ref)}`;
   } else if (prop.value !== undefined) {
     return `${JSON.stringify(prop.value)}`;
-  } else if (prop.oneOf) {
+  } else if (prop.anyOf) {
     return renderTypeUnion(clay, prop, refTypePrefix);
   } else if (prop.enum) {
     return renderEnumType(prop, refTypePrefix, isDeclaration);
@@ -190,8 +191,8 @@ export function renderRandomValue(
     return typeof prop.value === 'string'
       ? `'${prop.value}'`
       : JSON.stringify(prop.value);
-  } else if (prop.oneOf) {
-    return `sample([${prop.oneOf
+  } else if (prop.anyOf) {
+    return `sample([${prop.anyOf
       .map(p => renderRandomValue(clay, p, refTypePrefix))
       .join(', ')}]) as ${prop.title
       ? `${refTypePrefix}${prop.title}`
@@ -201,7 +202,11 @@ export function renderRandomValue(
   } else {
     switch (prop.type) {
       case 'string':
-        return 'rand.str()';
+        const minLength = prop.minLength || RAND_STR_DEFAULT_LENGTH;
+        const maxLength = prop.maxLength || minLength;
+        return minLength === RAND_STR_DEFAULT_LENGTH && minLength === maxLength
+          ? 'rand.str()'
+          : `rand.str(${minLength}, ${maxLength})`;
       case 'integer':
         return 'rand.int()';
       case 'number':
@@ -284,7 +289,7 @@ export const inferTypeDeclarationKind = (
   def: SchemaDef,
 ): TypeDeclarationKind => {
   if (
-    def.oneOf ||
+    def.anyOf ||
     (def.type && def.type !== 'array' && def.type !== 'object')
   ) {
     return TypeDeclarationKind.TypeLiteral;

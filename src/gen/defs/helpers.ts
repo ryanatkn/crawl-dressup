@@ -58,7 +58,7 @@ export const getSuperDefs = (clay: Clay, def: SchemaDef): SchemaDef[] => {
 
 // TODO move this out of gen - to where? - and write tests
 export const getActions = (clay: Clay): SchemaDef[] =>
-  (clay.definitions.Action.oneOf as any).map((a: any) =>
+  (clay.definitions.Action.anyOf as any).map((a: any) =>
     lookupDef(clay, a.$ref || ''),
   );
 

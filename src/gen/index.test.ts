@@ -11,5 +11,5 @@ it('generates some files', async () => {
     prettierCfg,
   };
   const generated = generate(ctx, getWritersList());
-  expect(generated.files.length).toBe(6);
+  expect(generated.files.length).toBe(7);
 });

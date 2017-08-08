@@ -14,9 +14,7 @@
 
 import {Clay} from '../../gen';
 
-export const appDef: Clay = {
-  $schema: 'http://json-schema.org/draft-04/schema#',
-  id: 'http://enti.com/v1/defs/app.clay.json',
+export const clay: Clay = {
   name: 'app',
   title: 'enti',
   description: 'enti app def',
@@ -27,13 +25,14 @@ export const appDef: Clay = {
       type: 'string',
       minLength: 26,
       maxLength: 26,
+      id: 'Id',
       code: {
         declaration: 'export type Id = string;\n',
       },
     },
     Json: {
       title: 'Json',
-      oneOf: [
+      anyOf: [
         {
           type: 'array',
         },
@@ -56,6 +55,7 @@ export const appDef: Clay = {
           type: 'null',
         },
       ],
+      id: 'Json',
       code: {
         declaration:
           'export type Json = any[] | object | boolean | number | number | string | null;\n',
@@ -64,6 +64,7 @@ export const appDef: Clay = {
     Path: {
       title: 'Path',
       type: 'string',
+      id: 'Path',
       code: {
         declaration: 'export type Path = string;\n',
       },
@@ -73,15 +74,16 @@ export const appDef: Clay = {
       type: 'object',
       properties: {
         id: {
-          $ref: '#/definitions/Id',
+          $ref: 'Id',
         },
       },
       patternProperties: {
         '^[a-zA-Z0-9]+$': {
-          $ref: '#/definitions/Json',
+          $ref: 'Json',
         },
       },
       required: ['id'],
+      id: 'Entity',
       code: {
         declaration: 'export interface Entity {id: Id}\n',
       },
@@ -94,15 +96,16 @@ export const appDef: Clay = {
           type: 'object',
           patternProperties: {
             '^[A-Z0-9]{26}$': {
-              $ref: '#/definitions/Entity',
+              $ref: 'Entity',
             },
             '^[a-zA-Z0-9]+': {
-              $ref: '#/definitions/Entity',
+              $ref: 'Entity',
             },
           },
         },
       },
       required: ['entities'],
+      id: 'ClientState',
       code: {
         declaration: 'export interface ClientState {entities: object}\n',
       },
@@ -112,7 +115,7 @@ export const appDef: Clay = {
       type: 'object',
       allOf: [
         {
-          $ref: '#/definitions/Entity',
+          $ref: 'Entity',
         },
       ],
       properties: {
@@ -122,14 +125,15 @@ export const appDef: Clay = {
         avatars: {
           type: 'array',
           items: {
-            $ref: '#/definitions/Avatar',
+            $ref: 'Avatar',
           },
         },
         activeAvatarId: {
-          $ref: '#/definitions/Id',
+          $ref: 'Id',
         },
       },
       required: ['name', 'avatars', 'activeAvatarId'],
+      id: 'Character',
       code: {
         declaration:
           'export interface Character extends Entity {\n  name: string;\n  avatars: Avatar[];\n  activeAvatarId: Id;\n}\n',
@@ -140,15 +144,16 @@ export const appDef: Clay = {
       type: 'object',
       allOf: [
         {
-          $ref: '#/definitions/Entity',
+          $ref: 'Entity',
         },
       ],
       properties: {
         costume: {
-          $ref: '#/definitions/Costume',
+          $ref: 'Costume',
         },
       },
       required: ['costume'],
+      id: 'Avatar',
       code: {
         declaration:
           'export interface Avatar extends Entity {costume: Costume}\n',
@@ -159,14 +164,14 @@ export const appDef: Clay = {
       type: 'object',
       allOf: [
         {
-          $ref: '#/definitions/Entity',
+          $ref: 'Entity',
         },
       ],
       properties: {
         base: {
-          oneOf: [
+          anyOf: [
             {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
             {
               type: 'null',
@@ -174,9 +179,9 @@ export const appDef: Clay = {
           ],
         },
         hair: {
-          oneOf: [
+          anyOf: [
             {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
             {
               type: 'null',
@@ -184,9 +189,9 @@ export const appDef: Clay = {
           ],
         },
         beard: {
-          oneOf: [
+          anyOf: [
             {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
             {
               type: 'null',
@@ -194,9 +199,9 @@ export const appDef: Clay = {
           ],
         },
         body: {
-          oneOf: [
+          anyOf: [
             {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
             {
               type: 'null',
@@ -204,9 +209,9 @@ export const appDef: Clay = {
           ],
         },
         legs: {
-          oneOf: [
+          anyOf: [
             {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
             {
               type: 'null',
@@ -214,9 +219,9 @@ export const appDef: Clay = {
           ],
         },
         hand1: {
-          oneOf: [
+          anyOf: [
             {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
             {
               type: 'null',
@@ -224,9 +229,9 @@ export const appDef: Clay = {
           ],
         },
         hand2: {
-          oneOf: [
+          anyOf: [
             {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
             {
               type: 'null',
@@ -234,9 +239,9 @@ export const appDef: Clay = {
           ],
         },
         head: {
-          oneOf: [
+          anyOf: [
             {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
             {
               type: 'null',
@@ -244,9 +249,9 @@ export const appDef: Clay = {
           ],
         },
         gloves: {
-          oneOf: [
+          anyOf: [
             {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
             {
               type: 'null',
@@ -254,9 +259,9 @@ export const appDef: Clay = {
           ],
         },
         boots: {
-          oneOf: [
+          anyOf: [
             {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
             {
               type: 'null',
@@ -264,9 +269,9 @@ export const appDef: Clay = {
           ],
         },
         cloak: {
-          oneOf: [
+          anyOf: [
             {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
             {
               type: 'null',
@@ -274,9 +279,9 @@ export const appDef: Clay = {
           ],
         },
         felids: {
-          oneOf: [
+          anyOf: [
             {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
             {
               type: 'null',
@@ -298,6 +303,7 @@ export const appDef: Clay = {
         'cloak',
         'felids',
       ],
+      id: 'Costume',
       code: {
         declaration:
           'export interface Costume extends Entity {\n  base: Id | null;\n  hair: Id | null;\n  beard: Id | null;\n  body: Id | null;\n  legs: Id | null;\n  hand1: Id | null;\n  hand2: Id | null;\n  head: Id | null;\n  gloves: Id | null;\n  boots: Id | null;\n  cloak: Id | null;\n  felids: Id | null;\n}\n',
@@ -311,7 +317,7 @@ export const appDef: Clay = {
           enum: ['sql', 'mongo'],
         },
         id: {
-          $ref: '#/definitions/Id',
+          $ref: 'Id',
         },
         title: {
           type: 'string',
@@ -321,6 +327,7 @@ export const appDef: Clay = {
         },
       },
       required: ['kind', 'id', 'title', 'uri'],
+      id: 'DataSource',
       code: {
         declaration:
           "export interface DataSource {\n  kind: 'sql' | 'mongo';\n  id: Id;\n  title: string;\n  uri: string;\n}\n",
@@ -328,20 +335,21 @@ export const appDef: Clay = {
     },
     Query: {
       title: 'Query',
-      oneOf: [
+      anyOf: [
         {
-          $ref: '#/definitions/NewQuery',
+          $ref: 'NewQuery',
         },
         {
-          $ref: '#/definitions/PendingQuery',
+          $ref: 'PendingQuery',
         },
         {
-          $ref: '#/definitions/RejectedQuery',
+          $ref: 'RejectedQuery',
         },
         {
-          $ref: '#/definitions/ResolvedQuery',
+          $ref: 'ResolvedQuery',
         },
       ],
+      id: 'Query',
       code: {
         declaration:
           'export type Query = NewQuery | PendingQuery | RejectedQuery | ResolvedQuery;\n',
@@ -356,10 +364,10 @@ export const appDef: Clay = {
           value: 'new',
         },
         id: {
-          $ref: '#/definitions/Id',
+          $ref: 'Id',
         },
         sourceId: {
-          $ref: '#/definitions/Id',
+          $ref: 'Id',
         },
         title: {
           type: 'string',
@@ -368,7 +376,7 @@ export const appDef: Clay = {
           type: 'string',
         },
         lastExecuted: {
-          oneOf: [
+          anyOf: [
             {
               type: 'string',
             },
@@ -379,6 +387,7 @@ export const appDef: Clay = {
         },
       },
       required: ['status', 'id', 'sourceId', 'title', 'raw', 'lastExecuted'],
+      id: 'NewQuery',
       code: {
         declaration:
           "export interface NewQuery {\n  status: 'new';\n  id: Id;\n  sourceId: Id;\n  title: string;\n  raw: string;\n  lastExecuted: string | null;\n}\n",
@@ -393,10 +402,10 @@ export const appDef: Clay = {
           value: 'pending',
         },
         id: {
-          $ref: '#/definitions/Id',
+          $ref: 'Id',
         },
         sourceId: {
-          $ref: '#/definitions/Id',
+          $ref: 'Id',
         },
         title: {
           type: 'string',
@@ -409,6 +418,7 @@ export const appDef: Clay = {
         },
       },
       required: ['status', 'id', 'sourceId', 'title', 'raw', 'lastExecuted'],
+      id: 'PendingQuery',
       code: {
         declaration:
           "export interface PendingQuery {\n  status: 'pending';\n  id: Id;\n  sourceId: Id;\n  title: string;\n  raw: string;\n  lastExecuted: string;\n}\n",
@@ -423,10 +433,10 @@ export const appDef: Clay = {
           value: 'failed',
         },
         id: {
-          $ref: '#/definitions/Id',
+          $ref: 'Id',
         },
         sourceId: {
-          $ref: '#/definitions/Id',
+          $ref: 'Id',
         },
         title: {
           type: 'string',
@@ -450,6 +460,7 @@ export const appDef: Clay = {
         'lastExecuted',
         'error',
       ],
+      id: 'RejectedQuery',
       code: {
         declaration:
           "export interface RejectedQuery {\n  status: 'failed';\n  id: Id;\n  sourceId: Id;\n  title: string;\n  raw: string;\n  lastExecuted: string;\n  error: string;\n}\n",
@@ -464,10 +475,10 @@ export const appDef: Clay = {
           value: 'resolved',
         },
         id: {
-          $ref: '#/definitions/Id',
+          $ref: 'Id',
         },
         sourceId: {
-          $ref: '#/definitions/Id',
+          $ref: 'Id',
         },
         title: {
           type: 'string',
@@ -479,7 +490,7 @@ export const appDef: Clay = {
           type: 'string',
         },
         results: {
-          oneOf: [
+          anyOf: [
             {
               type: 'boolean',
             },
@@ -507,6 +518,7 @@ export const appDef: Clay = {
         'lastExecuted',
         'results',
       ],
+      id: 'ResolvedQuery',
       code: {
         declaration:
           "export interface ResolvedQuery {\n  status: 'resolved';\n  id: Id;\n  sourceId: Id;\n  title: string;\n  raw: string;\n  lastExecuted: string;\n  results: boolean | null | number | object | string;\n}\n",
@@ -517,9 +529,10 @@ export const appDef: Clay = {
       type: 'object',
       properties: {
         id: {
-          $ref: '#/definitions/Id',
+          $ref: 'Id',
         },
       },
+      id: 'BaseAction',
       code: {
         declaration: 'export interface BaseAction {id?: Id}\n',
       },
@@ -539,48 +552,50 @@ export const appDef: Clay = {
         'ExecuteSuccessQueryAction',
         'SetActiveQueryAction',
       ],
+      id: 'ActionType',
       code: {
         declaration:
-          'export enum ActionType {\n  UpdateEntityAction,\n  SignUpUserAction,\n  SignInUserAction,\n  SignOutUserAction,\n  CreateQueryAction,\n  ReadQueryAction,\n  UpdateQueryAction,\n  DeleteQueryAction,\n  ExecuteQueryAction,\n  ExecuteSuccessQueryAction,\n  SetActiveQueryAction,\n}\n',
+          "export enum ActionType {\n  UpdateEntityAction = 'UpdateEntityAction',\n  SignUpUserAction = 'SignUpUserAction',\n  SignInUserAction = 'SignInUserAction',\n  SignOutUserAction = 'SignOutUserAction',\n  CreateQueryAction = 'CreateQueryAction',\n  ReadQueryAction = 'ReadQueryAction',\n  UpdateQueryAction = 'UpdateQueryAction',\n  DeleteQueryAction = 'DeleteQueryAction',\n  ExecuteQueryAction = 'ExecuteQueryAction',\n  ExecuteSuccessQueryAction = 'ExecuteSuccessQueryAction',\n  SetActiveQueryAction = 'SetActiveQueryAction',\n}\n",
       },
     },
     Action: {
       title: 'Action',
-      oneOf: [
+      anyOf: [
         {
-          $ref: '#/definitions/UpdateEntityAction',
+          $ref: 'UpdateEntityAction',
         },
         {
-          $ref: '#/definitions/SignUpUserAction',
+          $ref: 'SignUpUserAction',
         },
         {
-          $ref: '#/definitions/SignInUserAction',
+          $ref: 'SignInUserAction',
         },
         {
-          $ref: '#/definitions/SignOutUserAction',
+          $ref: 'SignOutUserAction',
         },
         {
-          $ref: '#/definitions/CreateQueryAction',
+          $ref: 'CreateQueryAction',
         },
         {
-          $ref: '#/definitions/ReadQueryAction',
+          $ref: 'ReadQueryAction',
         },
         {
-          $ref: '#/definitions/UpdateQueryAction',
+          $ref: 'UpdateQueryAction',
         },
         {
-          $ref: '#/definitions/DeleteQueryAction',
+          $ref: 'DeleteQueryAction',
         },
         {
-          $ref: '#/definitions/ExecuteQueryAction',
+          $ref: 'ExecuteQueryAction',
         },
         {
-          $ref: '#/definitions/ExecuteSuccessQueryAction',
+          $ref: 'ExecuteSuccessQueryAction',
         },
         {
-          $ref: '#/definitions/SetActiveQueryAction',
+          $ref: 'SetActiveQueryAction',
         },
       ],
+      id: 'Action',
       code: {
         declaration:
           'export type Action =\n  | UpdateEntityAction\n  | SignUpUserAction\n  | SignInUserAction\n  | SignOutUserAction\n  | CreateQueryAction\n  | ReadQueryAction\n  | UpdateQueryAction\n  | DeleteQueryAction\n  | ExecuteQueryAction\n  | ExecuteSuccessQueryAction\n  | SetActiveQueryAction;\n',
@@ -589,34 +604,34 @@ export const appDef: Clay = {
     UpdateEntityAction: {
       title: 'UpdateEntityAction',
       type: 'object',
-      id: 'Entity/Update',
       allOf: [
         {
-          $ref: '#/definitions/BaseAction',
+          $ref: 'BaseAction',
         },
       ],
       properties: {
         type: {
-          $ref: '#/definitions/ActionType',
+          $ref: 'ActionType',
           value: 'UpdateEntityAction',
         },
         payload: {
           type: 'object',
           properties: {
             id: {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
             key: {
               type: 'string',
             },
             value: {
-              $ref: '#/definitions/Json',
+              $ref: 'Json',
             },
           },
           required: ['id', 'key', 'value'],
         },
       },
       required: ['type', 'payload'],
+      id: 'UpdateEntityAction',
       code: {
         declaration:
           'export interface UpdateEntityAction extends BaseAction {\n  type: ActionType.UpdateEntityAction;\n  payload: {id: Id; key: string; value: Json};\n}\n',
@@ -625,15 +640,14 @@ export const appDef: Clay = {
     SignUpUserAction: {
       title: 'SignUpUserAction',
       type: 'object',
-      id: 'User/SignUp',
       allOf: [
         {
-          $ref: '#/definitions/BaseAction',
+          $ref: 'BaseAction',
         },
       ],
       properties: {
         type: {
-          $ref: '#/definitions/ActionType',
+          $ref: 'ActionType',
           value: 'SignUpUserAction',
         },
         payload: {
@@ -647,6 +661,7 @@ export const appDef: Clay = {
         },
       },
       required: ['type', 'payload'],
+      id: 'SignUpUserAction',
       code: {
         declaration:
           'export interface SignUpUserAction extends BaseAction {\n  type: ActionType.SignUpUserAction;\n  payload: {email: string};\n}\n',
@@ -655,15 +670,14 @@ export const appDef: Clay = {
     SignInUserAction: {
       title: 'SignInUserAction',
       type: 'object',
-      id: 'User/SignIn',
       allOf: [
         {
-          $ref: '#/definitions/BaseAction',
+          $ref: 'BaseAction',
         },
       ],
       properties: {
         type: {
-          $ref: '#/definitions/ActionType',
+          $ref: 'ActionType',
           value: 'SignInUserAction',
         },
         payload: {
@@ -680,6 +694,7 @@ export const appDef: Clay = {
         },
       },
       required: ['type', 'payload'],
+      id: 'SignInUserAction',
       code: {
         declaration:
           'export interface SignInUserAction extends BaseAction {\n  type: ActionType.SignInUserAction;\n  payload: {email: string; password: string};\n}\n',
@@ -688,15 +703,14 @@ export const appDef: Clay = {
     SignOutUserAction: {
       title: 'SignOutUserAction',
       type: 'object',
-      id: 'User/SignOut',
       allOf: [
         {
-          $ref: '#/definitions/BaseAction',
+          $ref: 'BaseAction',
         },
       ],
       properties: {
         type: {
-          $ref: '#/definitions/ActionType',
+          $ref: 'ActionType',
           value: 'SignOutUserAction',
         },
         payload: {
@@ -704,6 +718,7 @@ export const appDef: Clay = {
         },
       },
       required: ['type', 'payload'],
+      id: 'SignOutUserAction',
       code: {
         declaration:
           'export interface SignOutUserAction extends BaseAction {\n  type: ActionType.SignOutUserAction;\n  payload: null;\n}\n',
@@ -712,28 +727,28 @@ export const appDef: Clay = {
     CreateQueryAction: {
       title: 'CreateQueryAction',
       type: 'object',
-      id: 'Query/Create',
       allOf: [
         {
-          $ref: '#/definitions/BaseAction',
+          $ref: 'BaseAction',
         },
       ],
       properties: {
         type: {
-          $ref: '#/definitions/ActionType',
+          $ref: 'ActionType',
           value: 'CreateQueryAction',
         },
         payload: {
           type: 'object',
           properties: {
             query: {
-              $ref: '#/definitions/Query',
+              $ref: 'Query',
             },
           },
           required: ['query'],
         },
       },
       required: ['type', 'payload'],
+      id: 'CreateQueryAction',
       code: {
         declaration:
           'export interface CreateQueryAction extends BaseAction {\n  type: ActionType.CreateQueryAction;\n  payload: {query: Query};\n}\n',
@@ -742,15 +757,14 @@ export const appDef: Clay = {
     ReadQueryAction: {
       title: 'ReadQueryAction',
       type: 'object',
-      id: 'Query/Read',
       allOf: [
         {
-          $ref: '#/definitions/BaseAction',
+          $ref: 'BaseAction',
         },
       ],
       properties: {
         type: {
-          $ref: '#/definitions/ActionType',
+          $ref: 'ActionType',
           value: 'ReadQueryAction',
         },
         payload: {
@@ -758,6 +772,7 @@ export const appDef: Clay = {
         },
       },
       required: ['type', 'payload'],
+      id: 'ReadQueryAction',
       code: {
         declaration:
           'export interface ReadQueryAction extends BaseAction {\n  type: ActionType.ReadQueryAction;\n  payload: null;\n}\n',
@@ -766,25 +781,24 @@ export const appDef: Clay = {
     UpdateQueryAction: {
       title: 'UpdateQueryAction',
       type: 'object',
-      id: 'Query/Update',
       allOf: [
         {
-          $ref: '#/definitions/BaseAction',
+          $ref: 'BaseAction',
         },
       ],
       properties: {
         type: {
-          $ref: '#/definitions/ActionType',
+          $ref: 'ActionType',
           value: 'UpdateQueryAction',
         },
         payload: {
           type: 'object',
           properties: {
             id: {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
             sourceId: {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
             title: {
               type: 'string',
@@ -797,6 +811,7 @@ export const appDef: Clay = {
         },
       },
       required: ['type', 'payload'],
+      id: 'UpdateQueryAction',
       code: {
         declaration:
           'export interface UpdateQueryAction extends BaseAction {\n  type: ActionType.UpdateQueryAction;\n  payload: {id: Id; sourceId?: Id; title?: string; raw?: string};\n}\n',
@@ -805,28 +820,28 @@ export const appDef: Clay = {
     DeleteQueryAction: {
       title: 'DeleteQueryAction',
       type: 'object',
-      id: 'Query/Delete',
       allOf: [
         {
-          $ref: '#/definitions/BaseAction',
+          $ref: 'BaseAction',
         },
       ],
       properties: {
         type: {
-          $ref: '#/definitions/ActionType',
+          $ref: 'ActionType',
           value: 'DeleteQueryAction',
         },
         payload: {
           type: 'object',
           properties: {
             id: {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
           },
           required: ['id'],
         },
       },
       required: ['type', 'payload'],
+      id: 'DeleteQueryAction',
       code: {
         declaration:
           'export interface DeleteQueryAction extends BaseAction {\n  type: ActionType.DeleteQueryAction;\n  payload: {id: Id};\n}\n',
@@ -835,28 +850,28 @@ export const appDef: Clay = {
     ExecuteQueryAction: {
       title: 'ExecuteQueryAction',
       type: 'object',
-      id: 'Query/Execute',
       allOf: [
         {
-          $ref: '#/definitions/BaseAction',
+          $ref: 'BaseAction',
         },
       ],
       properties: {
         type: {
-          $ref: '#/definitions/ActionType',
+          $ref: 'ActionType',
           value: 'ExecuteQueryAction',
         },
         payload: {
           type: 'object',
           properties: {
             id: {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
           },
           required: ['id'],
         },
       },
       required: ['type', 'payload'],
+      id: 'ExecuteQueryAction',
       code: {
         declaration:
           'export interface ExecuteQueryAction extends BaseAction {\n  type: ActionType.ExecuteQueryAction;\n  payload: {id: Id};\n}\n',
@@ -865,22 +880,21 @@ export const appDef: Clay = {
     ExecuteSuccessQueryAction: {
       title: 'ExecuteSuccessQueryAction',
       type: 'object',
-      id: 'Query/ExecuteSuccess',
       allOf: [
         {
-          $ref: '#/definitions/BaseAction',
+          $ref: 'BaseAction',
         },
       ],
       properties: {
         type: {
-          $ref: '#/definitions/ActionType',
+          $ref: 'ActionType',
           value: 'ExecuteSuccessQueryAction',
         },
         payload: {
           type: 'object',
           properties: {
             id: {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
             results: {
               type: 'string',
@@ -890,6 +904,7 @@ export const appDef: Clay = {
         },
       },
       required: ['type', 'payload'],
+      id: 'ExecuteSuccessQueryAction',
       code: {
         declaration:
           'export interface ExecuteSuccessQueryAction extends BaseAction {\n  type: ActionType.ExecuteSuccessQueryAction;\n  payload: {id: Id; results: string};\n}\n',
@@ -898,28 +913,28 @@ export const appDef: Clay = {
     SetActiveQueryAction: {
       title: 'SetActiveQueryAction',
       type: 'object',
-      id: 'Query/SetActive',
       allOf: [
         {
-          $ref: '#/definitions/BaseAction',
+          $ref: 'BaseAction',
         },
       ],
       properties: {
         type: {
-          $ref: '#/definitions/ActionType',
+          $ref: 'ActionType',
           value: 'SetActiveQueryAction',
         },
         payload: {
           type: 'object',
           properties: {
             id: {
-              $ref: '#/definitions/Id',
+              $ref: 'Id',
             },
           },
           required: ['id'],
         },
       },
       required: ['type', 'payload'],
+      id: 'SetActiveQueryAction',
       code: {
         declaration:
           'export interface SetActiveQueryAction extends BaseAction {\n  type: ActionType.SetActiveQueryAction;\n  payload: {id: Id};\n}\n',
@@ -948,9 +963,10 @@ export const appDef: Clay = {
         'mutations',
         'transform',
       ],
+      id: 'CharacterCategory',
       code: {
         declaration:
-          'export enum CharacterCategory {\n  base,\n  hair,\n  beard,\n  body,\n  legs,\n  hand1,\n  hand2,\n  head,\n  gloves,\n  boots,\n  cloak,\n  felids,\n  drcwing,\n  drchead,\n  barding,\n  ench,\n  halo,\n  mutations,\n  transform,\n}\n',
+          "export enum CharacterCategory {\n  base = 'base',\n  hair = 'hair',\n  beard = 'beard',\n  body = 'body',\n  legs = 'legs',\n  hand1 = 'hand1',\n  hand2 = 'hand2',\n  head = 'head',\n  gloves = 'gloves',\n  boots = 'boots',\n  cloak = 'cloak',\n  felids = 'felids',\n  drcwing = 'drcwing',\n  drchead = 'drchead',\n  barding = 'barding',\n  ench = 'ench',\n  halo = 'halo',\n  mutations = 'mutations',\n  transform = 'transform',\n}\n",
       },
     },
     ImageData: {
@@ -958,7 +974,7 @@ export const appDef: Clay = {
       type: 'object',
       allOf: [
         {
-          $ref: '#/definitions/Entity',
+          $ref: 'Entity',
         },
       ],
       properties: {
@@ -972,10 +988,11 @@ export const appDef: Clay = {
           },
         },
         category: {
-          $ref: '#/definitions/CharacterCategory',
+          $ref: 'CharacterCategory',
         },
       },
       required: ['url', 'parts', 'category'],
+      id: 'ImageData',
       code: {
         declaration:
           'export interface ImageData extends Entity {\n  url: string;\n  parts: string[];\n  category: CharacterCategory;\n}\n',
@@ -986,9 +1003,10 @@ export const appDef: Clay = {
       type: 'object',
       properties: {
         id: {
-          $ref: '#/definitions/Id',
+          $ref: 'Id',
         },
       },
+      id: 'BaseMessage',
       code: {
         declaration: 'export interface BaseMessage {id?: Id}\n',
       },
@@ -996,21 +1014,23 @@ export const appDef: Clay = {
     MessageType: {
       title: 'MessageType',
       enum: ['InitMessage', 'ActionPerformedMessage'],
+      id: 'MessageType',
       code: {
         declaration:
-          'export enum MessageType {\n  InitMessage,\n  ActionPerformedMessage,\n}\n',
+          "export enum MessageType {\n  InitMessage = 'InitMessage',\n  ActionPerformedMessage = 'ActionPerformedMessage',\n}\n",
       },
     },
     Message: {
       title: 'Message',
-      oneOf: [
+      anyOf: [
         {
-          $ref: '#/definitions/InitMessage',
+          $ref: 'InitMessage',
         },
         {
-          $ref: '#/definitions/ActionPerformedMessage',
+          $ref: 'ActionPerformedMessage',
         },
       ],
+      id: 'Message',
       code: {
         declaration:
           'export type Message = InitMessage | ActionPerformedMessage;\n',
@@ -1019,15 +1039,14 @@ export const appDef: Clay = {
     InitMessage: {
       title: 'InitMessage',
       type: 'object',
-      id: 'User/SignUp',
       allOf: [
         {
-          $ref: '#/definitions/BaseMessage',
+          $ref: 'BaseMessage',
         },
       ],
       properties: {
         type: {
-          $ref: '#/definitions/MessageType',
+          $ref: 'MessageType',
           value: 'InitMessage',
         },
         payload: {
@@ -1035,6 +1054,7 @@ export const appDef: Clay = {
         },
       },
       required: ['type', 'payload'],
+      id: 'InitMessage',
       code: {
         declaration:
           'export interface InitMessage extends BaseMessage {\n  type: MessageType.InitMessage;\n  payload: null;\n}\n',
@@ -1043,28 +1063,28 @@ export const appDef: Clay = {
     ActionPerformedMessage: {
       title: 'ActionPerformedMessage',
       type: 'object',
-      id: 'User/SignUp',
       allOf: [
         {
-          $ref: '#/definitions/BaseMessage',
+          $ref: 'BaseMessage',
         },
       ],
       properties: {
         type: {
-          $ref: '#/definitions/MessageType',
+          $ref: 'MessageType',
           value: 'ActionPerformedMessage',
         },
         payload: {
           type: 'object',
           properties: {
             action: {
-              $ref: '#/definitions/Action',
+              $ref: 'Action',
             },
           },
           required: ['action'],
         },
       },
       required: ['type', 'payload'],
+      id: 'ActionPerformedMessage',
       code: {
         declaration:
           'export interface ActionPerformedMessage extends BaseMessage {\n  type: MessageType.ActionPerformedMessage;\n  payload: {action: Action};\n}\n',

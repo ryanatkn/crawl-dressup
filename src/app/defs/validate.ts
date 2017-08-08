@@ -7,6 +7,11 @@ export const validateClay = (clay: any): Clay => {
       const def = clay.definitions[d];
       const {title, required} = def;
 
+      // TODO is this what we want to do?
+      // maybe manage this and other things like `title` through the `sculpt` web ui programmatically?
+      // for example we may want to toggle "additionalProperties" off for all defs
+      def.id = d;
+
       if (!title) {
         throw new Error(`Definition "${d}" needs a title`);
       }

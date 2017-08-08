@@ -23,7 +23,7 @@ export interface SchemaProp {
     // required?: string[];
   };
   required?: string[];
-  oneOf?: SchemaProp[];
+  anyOf?: SchemaProp[];
   allOf?: SchemaProp[];
   enum?: string[];
 }
@@ -41,7 +41,7 @@ export interface SchemaDef {
     // required?: string[];
   };
   required?: string[];
-  oneOf?: SchemaProp[];
+  anyOf?: SchemaProp[];
   allOf?: SchemaProp[];
   code?: {
     declaration: string;
@@ -51,16 +51,16 @@ export interface SchemaDef {
 // this is the main definition to gen an app - a plain JSON data structure
 // TODO create json schema
 export interface Clay extends SchemaDef {
-  $schema: 'http://json-schema.org/draft-04/schema#';
+  // $schema: 'http://json-schema.org/draft-04/schema#';
   type: 'object';
-  id: string;
+  // id: string;
   name: string;
   description: string;
   definitions: {
     [key: string]: SchemaDef;
     // Action: SchemaDef & {
     //   title: string;
-    //   oneOf: {$ref: string}[];
+    //   anyOf: {$ref: string}[];
     // };
   };
   properties: {

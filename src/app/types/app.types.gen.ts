@@ -95,17 +95,17 @@ export interface ResolvedQuery {
 export interface BaseAction {id?: Id}
 
 export enum ActionType {
-  UpdateEntityAction,
-  SignUpUserAction,
-  SignInUserAction,
-  SignOutUserAction,
-  CreateQueryAction,
-  ReadQueryAction,
-  UpdateQueryAction,
-  DeleteQueryAction,
-  ExecuteQueryAction,
-  ExecuteSuccessQueryAction,
-  SetActiveQueryAction,
+  UpdateEntityAction = 'UpdateEntityAction',
+  SignUpUserAction = 'SignUpUserAction',
+  SignInUserAction = 'SignInUserAction',
+  SignOutUserAction = 'SignOutUserAction',
+  CreateQueryAction = 'CreateQueryAction',
+  ReadQueryAction = 'ReadQueryAction',
+  UpdateQueryAction = 'UpdateQueryAction',
+  DeleteQueryAction = 'DeleteQueryAction',
+  ExecuteQueryAction = 'ExecuteQueryAction',
+  ExecuteSuccessQueryAction = 'ExecuteSuccessQueryAction',
+  SetActiveQueryAction = 'SetActiveQueryAction',
 }
 
 export type Action =
@@ -177,25 +177,25 @@ export interface SetActiveQueryAction extends BaseAction {
 }
 
 export enum CharacterCategory {
-  base,
-  hair,
-  beard,
-  body,
-  legs,
-  hand1,
-  hand2,
-  head,
-  gloves,
-  boots,
-  cloak,
-  felids,
-  drcwing,
-  drchead,
-  barding,
-  ench,
-  halo,
-  mutations,
-  transform,
+  base = 'base',
+  hair = 'hair',
+  beard = 'beard',
+  body = 'body',
+  legs = 'legs',
+  hand1 = 'hand1',
+  hand2 = 'hand2',
+  head = 'head',
+  gloves = 'gloves',
+  boots = 'boots',
+  cloak = 'cloak',
+  felids = 'felids',
+  drcwing = 'drcwing',
+  drchead = 'drchead',
+  barding = 'barding',
+  ench = 'ench',
+  halo = 'halo',
+  mutations = 'mutations',
+  transform = 'transform',
 }
 
 export interface ImageData extends Entity {
@@ -207,8 +207,8 @@ export interface ImageData extends Entity {
 export interface BaseMessage {id?: Id}
 
 export enum MessageType {
-  InitMessage,
-  ActionPerformedMessage,
+  InitMessage = 'InitMessage',
+  ActionPerformedMessage = 'ActionPerformedMessage',
 }
 
 export type Message = InitMessage | ActionPerformedMessage;

@@ -1,6 +1,6 @@
 import * as fp from 'path';
 import * as fs from 'fs';
-import * as jsonschema from 'jsonschema';
+import * as Ajv from 'ajv';
 import * as prettier from 'prettier';
 
 import {GenCtx, generate} from '../gen';
@@ -24,7 +24,6 @@ TODO need better workflow
 const appDir = '../app';
 const clayDefPath = `${appDir}/defs/app.clay.json`;
 const prettierCfgPath = '../../config/prettier.json';
-const baseSchemaPath = '../gen/defs/jsonschema-meta.json';
 
 const saveFile = (destPath: string, contents: string): void => {
   log('saving', destPath);
@@ -43,7 +42,6 @@ async function main(): Promise<void> {
 
   const clay = validateClay(await loadCommentedJson(clayDefPath));
   const prettierCfg = await loadCommentedJson(prettierCfgPath);
-  const baseSchema = await loadCommentedJson(baseSchemaPath);
 
   // Load the clay app data and generate some code
   const ctx: GenCtx = {
@@ -52,13 +50,9 @@ async function main(): Promise<void> {
     prettierCfg,
   };
 
-  // This validation step is not very useful at the moment,
-  // but it can be expanded to better validate the definition file
-  // by editing the `baseSchema` JSON file directly.
-  const validatorResult = jsonschema.validate(ctx.clay, baseSchema);
-  if (validatorResult.errors.length) {
-    throw new Error(`Validator error: ${validatorResult.errors[0]}`);
-  }
+  // Validate clay with the meta schema
+  const ajv = new Ajv();
+  ajv.compile(clay);
 
   // `gen.generate` is a pure function - is does not perform any io actions or mutate anything external
   const resultsData = generate(ctx, getWritersList());

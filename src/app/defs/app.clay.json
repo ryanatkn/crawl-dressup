@@ -1,6 +1,6 @@
 {
-    "$schema": "http://json-schema.org/draft-04/schema#",
-    "id": "http://enti.com/v1/defs/app.clay.json",
+    // "$schema": "http://json-schema.org/draft-04/schema#",
+    // "id": "http://enti.com/v1/defs/app.clay.json",
     "name": "app",
     "title": "enti",
     "description": "enti app def",
@@ -14,7 +14,7 @@
         },
         "Json": {
             "title": "Json",
-            "oneOf": [
+            "anyOf": [
                 {"type": "array"}, // TODO would be nice to have this be a generic with default type to `any`, so `Json` and `Json<MyType>` both work
                 {"type": "object"},
                 {"type": "boolean"},
@@ -33,10 +33,10 @@
             "type": "object",
             // TODO set of defs
             "properties": {
-                "id": { "$ref": "#/definitions/Id" }
+                "id": { "$ref": "Id" }
             },
             "patternProperties": {
-                "^[a-zA-Z0-9]+$": { "$ref": "#/definitions/Json" }
+                "^[a-zA-Z0-9]+$": { "$ref": "Json" }
             },
             "required": ["id"]
             // ultimately, generics? so lists of defs? so make ad-hoc defs? because 1 def instance per def is limiting
@@ -50,11 +50,11 @@
                     "type": "object",
                     // TODO map of ids/names Entity defs
                     "patternProperties": {
-                        "^[A-Z0-9]{26}$": { // TODO how to extract this? also some chars like O are omitted, also need to account for arbitrary strings (oneOf)
-                            "$ref": "#/definitions/Entity"
+                        "^[A-Z0-9]{26}$": { // TODO how to extract this? also some chars like O are omitted, also need to account for arbitrary strings (anyOf)
+                            "$ref": "Entity"
                         },
                         "^[a-zA-Z0-9]+": { // TODO be more lenient? include path/info/if/thats/what/we/use?
-                            "$ref": "#/definitions/Entity"
+                            "$ref": "Entity"
                         }
                     }
                 }
@@ -66,17 +66,17 @@
         "Character": {
             "title": "Character",
             "type": "object",
-            "allOf": [{"$ref": "#/definitions/Entity"}],
+            "allOf": [{"$ref": "Entity"}],
             "properties": {
                 "name": {
                     "type": "string" // TODO CharacterName with validation rules
                 },
                 "avatars": { // TODO or should avatars point to a single character?
                     "type": "array",
-                    "items": {"$ref": "#/definitions/Avatar"}
+                    "items": {"$ref": "Avatar"}
                 },
                 "activeAvatarId": {
-                    "$ref": "#/definitions/Id" // TODO how to express id of an avatar?
+                    "$ref": "Id" // TODO how to express id of an avatar?
                 }
             },
             "required": [
@@ -88,9 +88,9 @@
         "Avatar": {
             "title": "Avatar",
             "type": "object",
-            "allOf": [{"$ref": "#/definitions/Entity"}],
+            "allOf": [{"$ref": "Entity"}],
             "properties": {
-                "costume": {"$ref": "#/definitions/Costume"}
+                "costume": {"$ref": "Costume"}
             },
             "required": [
                 "costume"
@@ -99,23 +99,23 @@
         "Costume": {
             "title": "Costume",
             "type": "object",
-            "allOf": [{"$ref": "#/definitions/Entity"}],
+            "allOf": [{"$ref": "Entity"}],
             "properties": {
                 // TODO we're hardcoding a mapping of CharacterCategory into this type
                 // what we really want is a map of a subset of categories to paths
                 // TODO also want to encode Id is to an `ImageData`
-                "base": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
-                "hair": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
-                "beard": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
-                "body": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
-                "legs": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
-                "hand1": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
-                "hand2": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
-                "head": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
-                "gloves": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
-                "boots": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
-                "cloak": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]},
-                "felids": {"oneOf": [{"$ref": "#/definitions/Id"}, {"type": "null"}]}
+                "base": {"anyOf": [{"$ref": "Id"}, {"type": "null"}]},
+                "hair": {"anyOf": [{"$ref": "Id"}, {"type": "null"}]},
+                "beard": {"anyOf": [{"$ref": "Id"}, {"type": "null"}]},
+                "body": {"anyOf": [{"$ref": "Id"}, {"type": "null"}]},
+                "legs": {"anyOf": [{"$ref": "Id"}, {"type": "null"}]},
+                "hand1": {"anyOf": [{"$ref": "Id"}, {"type": "null"}]},
+                "hand2": {"anyOf": [{"$ref": "Id"}, {"type": "null"}]},
+                "head": {"anyOf": [{"$ref": "Id"}, {"type": "null"}]},
+                "gloves": {"anyOf": [{"$ref": "Id"}, {"type": "null"}]},
+                "boots": {"anyOf": [{"$ref": "Id"}, {"type": "null"}]},
+                "cloak": {"anyOf": [{"$ref": "Id"}, {"type": "null"}]},
+                "felids": {"anyOf": [{"$ref": "Id"}, {"type": "null"}]}
             },
             "required": [
                 "base",
@@ -143,7 +143,7 @@
                     ]
                 },
                 "id": {
-                    "$ref": "#/definitions/Id"
+                    "$ref": "Id"
                 },
                 "title": {
                     "type": "string"
@@ -161,18 +161,18 @@
         },
         "Query": {
             "title": "Query",
-            "oneOf": [
+            "anyOf": [
                 {
-                    "$ref": "#/definitions/NewQuery"
+                    "$ref": "NewQuery"
                 },
                 {
-                    "$ref": "#/definitions/PendingQuery"
+                    "$ref": "PendingQuery"
                 },
                 {
-                    "$ref": "#/definitions/RejectedQuery"
+                    "$ref": "RejectedQuery"
                 },
                 {
-                    "$ref": "#/definitions/ResolvedQuery"
+                    "$ref": "ResolvedQuery"
                 }
             ]
         },
@@ -185,10 +185,10 @@
                     "value": "new"
                 },
                 "id": {
-                    "$ref": "#/definitions/Id"
+                    "$ref": "Id"
                 },
                 "sourceId": {
-                    "$ref": "#/definitions/Id"
+                    "$ref": "Id"
                 },
                 "title": {
                     "type": "string"
@@ -197,7 +197,7 @@
                     "type": "string"
                 },
                 "lastExecuted": {
-                    "oneOf": [
+                    "anyOf": [
                         {
                             "type": "string"
                         },
@@ -225,10 +225,10 @@
                     "value": "pending"
                 },
                 "id": {
-                    "$ref": "#/definitions/Id"
+                    "$ref": "Id"
                 },
                 "sourceId": {
-                    "$ref": "#/definitions/Id"
+                    "$ref": "Id"
                 },
                 "title": {
                     "type": "string"
@@ -258,10 +258,10 @@
                     "value": "failed"
                 },
                 "id": {
-                    "$ref": "#/definitions/Id"
+                    "$ref": "Id"
                 },
                 "sourceId": {
-                    "$ref": "#/definitions/Id"
+                    "$ref": "Id"
                 },
                 "title": {
                     "type": "string"
@@ -295,10 +295,10 @@
                     "value": "resolved"
                 },
                 "id": {
-                    "$ref": "#/definitions/Id"
+                    "$ref": "Id"
                 },
                 "sourceId": {
-                    "$ref": "#/definitions/Id"
+                    "$ref": "Id"
                 },
                 "title": {
                     "type": "string"
@@ -310,7 +310,7 @@
                     "type": "string"
                 },
                 "results": {
-                    "oneOf": [
+                    "anyOf": [
                         {
                             "type": "boolean"
                         },
@@ -344,7 +344,7 @@
             "type": "object",
             "properties": {
                 "id": {
-                    "$ref": "#/definitions/Id"
+                    "$ref": "Id"
                 }
             }
         },
@@ -366,39 +366,39 @@
         },
         "Action": {
             "title": "Action",
-            "oneOf": [
+            "anyOf": [
                 {
-                    "$ref": "#/definitions/UpdateEntityAction"
+                    "$ref": "UpdateEntityAction"
                 },
                 {
-                    "$ref": "#/definitions/SignUpUserAction"
+                    "$ref": "SignUpUserAction"
                 },
                 {
-                    "$ref": "#/definitions/SignInUserAction"
+                    "$ref": "SignInUserAction"
                 },
                 {
-                    "$ref": "#/definitions/SignOutUserAction"
+                    "$ref": "SignOutUserAction"
                 },
                 {
-                    "$ref": "#/definitions/CreateQueryAction"
+                    "$ref": "CreateQueryAction"
                 },
                 {
-                    "$ref": "#/definitions/ReadQueryAction"
+                    "$ref": "ReadQueryAction"
                 },
                 {
-                    "$ref": "#/definitions/UpdateQueryAction"
+                    "$ref": "UpdateQueryAction"
                 },
                 {
-                    "$ref": "#/definitions/DeleteQueryAction"
+                    "$ref": "DeleteQueryAction"
                 },
                 {
-                    "$ref": "#/definitions/ExecuteQueryAction"
+                    "$ref": "ExecuteQueryAction"
                 },
                 {
-                    "$ref": "#/definitions/ExecuteSuccessQueryAction"
+                    "$ref": "ExecuteSuccessQueryAction"
                 },
                 {
-                    "$ref": "#/definitions/SetActiveQueryAction"
+                    "$ref": "SetActiveQueryAction"
                 }
                 
             ]
@@ -408,25 +408,24 @@
         "UpdateEntityAction": {
             "title": "UpdateEntityAction",
             "type": "object",
-            "id": "Entity/Update",
             "allOf": [
                 {
-                    "$ref": "#/definitions/BaseAction"
+                    "$ref": "BaseAction"
                 }
             ],
             "properties": {
-                "type": { "$ref": "#/definitions/ActionType", "value": "UpdateEntityAction" },
+                "type": { "$ref": "ActionType", "value": "UpdateEntityAction" },
                 "payload": {
                     "type": "object",
                     "properties": {
                         "id": {
-                            "$ref": "#/definitions/Id"
+                            "$ref": "Id"
                         },
                         "key": { // aka which definition/component you're targetting for this id - TODO still bridging ecs with jsonschema
                             "type": "string"
                         },
                         "value": {
-                            "$ref": "#/definitions/Json"
+                            "$ref": "Json"
                         }
                     },
                     "required": [
@@ -444,14 +443,13 @@
         "SignUpUserAction": {
             "title": "SignUpUserAction",
             "type": "object",
-            "id": "User/SignUp",
             "allOf": [
                 {
-                    "$ref": "#/definitions/BaseAction"
+                    "$ref": "BaseAction"
                 }
             ],
             "properties": {
-                "type": { "$ref": "#/definitions/ActionType", "value": "SignUpUserAction" },
+                "type": { "$ref": "ActionType", "value": "SignUpUserAction" },
                 "payload": {
                     "type": "object",
                     "properties": {
@@ -472,14 +470,13 @@
         "SignInUserAction": {
             "title": "SignInUserAction",
             "type": "object",
-            "id": "User/SignIn",
             "allOf": [
                 {
-                    "$ref": "#/definitions/BaseAction"
+                    "$ref": "BaseAction"
                 }
             ],
             "properties": {
-                "type": { "$ref": "#/definitions/ActionType", "value": "SignInUserAction" },
+                "type": { "$ref": "ActionType", "value": "SignInUserAction" },
                 "payload": {
                     "type": "object",
                     "properties": {
@@ -504,14 +501,13 @@
         "SignOutUserAction": {
             "title": "SignOutUserAction",
             "type": "object",
-            "id": "User/SignOut",
             "allOf": [
                 {
-                    "$ref": "#/definitions/BaseAction"
+                    "$ref": "BaseAction"
                 }
             ],
             "properties": {
-                "type": { "$ref": "#/definitions/ActionType", "value": "SignOutUserAction" },
+                "type": { "$ref": "ActionType", "value": "SignOutUserAction" },
                 "payload": {"type": "null"}
             },
             "required":[
@@ -522,19 +518,18 @@
         "CreateQueryAction": {
             "title": "CreateQueryAction",
             "type": "object",
-            "id": "Query/Create",
             "allOf": [
                 {
-                    "$ref": "#/definitions/BaseAction"
+                    "$ref": "BaseAction"
                 }
             ],
             "properties": {
-                "type": { "$ref": "#/definitions/ActionType", "value": "CreateQueryAction" },
+                "type": { "$ref": "ActionType", "value": "CreateQueryAction" },
                 "payload": {
                     "type": "object",
                     "properties": {
                         "query": {
-                            "$ref": "#/definitions/Query"
+                            "$ref": "Query"
                         }
                     },
                     "required": [
@@ -550,14 +545,13 @@
         "ReadQueryAction": {
             "title": "ReadQueryAction",
             "type": "object",
-            "id": "Query/Read",
             "allOf": [
                 {
-                    "$ref": "#/definitions/BaseAction"
+                    "$ref": "BaseAction"
                 }
             ],
             "properties": {
-                "type": { "$ref": "#/definitions/ActionType", "value": "ReadQueryAction" },
+                "type": { "$ref": "ActionType", "value": "ReadQueryAction" },
                 "payload": {"type": "null"}
             },
             "required":[
@@ -568,22 +562,21 @@
         "UpdateQueryAction": { // TODO make generic
             "title": "UpdateQueryAction",
             "type": "object",
-            "id": "Query/Update",
             "allOf": [
                 {
-                    "$ref": "#/definitions/BaseAction"
+                    "$ref": "BaseAction"
                 }
             ],
             "properties": {
-                "type": { "$ref": "#/definitions/ActionType", "value": "UpdateQueryAction" },
+                "type": { "$ref": "ActionType", "value": "UpdateQueryAction" },
                 "payload": {
                     "type": "object",
                     "properties": {
                         "id": {
-                            "$ref": "#/definitions/Id"
+                            "$ref": "Id"
                         },
                         "sourceId": {
-                            "$ref": "#/definitions/Id"
+                            "$ref": "Id"
                         },
                         "title": {
                             "type": "string"
@@ -605,19 +598,18 @@
         "DeleteQueryAction": {
             "title": "DeleteQueryAction",
             "type": "object",
-            "id": "Query/Delete",
             "allOf": [
                 {
-                    "$ref": "#/definitions/BaseAction"
+                    "$ref": "BaseAction"
                 }
             ],
             "properties": {
-                "type": { "$ref": "#/definitions/ActionType", "value": "DeleteQueryAction" },
+                "type": { "$ref": "ActionType", "value": "DeleteQueryAction" },
                 "payload": {
                     "type": "object",
                     "properties": {
                         "id": {
-                            "$ref": "#/definitions/Id"
+                            "$ref": "Id"
                         }
                     },
                     "required": [
@@ -633,19 +625,18 @@
         "ExecuteQueryAction": {
             "title": "ExecuteQueryAction",
             "type": "object",
-            "id": "Query/Execute",
             "allOf": [
                 {
-                    "$ref": "#/definitions/BaseAction"
+                    "$ref": "BaseAction"
                 }
             ],
             "properties": {
-                "type": { "$ref": "#/definitions/ActionType", "value": "ExecuteQueryAction" },
+                "type": { "$ref": "ActionType", "value": "ExecuteQueryAction" },
                 "payload": {
                     "type": "object",
                     "properties": {
                         "id": {
-                            "$ref": "#/definitions/Id"
+                            "$ref": "Id"
                         }
                     },
                     "required": [
@@ -661,19 +652,18 @@
         "ExecuteSuccessQueryAction": {
             "title": "ExecuteSuccessQueryAction",
             "type": "object",
-            "id": "Query/ExecuteSuccess",
             "allOf": [
                 {
-                    "$ref": "#/definitions/BaseAction"
+                    "$ref": "BaseAction"
                 }
             ],
             "properties": {
-                "type": { "$ref": "#/definitions/ActionType", "value": "ExecuteSuccessQueryAction" },
+                "type": { "$ref": "ActionType", "value": "ExecuteSuccessQueryAction" },
                 "payload": {
                     "type": "object",
                     "properties": {
                         "id": {
-                            "$ref": "#/definitions/Id"
+                            "$ref": "Id"
                         },
                         "results": {
                             "type": "string"
@@ -693,19 +683,18 @@
         "SetActiveQueryAction": { // TODO probably belongs in some ui context or something
             "title": "SetActiveQueryAction",
             "type": "object",
-            "id": "Query/SetActive",
             "allOf": [
                 {
-                    "$ref": "#/definitions/BaseAction"
+                    "$ref": "BaseAction"
                 }
             ],
             "properties": {
-                "type": { "$ref": "#/definitions/ActionType", "value": "SetActiveQueryAction" },
+                "type": { "$ref": "ActionType", "value": "SetActiveQueryAction" },
                 "payload": {
                     "type": "object",
                     "properties": {
                         "id": {
-                            "$ref": "#/definitions/Id"
+                            "$ref": "Id"
                         }
                     },
                     "required": [
@@ -748,11 +737,11 @@
         "ImageData": {
             "title": "ImageData",
             "type": "object",
-            "allOf": [{"$ref": "#/definitions/Entity"}],
+            "allOf": [{"$ref": "Entity"}],
             "properties": {
                 "url": {"type": "string"},
                 "parts": {"type": "array", "items": {"type": "string"}},
-                "category": {"$ref": "#/definitions/CharacterCategory"}
+                "category": {"$ref": "CharacterCategory"}
             },
             "required": [
                 "url",
@@ -765,7 +754,7 @@
             "type": "object",
             "properties": {
                 "id": {
-                    "$ref": "#/definitions/Id"
+                    "$ref": "Id"
                 }
             }
         },
@@ -778,26 +767,25 @@
         },
         "Message": {
             "title": "Message",
-            "oneOf": [
+            "anyOf": [
                 {
-                    "$ref": "#/definitions/InitMessage"
+                    "$ref": "InitMessage"
                 },
                 {
-                    "$ref": "#/definitions/ActionPerformedMessage"
+                    "$ref": "ActionPerformedMessage"
                 }
             ]
         },
         "InitMessage": {
             "title": "InitMessage",
             "type": "object",
-            "id": "User/SignUp",
             "allOf": [
                 {
-                    "$ref": "#/definitions/BaseMessage"
+                    "$ref": "BaseMessage"
                 }
             ],
             "properties": {
-                "type": { "$ref": "#/definitions/MessageType", "value": "InitMessage" },
+                "type": { "$ref": "MessageType", "value": "InitMessage" },
                 "payload": {
                     "type": "null"
                 }
@@ -810,19 +798,18 @@
         "ActionPerformedMessage": {
             "title": "ActionPerformedMessage",
             "type": "object",
-            "id": "User/SignUp",
             "allOf": [
                 {
-                    "$ref": "#/definitions/BaseMessage"
+                    "$ref": "BaseMessage"
                 }
             ],
             "properties": {
-                "type": { "$ref": "#/definitions/MessageType", "value": "ActionPerformedMessage" },
+                "type": { "$ref": "MessageType", "value": "ActionPerformedMessage" },
                 "payload": {
                     "type": "object",
                     "properties": {
                         "action": {
-                            "$ref": "#/definitions/Action"
+                            "$ref": "Action"
                         }
                     },
                     "required": [
