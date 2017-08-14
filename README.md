@@ -1,6 +1,6 @@
 # enti
 
-> [stuff for doing](https://enti-life.github.io/enti)
+> [make u avatar](https://enti-life.github.io/enti)
 
 
 ## diy
