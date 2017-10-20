@@ -1,6 +1,6 @@
 # enti
 
-> [make u avatar](https://enti-life.github.io/enti)
+> [make u avatar](https://ryanatkn.github.io/crawl-dressup)
 
 
 ## diy
