@@ -65,7 +65,6 @@ The following artists have given explicit approval that past and future artwork 
 - Marbit
 - theTower mwclaws@gmail.com
 
-The following people have released all of their contributions to 
-[_enti_](https://github.com/enti-life/enti) under CC0.
+The following have released their code under CC:0.
 
 - Ryan Atkinson - ryanatkn@gmail.com

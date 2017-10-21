@@ -57,12 +57,12 @@ class App extends React.Component<Props> {
           <h2 style={{display: 'flex', alignItems: 'flex-start'}}>
             {/* TODO clickable-img class, or btn-img, or something similar  */}
             <a
-              href="https://github.com/enti-life/enti"
+              href="https://github.com/ryanatkn/crawl-dressup"
               style={{opacity: 0.8, marginRight: 10}}
             >
               <img src="assets/github-light.png" />
             </a>
-            <div>enti</div>
+            <div>crawl-dressup</div>
           </h2>
           <div style={{display: 'flex'}}>
             <div
@@ -202,12 +202,18 @@ class App extends React.Component<Props> {
                     alignItems: 'flex-end',
                   }}
                 />
-                <div>
+                <div
+                  style={{
+                    marginLeft: '10px',
+                  }}
+                >
                   {/*TODO on click or key={i}, toggle show/hide that category in ui, and displayed toggled status, also display hovered status*/}
                   {k.categoriesOrderedForMenu.map((category, i) =>
                     <div
                       key={category}
                       style={{
+                        display: 'flex',
+                        alignItems: 'center',
                         fontWeight:
                           category === activeCharacterCategory
                             ? 'bold'
@@ -223,9 +229,10 @@ class App extends React.Component<Props> {
                           ],
                         )}
                     >
-                      <small>{i}</small> {t.CharacterCategory[category]}
-                      {' - '}
-                      <small>
+                      <span style={{fontSize: '1.35em'}}>
+                        {t.CharacterCategory[category]}
+                      </span>
+                      <small style={{marginLeft: 10}}>
                         {playerImages.reduce(
                           (count, image) =>
                             image.category === category ? count + 1 : count,
@@ -242,15 +249,6 @@ class App extends React.Component<Props> {
                     removeItem={removeCostumeCategory} // TODO this is all super awkward... not using the `costumeId` like it should
                   />
                 </div>
-                <div>
-                  TODO - show each of the character's avatars (the currently
-                  selected one being the large left one)
-                  {/* TODO display all of character's avatars */}
-                </div>
-                <div>
-                  <button type="button">export</button>
-                  <button type="button">import</button>
-                </div>
               </div>
               <div
                 style={{
@@ -260,11 +258,10 @@ class App extends React.Component<Props> {
                 }}
               >
                 <div style={{display: 'flex', alignItems: 'center'}}>
-                  <h3>
+                  <h1>
                     {t.CharacterCategory[activeCharacterCategory]}
-                  </h3>
-                  {' - '}
-                  <small>
+                  </h1>
+                  <small style={{marginLeft: 10}}>
                     {playerImages.reduce(
                       (count, image) =>
                         image.category === activeCharacterCategory
@@ -301,6 +298,8 @@ class App extends React.Component<Props> {
                               activeCharacterCategory,
                             )}
                           style={{
+                            width: k.renderedTileSize,
+                            height: k.renderedTileSize,
                             border:
                               avatarCostumeItem &&
                               image.id === avatarCostumeItem.id
@@ -329,10 +328,12 @@ class App extends React.Component<Props> {
 
 const mapStateToProps = (state: t.ClientState): ConnectedStateProps => ({
   // queries: state.queries,
+  // tslint:disable:no-string-literal
   hoveredEntityId: state.entities['ui'].hoveredEntityId,
   activeCharacterCategory: state.entities['ui'].activeCharacterCategory,
   avatar: state.entities['character'].avatars[0], // TODO
   previewAvatar: state.entities['previewAvatar'],
+  // tslint:ensable:no-string-literal
 });
 
 const mapDispatchToProps = (dispatch: t.Dispatch): ConnectedDispatchProps => ({

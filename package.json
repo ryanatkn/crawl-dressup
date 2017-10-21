@@ -1,9 +1,9 @@
 {
-  "name": "enti",
-  "description": "much",
+  "name": "crawl-dressup",
+  "description": "make u avatar :dragon:",
   "version": "0.1.0",
   "license": "CC0 1.0",
-  "homepage": "https://enti-life.github.io/enti",
+  "homepage": "https://ryanatkn.github.io/crawl-dressup",
   "scripts": {
     "start": "node scripts/start.js",
     "server": "node build/server",
@@ -91,8 +91,8 @@
     "sw-precache-webpack-plugin": "0.9.1",
     "ts-loader": "^2.2.0",
     "ts-node": "^3.1.0",
-    "tslint": "^5.2.0",
-    "tslint-config-strictish": "git+https://github.com/ryanatkn/tslint-config-strictish.git",
+    "tslint": "^5.8.0",
+    "tslint-config-strictish": "ryanatkn/tslint-config-strictish#v5.3.1",
     "tslint-loader": "^3.5.3",
     "tslint-react": "^3.0.0",
     "typescript": "^2.4.0",
@@ -104,18 +104,9 @@
     "whatwg-fetch": "2.0.3"
   },
   "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.{js,jsx,ts,tsx}"
-    ],
-    "setupFiles": [
-      "<rootDir>/config/polyfills.js"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js",
-      "jsx"
-    ],
+    "collectCoverageFrom": ["src/**/*.{js,jsx,ts,tsx}"],
+    "setupFiles": ["<rootDir>/config/polyfills.js"],
+    "moduleFileExtensions": ["ts", "tsx", "js", "jsx"],
     "testMatch": [
       "<rootDir>/src/**/__tests__/**/*.ts?(x)",
       "<rootDir>/src/**/?(*.)(spec|test).ts?(x)"
@@ -135,9 +126,7 @@
     }
   },
   "babel": {
-    "presets": [
-      "react-app"
-    ]
+    "presets": ["react-app"]
   },
   "eslintConfig": {
     "extends": "react-app"

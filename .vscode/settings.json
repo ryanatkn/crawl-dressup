@@ -15,14 +15,20 @@ Try to use `TSLint (vnext) - eg2.ts-tslints` when severity problem is figured ou
     "prettier.trailingComma": "all",
     "prettier.bracketSpacing": false,
     "tslint.alwaysShowRuleFailuresAsWarnings": true,
-    "files.exclude": {
-        "**/.git": true,
-        "**/.svn": true,
-        "**/.hg": true,
-        "**/CVS": true,
-        "**/.DS_Store": true,
+    "files.watcherExclude": {
+        "**/.git/**": true,
+        "**/node_modules/**": true,
+        "**/tmp/**": true,
+        "**/vendor/**": true,
+        "**/build/**": true,
+        "**/dist/**": true,
+        "**/public/assets/dcss": true
+      },
+      "search.exclude": {
         "**/node_modules": true,
-        "**/public/assets/dcss": true,
-        "**/build": true
-    }
+        "**/bower_components": true,
+        "**/build": true,
+        "**/dist": true,
+        "**/public/assets/dcss": true
+      }
 }
