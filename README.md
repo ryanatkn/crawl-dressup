@@ -2,10 +2,10 @@
 
 > [make u avatar](https://ryanatkn.github.io/crawl-dressup) :dragon:
 
-This project was originally much wider in scope,
+This project was originally infinitely wider in scope,
 but all it does now is let you play dressup using
 [Dungeon Crawl Stone Soup](https://github.com/crawl/crawl) assets.
-It's going to become [Gro Garden](https://github.com/enti-life/gro-garden)
+The followup will be [Gro Garden](https://github.com/enti-life/gro-garden)
 once [Gro](https://github.com/enti-life/gro) is more mature.
 
 The code uses experimental codegen that became Gro,
