@@ -67,7 +67,7 @@ char preview and dressup
 
 fork/edit pixels of anything
     - use stuff created by the community (publish step prevents unintended spam, approval feature probably needed as well)
-    - use api to create pull requests with image assets to the `enti-life/enti` repo?
+    - use api to create pull requests with image assets to the repo?
 
 other things
     - create spaces, invite people to them

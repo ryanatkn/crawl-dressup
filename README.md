@@ -5,8 +5,8 @@
 This project was originally much wider in scope,
 but all it does now is let you play dressup using
 [Dungeon Crawl Stone Soup](https://github.com/crawl/crawl) assets.
-It's going to become [Gro Garden](https://github.com/enti-life/gro-garden)
-once [Gro](https://github.com/enti-life/gro) is more mature.
+It's going to become [Gro Garden](https://github.com/gro-garden/gro-garden)
+once [Gro](https://github.com/gro-garden/gro) is more mature.
 
 The code uses experimental codegen that became Gro,
 and the views are a special kind of mess, so don't try to learn from them.
