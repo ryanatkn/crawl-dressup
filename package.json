@@ -2,8 +2,13 @@
   "name": "crawl-dressup",
   "description": "make u avatar :dragon:",
   "version": "0.1.0",
-  "license": "CC0 1.0",
+  "license": "CC0-1.0",
   "homepage": "https://ryanatkn.github.io/crawl-dressup",
+  "author": {
+    "name": "Ryan Atkinson",
+    "email": "mail@ryanatkn.com",
+    "url": "https://www.ryanatkn.com"
+  },
   "scripts": {
     "start": "node scripts/start.js",
     "server": "node build/server",
